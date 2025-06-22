@@ -145,10 +145,14 @@ export function HorariosDisplay() {
     if (cantidadClases <= 1) return false
 
     const agrupacion = asignatura.agrupacionClases?.[tipoClase]
-    if (agrupacion === "conjunto") return false // No requiere selección, son un conjunto
-    if (agrupacion === "elegir") return true // Requiere selección
+    
+    // Si está explícitamente marcado como conjunto, no requiere selección
+    if (agrupacion === "conjunto") return false
+    
+    // Si está explícitamente marcado como elegir, requiere selección
+    if (agrupacion === "elegir") return true
 
-    // Si no hay información específica, usar la lógica anterior (requiere selección si hay múltiples)
+    // Si no hay información específica y hay múltiples clases, asumir que requiere selección (lógica por defecto)
     return cantidadClases > 1
   }
 
@@ -274,7 +278,7 @@ export function HorariosDisplay() {
       const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
       
       // Solo marcar como faltante si requiere selección y no se ha seleccionado
-      if (agrupacion === "elegir" && !clasesSeleccionadas[grupo.tipo]) {
+      if (agrupacion === "elegir" && grupo.clases.length > 1 && !clasesSeleccionadas[grupo.tipo]) {
         // Usar nombres completos en plural
         const nombreCompleto =
           grupo.tipo === "Teórico"
@@ -286,7 +290,7 @@ export function HorariosDisplay() {
                 : grupo.tipo
         tiposFaltantes.push(nombreCompleto)
       } else if (!agrupacion && grupo.clases.length > 1 && !clasesSeleccionadas[grupo.tipo]) {
-        // Lógica por defecto para clases sin especificación
+        // Lógica por defecto para clases sin especificación (asumen que requieren selección)
         const nombreCompleto =
           grupo.tipo === "Teórico"
             ? "Teóricos"
@@ -297,6 +301,7 @@ export function HorariosDisplay() {
                 : grupo.tipo
         tiposFaltantes.push(nombreCompleto)
       }
+      // Si agrupacion === "conjunto", nunca marcar como faltante
     })
 
     return tiposFaltantes
@@ -642,15 +647,17 @@ export function HorariosDisplay() {
                           </RadioGroup>
                         ) : (
                           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                            {grupo.clases.map((clase) => (
+                            {grupo.clases.map((clase, index) => (
                               <div key={clase.id} className="border border-uba-primary/20 rounded-lg p-3 bg-gray-50">
                                 <div className="flex justify-between items-start mb-2">
                                   <Badge variant="outline" className="text-xs border-uba-primary/50 text-uba-primary">
-                                    {clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
+                                    {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
+                                      ? `${clase.tipo} ${index + 1}`
+                                      : clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
                                   </Badge>
-                                  {grupo.clases.length > 1 && (
-                                    <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
-                                      Conjunto
+                                  {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
+                                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                                      Complementario
                                     </Badge>
                                   )}
                                 </div>

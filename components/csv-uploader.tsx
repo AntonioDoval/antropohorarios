@@ -289,53 +289,67 @@ export function CSVUploader() {
         }
 
         // Leer información de relación entre clases de las columnas V y AE
-        const relacionTeoricos = row["Relación entre teóricos (si corresponde)"]?.trim() || ""
-        const relacionTeoricoPracticos = row["Relación entre teórico-prácticos (si corresponde)"]?.trim() || ""
+        const relacionTeoricos = row["Indicar relación entre los dos horarios de teóricos"]?.trim() || ""
+        const relacionTeoricoPracticos = row["Indicar relación entre los dos horarios de teórico-prácticos"]?.trim() || ""
+
+        console.log("Relación entre teóricos:", relacionTeoricos)
+        console.log("Relación entre teórico-prácticos:", relacionTeoricoPracticos)
 
         // Determinar si las clases deben agruparse
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
         // Para teóricos: analizar la relación
-        if (relacionTeoricos) {
+        if (relacionTeoricos && clases.filter(c => c.tipo === "Teórico").length > 1) {
           const relacionTeoricosLower = relacionTeoricos.toLowerCase()
           if (
             relacionTeoricosLower.includes("mismo") || 
             relacionTeoricosLower.includes("dividido") ||
             relacionTeoricosLower.includes("conjunto") ||
-            relacionTeoricosLower.includes("complementario")
+            relacionTeoricosLower.includes("complementario") ||
+            relacionTeoricosLower.includes("se dicta en dos horarios") ||
+            relacionTeoricosLower.includes("son complementarios")
           ) {
             agrupacionClases["Teórico"] = "conjunto"
+            console.log("Teóricos marcados como conjunto")
           } else if (
             relacionTeoricosLower.includes("elegir") ||
             relacionTeoricosLower.includes("opción") ||
             relacionTeoricosLower.includes("alternativa") ||
-            relacionTeoricosLower.includes("deben elegir")
+            relacionTeoricosLower.includes("deben elegir") ||
+            relacionTeoricosLower.includes("estudiantes deben elegir")
           ) {
             agrupacionClases["Teórico"] = "elegir"
+            console.log("Teóricos marcados como elegir")
           }
         }
 
         // Para teórico-prácticos: analizar la relación
-        if (relacionTeoricoPracticos) {
+        if (relacionTeoricoPracticos && clases.filter(c => c.tipo === "Teórico-Práctico").length > 1) {
           const relacionTeoricoPracticosLower = relacionTeoricoPracticos.toLowerCase()
           if (
             relacionTeoricoPracticosLower.includes("mismo") ||
             relacionTeoricoPracticosLower.includes("dividido") ||
             relacionTeoricoPracticosLower.includes("conjunto") ||
-            relacionTeoricoPracticosLower.includes("complementario")
+            relacionTeoricoPracticosLower.includes("complementario") ||
+            relacionTeoricoPracticosLower.includes("se dicta en dos horarios") ||
+            relacionTeoricoPracticosLower.includes("son complementarios")
           ) {
             agrupacionClases["Teórico-Práctico"] = "conjunto"
+            console.log("Teórico-prácticos marcados como conjunto")
           } else if (
             relacionTeoricoPracticosLower.includes("elegir") ||
             relacionTeoricoPracticosLower.includes("opción") ||
             relacionTeoricoPracticosLower.includes("alternativa") ||
-            relacionTeoricoPracticosLower.includes("deben elegir")
+            relacionTeoricoPracticosLower.includes("deben elegir") ||
+            relacionTeoricoPracticosLower.includes("estudiantes deben elegir")
           ) {
             agrupacionClases["Teórico-Práctico"] = "elegir"
+            console.log("Teórico-prácticos marcados como elegir")
           }
         }
 
         console.log(`Clases encontradas: ${clases.length}`)
+        console.log("Agrupación de clases:", agrupacionClases)
 
         // Ajustar numeración para tipos con una sola clase
         const tiposClase = ["Teórico", "Teórico-Práctico", "Práctico"]
