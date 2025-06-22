@@ -417,6 +417,14 @@ export function CSVUploader() {
     setFile(null)
   }
 
+  const clearData = () => {
+    localStorage.removeItem("horarios-antropologia")
+    setMessage({
+      type: "success",
+      text: "Datos actuales limpiados exitosamente.",
+    })
+  }
+
   return (
     <div className="space-y-6">
       <Card className="bg-gray-50 border-gray-200">
@@ -485,13 +493,23 @@ export function CSVUploader() {
             </p>
           </div>
 
-          <Button
-            onClick={processCSV}
-            disabled={!file || loading}
-            className="w-full bg-uba-primary hover:bg-uba-primary/90"
-          >
-            {loading ? "Procesando..." : "Procesar CSV"}
-          </Button>
+          <div className="space-y-3">
+            <Button
+              onClick={processCSV}
+              disabled={!file || loading}
+              className="w-full bg-uba-primary hover:bg-uba-primary/90"
+            >
+              {loading ? "Procesando..." : "Procesar CSV"}
+            </Button>
+            
+            <Button
+              onClick={clearData}
+              variant="destructive"
+              className="w-full"
+            >
+              Limpiar Datos Actuales
+            </Button>
+          </div>
 
           {message && (
             <Alert className={message.type === "error" ? "border-red-200 bg-red-50" : "border-green-200 bg-green-50"}>
@@ -513,36 +531,46 @@ export function CSVUploader() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-uba-primary">
               <FileText className="h-5 w-5" />
-              Vista Previa ({preview.length} asignaturas)
+              Vista Previa
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="max-h-96 overflow-y-auto mb-4">
+            {/* Botón confirmar arriba */}
+            <div className="mb-6">
+              <Button onClick={saveData} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 text-lg">
+                ✓ Confirmar y Guardar Horarios
+              </Button>
+            </div>
+
+            {/* Resumen simplificado */}
+            <div className="bg-white p-4 rounded-lg border mb-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-uba-primary">
+                  {preview.length} asignaturas procesadas
+                </div>
+                <div className="text-lg text-gray-600 mt-1">
+                  {preview.reduce((total, asig) => total + asig.clases.length, 0)} clases en total
+                </div>
+              </div>
+            </div>
+
+            {/* Lista completa de asignaturas */}
+            <div className="max-h-80 overflow-y-auto mb-6">
               <div className="grid gap-2">
-                {preview.slice(0, 5).map((asignatura, index) => (
+                {preview.map((asignatura, index) => (
                   <div key={index} className="border rounded p-3 bg-white text-sm">
-                    <div className="font-medium mb-2">{asignatura.materia}</div>
-                    <div className="text-gray-600 mb-2">
-                      <strong>Tipo:</strong> {asignatura.tipoAsignatura || "No especificado"} |{" "}
-                      <strong>Cátedra:</strong> {asignatura.catedra} | <strong>Modalidad:</strong>{" "}
-                      {asignatura.modalidadCursada} | <strong>Aprobación:</strong> {asignatura.modalidadAprobacion}
-                    </div>
-                    <div className="space-y-1">
-                      {asignatura.clases.map((clase, claseIndex) => (
-                        <div key={claseIndex} className="text-xs bg-gray-100 p-2 rounded">
-                          {clase.tipo} {clase.numero !== 0 ? clase.numero : ""} | {clase.dia} {clase.horario}
-                        </div>
-                      ))}
+                    <div className="font-medium text-uba-primary">{asignatura.materia}</div>
+                    <div className="text-gray-600 text-xs">
+                      Cátedra: {asignatura.catedra} | {asignatura.clases.length} clase{asignatura.clases.length !== 1 ? 's' : ''}
                     </div>
                   </div>
                 ))}
-                {preview.length > 5 && (
-                  <div className="text-center text-gray-500 py-2">... y {preview.length - 5} asignaturas más</div>
-                )}
               </div>
             </div>
-            <Button onClick={saveData} className="w-full bg-uba-primary hover:bg-uba-primary/90">
-              Confirmar y Guardar Horarios
+
+            {/* Botón confirmar abajo */}
+            <Button onClick={saveData} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 text-lg">
+              ✓ Confirmar y Guardar Horarios
             </Button>
           </CardContent>
         </Card>

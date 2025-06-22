@@ -307,6 +307,122 @@ export function HorariosDisplay() {
     return tiposFaltantes
   }
 
+  // Función para detectar superposiciones horarias
+  const detectarSuperposiciones = () => {
+    if (!data) return []
+
+    const clasesSeleccionadas: Array<{
+      asignatura: string
+      clase: string
+      dia: string
+      inicio: number
+      fin: number
+    }> = []
+
+    // Recopilar todas las clases seleccionadas
+    seleccion.asignaturas.forEach((asignaturaId) => {
+      const asignatura = data.asignaturas.find((a) => a.id === asignaturaId)
+      if (!asignatura) return
+
+      const clasesAsignatura = seleccion.clases[asignaturaId] || {}
+      const gruposClases = agruparClasesPorTipo(asignatura.clases)
+
+      gruposClases.forEach((grupo) => {
+        const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
+        
+        if (agrupacion === "conjunto") {
+          // Si es conjunto, agregar todas las clases del grupo
+          grupo.clases.forEach((clase) => {
+            const horarioParts = clase.horario.split(" - ")
+            const inicio = parseInt(horarioParts[0].split(":")[0])
+            const fin = parseInt(horarioParts[1].split(":")[0])
+            
+            clasesSeleccionadas.push({
+              asignatura: asignatura.materia,
+              clase: `${clase.tipo} ${grupo.clases.length > 1 ? grupo.clases.indexOf(clase) + 1 : ""}`.trim(),
+              dia: clase.dia,
+              inicio,
+              fin
+            })
+          })
+        } else {
+          // Para clases que requieren selección o únicas
+          if (grupo.clases.length === 1) {
+            const clase = grupo.clases[0]
+            const horarioParts = clase.horario.split(" - ")
+            const inicio = parseInt(horarioParts[0].split(":")[0])
+            const fin = parseInt(horarioParts[1].split(":")[0])
+            
+            clasesSeleccionadas.push({
+              asignatura: asignatura.materia,
+              clase: clase.tipo,
+              dia: clase.dia,
+              inicio,
+              fin
+            })
+          } else {
+            const claseSeleccionadaId = clasesAsignatura[grupo.tipo]
+            if (claseSeleccionadaId) {
+              const clase = grupo.clases.find((c) => c.id === claseSeleccionadaId)
+              if (clase) {
+                const horarioParts = clase.horario.split(" - ")
+                const inicio = parseInt(horarioParts[0].split(":")[0])
+                const fin = parseInt(horarioParts[1].split(":")[0])
+                
+                clasesSeleccionadas.push({
+                  asignatura: asignatura.materia,
+                  clase: `${clase.tipo} ${clase.numero}`,
+                  dia: clase.dia,
+                  inicio,
+                  fin
+                })
+              }
+            }
+          }
+        }
+      })
+    })
+
+    // Detectar superposiciones
+    const superposiciones: Array<{
+      clase1: string
+      clase2: string
+      dia: string
+      horario: string
+    }> = []
+
+    for (let i = 0; i < clasesSeleccionadas.length; i++) {
+      for (let j = i + 1; j < clasesSeleccionadas.length; j++) {
+        const clase1 = clasesSeleccionadas[i]
+        const clase2 = clasesSeleccionadas[j]
+
+        // Verificar si son el mismo día y se superponen horarios
+        if (clase1.dia === clase2.dia) {
+          const haySuper = (clase1.inicio < clase2.fin && clase1.fin > clase2.inicio)
+          
+          if (haySuper) {
+            superposiciones.push({
+              clase1: `${clase1.asignatura} (${clase1.clase})`,
+              clase2: `${clase2.asignatura} (${clase2.clase})`,
+              dia: clase1.dia,
+              horario: `${Math.max(clase1.inicio, clase2.inicio)}:00-${Math.min(clase1.fin, clase2.fin)}:00`
+            })
+          }
+        }
+      }
+    }
+
+    return superposiciones
+  }
+
+  // Función para limpiar selección
+  const limpiarSeleccion = () => {
+    setSeleccion({
+      asignaturas: [],
+      clases: {},
+    })
+  }
+
   // Función para obtener la selección formateada
   const getSeleccionFormateada = () => {
     if (!data) return []
@@ -557,6 +673,26 @@ export function HorariosDisplay() {
         </CardContent>
       </Card>
 
+      {/* Advertencias de superposición */}
+      {(() => {
+        const superposiciones = detectarSuperposiciones()
+        return superposiciones.length > 0 ? (
+          <Alert className="border-red-300 bg-red-50">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <AlertDescription className="text-red-800">
+              <div className="font-semibold mb-2">⚠️ Detectamos superposiciones horarias:</div>
+              <ul className="space-y-1">
+                {superposiciones.map((superposicion, index) => (
+                  <li key={index} className="text-sm">
+                    • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
+                  </li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        ) : null
+      })()}
+
       {/* Lista de asignaturas */}
       <div className="space-y-6">
         {asignaturasFiltradas.length === 0 ? (
@@ -703,7 +839,39 @@ export function HorariosDisplay() {
       {/* Tu Selección */}
       {seleccionFormateada.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-uba-primary mb-4">Tu Selección</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-uba-primary">Tu Selección</h2>
+            <Button
+              onClick={limpiarSeleccion}
+              variant="destructive"
+              size="sm"
+              className="text-white"
+            >
+              <X className="h-4 w-4 mr-1" />
+              Limpiar Selección
+            </Button>
+          </div>
+
+          {/* Advertencias de superposición en Tu Selección */}
+          {(() => {
+            const superposiciones = detectarSuperposiciones()
+            return superposiciones.length > 0 ? (
+              <Alert className="border-red-300 bg-red-50 mb-4">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+                <AlertDescription className="text-red-800">
+                  <div className="font-semibold mb-2">⚠️ Hay superposiciones horarias en tu selección:</div>
+                  <ul className="space-y-1">
+                    {superposiciones.map((superposicion, index) => (
+                      <li key={index} className="text-sm">
+                        • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
+                      </li>
+                    ))}
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            ) : null
+          })()}
+
           <Card className="bg-uba-secondary/10 border-uba-secondary/30">
             <CardContent className="pt-6">
               <div className="space-y-4">
