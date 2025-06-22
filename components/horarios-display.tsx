@@ -271,10 +271,22 @@ export function HorariosDisplay() {
     const tiposFaltantes: string[] = []
 
     gruposClases.forEach((grupo) => {
-      const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
-
-      if (requiereElegir && !clasesSeleccionadas[grupo.tipo]) {
+      const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
+      
+      // Solo marcar como faltante si requiere selección y no se ha seleccionado
+      if (agrupacion === "elegir" && !clasesSeleccionadas[grupo.tipo]) {
         // Usar nombres completos en plural
+        const nombreCompleto =
+          grupo.tipo === "Teórico"
+            ? "Teóricos"
+            : grupo.tipo === "Teórico-Práctico"
+              ? "Teórico-Prácticos"
+              : grupo.tipo === "Práctico"
+                ? "Prácticos"
+                : grupo.tipo
+        tiposFaltantes.push(nombreCompleto)
+      } else if (!agrupacion && grupo.clases.length > 1 && !clasesSeleccionadas[grupo.tipo]) {
+        // Lógica por defecto para clases sin especificación
         const nombreCompleto =
           grupo.tipo === "Teórico"
             ? "Teóricos"
@@ -311,9 +323,20 @@ export function HorariosDisplay() {
       const tiposFaltantes = getClasesFaltantes(asignatura, clasesAsignatura)
 
       gruposClases.forEach((grupo) => {
-        const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
-
-        if (requiereElegir) {
+        const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
+        
+        if (agrupacion === "conjunto") {
+          // Si es conjunto, mostrar todas las clases del grupo
+          grupo.clases.forEach((clase, index) => {
+            clasesSeleccionadas.push({
+              nombre: grupo.clases.length > 1 
+                ? `${clase.tipo} ${index + 1}` 
+                : (clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`),
+              dia: clase.dia,
+              horario: clase.horario,
+            })
+          })
+        } else if (agrupacion === "elegir") {
           // Si requiere selección, mostrar solo la seleccionada
           const claseSeleccionadaId = clasesAsignatura[grupo.tipo]
           if (claseSeleccionadaId) {
@@ -327,14 +350,29 @@ export function HorariosDisplay() {
             }
           }
         } else {
-          // Si no requiere selección (una sola clase o conjunto), mostrar todas
-          grupo.clases.forEach((clase) => {
-            clasesSeleccionadas.push({
-              nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`,
-              dia: clase.dia,
-              horario: clase.horario,
+          // Lógica por defecto: si hay una sola clase, mostrarla; si hay múltiples, aplicar lógica anterior
+          if (grupo.clases.length === 1) {
+            grupo.clases.forEach((clase) => {
+              clasesSeleccionadas.push({
+                nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`,
+                dia: clase.dia,
+                horario: clase.horario,
+              })
             })
-          })
+          } else {
+            // Para múltiples clases sin especificación, mantener lógica de selección
+            const claseSeleccionadaId = clasesAsignatura[grupo.tipo]
+            if (claseSeleccionadaId) {
+              const clase = grupo.clases.find((c) => c.id === claseSeleccionadaId)
+              if (clase) {
+                clasesSeleccionadas.push({
+                  nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`,
+                  dia: clase.dia,
+                  horario: clase.horario,
+                })
+              }
+            }
+          }
         }
       })
 

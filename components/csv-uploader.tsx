@@ -295,25 +295,44 @@ export function CSVUploader() {
         // Determinar si las clases deben agruparse
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
-        if (relacionTeoricos.toLowerCase().includes("mismo") || relacionTeoricos.toLowerCase().includes("dividido")) {
-          agrupacionClases["Teórico"] = "conjunto"
-        } else if (
-          relacionTeoricos.toLowerCase().includes("elegir") ||
-          relacionTeoricos.toLowerCase().includes("opción")
-        ) {
-          agrupacionClases["Teórico"] = "elegir"
+        // Para teóricos: analizar la relación
+        if (relacionTeoricos) {
+          const relacionTeoricosLower = relacionTeoricos.toLowerCase()
+          if (
+            relacionTeoricosLower.includes("mismo") || 
+            relacionTeoricosLower.includes("dividido") ||
+            relacionTeoricosLower.includes("conjunto") ||
+            relacionTeoricosLower.includes("complementario")
+          ) {
+            agrupacionClases["Teórico"] = "conjunto"
+          } else if (
+            relacionTeoricosLower.includes("elegir") ||
+            relacionTeoricosLower.includes("opción") ||
+            relacionTeoricosLower.includes("alternativa") ||
+            relacionTeoricosLower.includes("deben elegir")
+          ) {
+            agrupacionClases["Teórico"] = "elegir"
+          }
         }
 
-        if (
-          relacionTeoricoPracticos.toLowerCase().includes("mismo") ||
-          relacionTeoricoPracticos.toLowerCase().includes("dividido")
-        ) {
-          agrupacionClases["Teórico-Práctico"] = "conjunto"
-        } else if (
-          relacionTeoricoPracticos.toLowerCase().includes("elegir") ||
-          relacionTeoricoPracticos.toLowerCase().includes("opción")
-        ) {
-          agrupacionClases["Teórico-Práctico"] = "elegir"
+        // Para teórico-prácticos: analizar la relación
+        if (relacionTeoricoPracticos) {
+          const relacionTeoricoPracticosLower = relacionTeoricoPracticos.toLowerCase()
+          if (
+            relacionTeoricoPracticosLower.includes("mismo") ||
+            relacionTeoricoPracticosLower.includes("dividido") ||
+            relacionTeoricoPracticosLower.includes("conjunto") ||
+            relacionTeoricoPracticosLower.includes("complementario")
+          ) {
+            agrupacionClases["Teórico-Práctico"] = "conjunto"
+          } else if (
+            relacionTeoricoPracticosLower.includes("elegir") ||
+            relacionTeoricoPracticosLower.includes("opción") ||
+            relacionTeoricoPracticosLower.includes("alternativa") ||
+            relacionTeoricoPracticosLower.includes("deben elegir")
+          ) {
+            agrupacionClases["Teórico-Práctico"] = "elegir"
+          }
         }
 
         console.log(`Clases encontradas: ${clases.length}`)
