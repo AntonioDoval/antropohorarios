@@ -145,10 +145,10 @@ export function HorariosDisplay() {
     if (cantidadClases <= 1) return false
 
     const agrupacion = asignatura.agrupacionClases?.[tipoClase]
-    
+
     // Si está explícitamente marcado como conjunto, no requiere selección
     if (agrupacion === "conjunto") return false
-    
+
     // Si está explícitamente marcado como elegir, requiere selección
     if (agrupacion === "elegir") return true
 
@@ -276,7 +276,7 @@ export function HorariosDisplay() {
 
     gruposClases.forEach((grupo) => {
       const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
-      
+
       // Solo marcar como faltante si requiere selección y no se ha seleccionado
       if (agrupacion === "elegir" && grupo.clases.length > 1 && !clasesSeleccionadas[grupo.tipo]) {
         // Usar nombres completos en plural
@@ -329,14 +329,14 @@ export function HorariosDisplay() {
 
       gruposClases.forEach((grupo) => {
         const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
-        
+
         if (agrupacion === "conjunto") {
           // Si es conjunto, agregar todas las clases del grupo
           grupo.clases.forEach((clase) => {
             const horarioParts = clase.horario.split(" - ")
             const inicio = parseInt(horarioParts[0].split(":")[0])
             const fin = parseInt(horarioParts[1].split(":")[0])
-            
+
             clasesSeleccionadas.push({
               asignatura: asignatura.materia,
               clase: `${clase.tipo} ${grupo.clases.length > 1 ? grupo.clases.indexOf(clase) + 1 : ""}`.trim(),
@@ -352,7 +352,7 @@ export function HorariosDisplay() {
             const horarioParts = clase.horario.split(" - ")
             const inicio = parseInt(horarioParts[0].split(":")[0])
             const fin = parseInt(horarioParts[1].split(":")[0])
-            
+
             clasesSeleccionadas.push({
               asignatura: asignatura.materia,
               clase: clase.tipo,
@@ -368,7 +368,7 @@ export function HorariosDisplay() {
                 const horarioParts = clase.horario.split(" - ")
                 const inicio = parseInt(horarioParts[0].split(":")[0])
                 const fin = parseInt(horarioParts[1].split(":")[0])
-                
+
                 clasesSeleccionadas.push({
                   asignatura: asignatura.materia,
                   clase: `${clase.tipo} ${clase.numero}`,
@@ -399,7 +399,7 @@ export function HorariosDisplay() {
         // Verificar si son el mismo día y se superponen horarios
         if (clase1.dia === clase2.dia) {
           const haySuper = (clase1.inicio < clase2.fin && clase1.fin > clase2.inicio)
-          
+
           if (haySuper) {
             superposiciones.push({
               clase1: `${clase1.asignatura} (${clase1.clase})`,
@@ -445,7 +445,7 @@ export function HorariosDisplay() {
 
       gruposClases.forEach((grupo) => {
         const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
-        
+
         if (agrupacion === "conjunto") {
           // Si es conjunto, mostrar todas las clases del grupo
           grupo.clases.forEach((clase, index) => {
@@ -799,17 +799,15 @@ export function HorariosDisplay() {
                                         />
                                       </div>
                                     </div>
-                                  </div>
-                                )
-                              })}
-                                  <div className="text-sm text-gray-600 space-y-1">
+                                    <div className="text-sm text-gray-600 space-y-1">
                                       <div className="flex items-center gap-2">
                                         <span className="font-medium text-uba-primary">{clase.dia}</span>
                                         <span>{clase.horario}</span>
                                       </div>
                                     </div>
                                   </div>
-                                ))}
+                                )
+                              })}
                             </div>
                           </RadioGroup>
                         ) : (
