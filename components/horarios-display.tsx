@@ -559,20 +559,22 @@ export function HorariosDisplay() {
 
         {/* Alert de aclaración más grande y amarillo */}
         <Alert className="border-yellow-300 bg-yellow-100 p-4">
-          <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
-          <AlertDescription className="text-gray-800 text-base ml-2">
-            <span className="font-semibold">Aclaración:</span> esta herramienta es para visualizar y planificar
-            horarios. Para realizar las inscripciones debés hacerlo por{" "}
-            <a
-              href="https://suiganew.filo.uba.ar/"
-              className="text-blue-600 hover:text-blue-800 font-semibold underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              SUIGA
-            </a>
-            .
-          </AlertDescription>
+          <div className="flex items-start gap-3">
+            <div className="text-2xl mt-0.5">⚠️</div>
+            <AlertDescription className="text-gray-800 text-base">
+              <span className="font-semibold">Aclaración:</span> esta herramienta es para visualizar y planificar
+              horarios. Para realizar las inscripciones debés hacerlo por{" "}
+              <a
+                href="https://suiganew.filo.uba.ar/"
+                className="text-blue-600 hover:text-blue-800 font-semibold underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                SUIGA
+              </a>
+              .
+            </AlertDescription>
+          </div>
         </Alert>
       </div>
 
@@ -678,17 +680,19 @@ export function HorariosDisplay() {
         const superposiciones = detectarSuperposiciones()
         return superposiciones.length > 0 ? (
           <Alert className="border-red-300 bg-red-50">
-            <AlertTriangle className="h-5 w-5 text-red-600" />
-            <AlertDescription className="text-red-800">
-              <div className="font-semibold mb-2">⚠️ Detectamos superposiciones horarias:</div>
-              <ul className="space-y-1">
-                {superposiciones.map((superposicion, index) => (
-                  <li key={index} className="text-sm">
-                    • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
-                  </li>
-                ))}
-              </ul>
-            </AlertDescription>
+            <div className="flex items-start gap-3">
+              <div className="text-2xl mt-0.5">⚠️</div>
+              <AlertDescription className="text-red-800">
+                <div className="font-semibold mb-2">Detectamos superposiciones horarias:</div>
+                <ul className="space-y-1">
+                  {superposiciones.map((superposicion, index) => (
+                    <li key={index} className="text-sm">
+                      • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
+                    </li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </div>
           </Alert>
         ) : null
       })()}
@@ -701,28 +705,38 @@ export function HorariosDisplay() {
             <p className="text-gray-600">Intenta ajustar los filtros de búsqueda.</p>
           </div>
         ) : (
-          asignaturasFiltradas.map((asignatura) => (
-            <Card key={asignatura.id} className="w-full border-uba-primary/20">
-              <CardHeader className="pb-4 bg-uba-primary text-white rounded-t-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {getAsignaturaIcon(asignatura)}
-                    <div>
-                      <CardTitle className="text-xl">{asignatura.materia}</CardTitle>
-                      <div className="text-sm text-white">
-                        <span className="font-medium">Cátedra:</span> {asignatura.catedra}
+          asignaturasFiltradas.map((asignatura) => {
+            const isSelected = seleccion.asignaturas.includes(asignatura.id)
+            return (
+              <Card key={asignatura.id} className={`w-full transition-all duration-200 ${
+                isSelected 
+                  ? "border-uba-secondary border-2 shadow-lg bg-uba-secondary/5" 
+                  : "border-uba-primary/20 hover:border-uba-primary/40"
+              }`}>
+                <CardHeader className={`pb-4 rounded-t-lg transition-all duration-200 ${
+                  isSelected 
+                    ? "bg-uba-secondary text-white" 
+                    : "bg-uba-primary text-white"
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {getAsignaturaIcon(asignatura)}
+                      <div>
+                        <CardTitle className="text-xl">{asignatura.materia}</CardTitle>
+                        <div className="text-sm text-white">
+                          <span className="font-medium">Cátedra:</span> {asignatura.catedra}
+                        </div>
                       </div>
                     </div>
+                    <div className="mr-4">
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => toggleAsignatura(asignatura.id)}
+                        className="border-white data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-uba-secondary"
+                      />
+                    </div>
                   </div>
-                  <div className="mr-4">
-                    <Checkbox
-                      checked={seleccion.asignaturas.includes(asignatura.id)}
-                      onCheckedChange={() => toggleAsignatura(asignatura.id)}
-                      className="border-white data-[state=checked]:bg-uba-secondary data-[state=checked]:border-uba-secondary"
-                    />
-                  </div>
-                </div>
-              </CardHeader>
+                </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 {/* Características de la asignatura */}
                 <div className="flex flex-wrap gap-2">
@@ -757,20 +771,37 @@ export function HorariosDisplay() {
                             onValueChange={(value) => seleccionarClase(asignatura.id, grupo.tipo, value)}
                           >
                             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                              {grupo.clases.map((clase) => (
-                                <div key={clase.id} className="border border-uba-primary/20 rounded-lg p-3 bg-gray-50">
-                                  <div className="flex justify-between items-start mb-2">
-                                    <Badge variant="outline" className="text-xs border-uba-primary/50 text-uba-primary">
-                                      {clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
-                                    </Badge>
-                                    <div className="flex items-center">
-                                      <RadioGroupItem
-                                        value={clase.id}
-                                        id={clase.id}
-                                        className="data-[state=checked]:bg-uba-primary data-[state=checked]:border-uba-primary"
-                                      />
+                              {grupo.clases.map((clase) => {
+                                const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
+                                return (
+                                  <div key={clase.id} className={`border rounded-lg p-3 transition-all duration-200 ${
+                                    isClassSelected 
+                                      ? "border-uba-secondary bg-uba-secondary/10 shadow-md" 
+                                      : "border-uba-primary/20 bg-gray-50 hover:border-uba-primary/40"
+                                  }`}>
+                                    <div className="flex justify-between items-start mb-2">
+                                      <Badge variant="outline" className={`text-xs ${
+                                        isClassSelected 
+                                          ? "border-uba-secondary text-uba-secondary" 
+                                          : "border-uba-primary/50 text-uba-primary"
+                                      }`}>
+                                        {clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
+                                      </Badge>
+                                      <div className="flex items-center">
+                                        <RadioGroupItem
+                                          value={clase.id}
+                                          id={clase.id}
+                                          className={`${
+                                            isClassSelected 
+                                              ? "data-[state=checked]:bg-uba-secondary data-[state=checked]:border-uba-secondary" 
+                                              : "data-[state=checked]:bg-uba-primary data-[state=checked]:border-uba-primary"
+                                          }`}
+                                        />
+                                      </div>
                                     </div>
                                   </div>
+                                )
+                              })}
                                   <div className="text-sm text-gray-600 space-y-1">
                                     <div className="flex items-center gap-2">
                                       <span className="font-medium text-uba-primary">{clase.dia}</span>
@@ -784,9 +815,17 @@ export function HorariosDisplay() {
                         ) : (
                           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                             {grupo.clases.map((clase, index) => (
-                              <div key={clase.id} className="border border-uba-primary/20 rounded-lg p-3 bg-gray-50">
+                              <div key={clase.id} className={`border rounded-lg p-3 transition-all duration-200 ${
+                                isSelected 
+                                  ? "border-uba-secondary/30 bg-uba-secondary/10" 
+                                  : "border-uba-primary/20 bg-gray-50"
+                              }`}>
                                 <div className="flex justify-between items-start mb-2">
-                                  <Badge variant="outline" className="text-xs border-uba-primary/50 text-uba-primary">
+                                  <Badge variant="outline" className={`text-xs ${
+                                    isSelected 
+                                      ? "border-uba-secondary/50 text-uba-secondary" 
+                                      : "border-uba-primary/50 text-uba-primary"
+                                  }`}>
                                     {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
                                       ? `${clase.tipo} ${index + 1}`
                                       : clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
@@ -829,7 +868,8 @@ export function HorariosDisplay() {
                   })()}
               </CardContent>
             </Card>
-          ))
+            )
+          })
         )}
       </div>
 
@@ -857,17 +897,19 @@ export function HorariosDisplay() {
             const superposiciones = detectarSuperposiciones()
             return superposiciones.length > 0 ? (
               <Alert className="border-red-300 bg-red-50 mb-4">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
-                <AlertDescription className="text-red-800">
-                  <div className="font-semibold mb-2">⚠️ Hay superposiciones horarias en tu selección:</div>
-                  <ul className="space-y-1">
-                    {superposiciones.map((superposicion, index) => (
-                      <li key={index} className="text-sm">
-                        • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
-                      </li>
-                    ))}
-                  </ul>
-                </AlertDescription>
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl mt-0.5">⚠️</div>
+                  <AlertDescription className="text-red-800">
+                    <div className="font-semibold mb-2">Hay superposiciones horarias en tu selección:</div>
+                    <ul className="space-y-1">
+                      {superposiciones.map((superposicion, index) => (
+                        <li key={index} className="text-sm">
+                          • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
+                        </li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </div>
               </Alert>
             ) : null
           })()}
