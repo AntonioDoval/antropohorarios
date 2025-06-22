@@ -803,13 +803,13 @@ export function HorariosDisplay() {
                                 )
                               })}
                                   <div className="text-sm text-gray-600 space-y-1">
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-medium text-uba-primary">{clase.dia}</span>
-                                      <span>{clase.horario}</span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-uba-primary">{clase.dia}</span>
+                                        <span>{clase.horario}</span>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           </RadioGroup>
                         ) : (
