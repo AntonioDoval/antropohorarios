@@ -562,8 +562,8 @@ export function HorariosDisplay() {
   return (
     <TooltipProvider>
       <div className="space-y-4">
-      {/* Header section con márgenes reducidos */}
-      <div className="mb-4">
+        {/* Header section con márgenes reducidos */}
+        <div className="mb-4"></div>
         <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
         <h1 className="text-5xl font-bold text-uba-primary mb-2">
           {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
@@ -978,8 +978,6 @@ export function HorariosDisplay() {
             </CardContent>
           </Card>
         </div>
-      )}
-</div>
       )}
       </div>
     </TooltipProvider>
