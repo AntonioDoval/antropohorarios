@@ -632,7 +632,7 @@ export function HorariosDisplay() {
                         <Checkbox
                           id={`modalidad-${modalidad}`}
                           checked={filtros.modalidadesAprobacion.includes(modalidad)}
-                          onCheckedChange={()={() => toggleFiltro("modalidadesAprobacion", modalidad)}
+                          onCheckedChange={() => toggleFiltro("modalidadesAprobacion", modalidad)}
                         />
                         <label htmlFor={`modalidad-${modalidad}`} className="text-sm text-gray-700 cursor-pointer">
                           {modalidad}
