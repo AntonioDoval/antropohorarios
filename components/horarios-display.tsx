@@ -981,3 +981,5 @@ export function HorariosDisplay() {
       )}
       </div>
     </TooltipProvider>
+  )
+}
