@@ -1,10 +1,13 @@
 import { Suspense } from "react"
 import { HorariosDisplay } from "@/components/horarios-display"
 import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
+      <Navigation />
+      
       {/* Header principal */}
       <header className="bg-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
