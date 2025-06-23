@@ -31,11 +31,19 @@ export interface AsignaturaConPlan {
   clases: any[]
   // Datos del plan de estudios
   planInfo?: {
-    cod85: string
-    cod23: string
-    nombreCorto: string
-    nombreSiglas: string
-    ciclo: string
+    orientaciones: string[] // Lista de orientaciones para las que es válida
+    equivalencia: {
+      cod85?: string
+      cod23?: string
+      nombrePlan85?: string
+      nombrePlan23?: string
+    }
+    ciclos: {
+      ciclo23Prof?: string
+      ciclo23LicSocio?: string
+      ciclo23LicArqueo?: string
+      ciclo85?: string
+    }
     electividad: string
     area: string
     correlatividad: string
@@ -51,34 +59,105 @@ export function enrichAsignaturasWithPlanInfo(asignaturas: any[]): AsignaturaCon
   const planes = getPlanesDeEstudios()
   
   return asignaturas.map(asignatura => {
-    // Buscar la materia en los planes de estudios por nombre
-    let materiaEncontrada: MateriaDelPlan | null = null
+    // Buscar la materia en todos los planes de estudios
+    const materiasEncontradas: {
+      plan: PlanDeEstudios
+      materia: MateriaDelPlan
+    }[] = []
     
     for (const plan of planes) {
-      materiaEncontrada = plan.materias.find(materia => 
-        // Comparar nombres normalizados (sin mayúsculas y caracteres especiales)
+      const materiaEncontrada = plan.materias.find(materia => 
         normalizarNombre(materia.nombre) === normalizarNombre(asignatura.materia)
-      ) || null
+      )
       
-      if (materiaEncontrada) break
+      if (materiaEncontrada) {
+        materiasEncontradas.push({ plan, materia: materiaEncontrada })
+      }
     }
     
     const result: AsignaturaConPlan = {
       ...asignatura,
-      planInfo: materiaEncontrada ? {
-        cod85: materiaEncontrada.cod85,
-        cod23: materiaEncontrada.cod23,
-        nombreCorto: materiaEncontrada.nombreCorto,
-        nombreSiglas: materiaEncontrada.nombreSiglas,
-        ciclo: materiaEncontrada.ciclo,
-        electividad: materiaEncontrada.electividad,
-        area: materiaEncontrada.area,
-        correlatividad: materiaEncontrada.correlatividad,
-      } : undefined
+      planInfo: materiasEncontradas.length > 0 ? procesarInformacionPlanes(materiasEncontradas, planes) : undefined
     }
     
     return result
   })
+}
+
+function procesarInformacionPlanes(
+  materiasEncontradas: { plan: PlanDeEstudios; materia: MateriaDelPlan }[],
+  todosLosPlanes: PlanDeEstudios[]
+): AsignaturaConPlan['planInfo'] {
+  // Obtener orientaciones válidas
+  const orientaciones = materiasEncontradas.map(item => item.plan.orientacion)
+  
+  // Buscar equivalencias entre planes 1985 y 2023
+  const materiasPlan23 = materiasEncontradas.filter(item => item.plan.año === "2023")
+  const materiasPlan85 = materiasEncontradas.filter(item => item.plan.año === "1985")
+  
+  let equivalencia: any = {}
+  
+  // Si tenemos materias en plan 2023, buscar equivalencias
+  if (materiasPlan23.length > 0) {
+    const materia23 = materiasPlan23[0].materia
+    equivalencia.cod23 = materia23.cod23
+    equivalencia.nombrePlan23 = materia23.nombre
+    
+    // Buscar equivalencia con plan 1985 usando cod85
+    if (materia23.cod85) {
+      const planEquivalente85 = todosLosPlanes.find(plan => 
+        plan.año === "1985" && 
+        plan.materias.some(m => m.cod85 === materia23.cod85 || m.cod23 === materia23.cod85)
+      )
+      
+      if (planEquivalente85) {
+        const materiaEquivalente = planEquivalente85.materias.find(m => 
+          m.cod85 === materia23.cod85 || m.cod23 === materia23.cod85
+        )
+        if (materiaEquivalente) {
+          equivalencia.cod85 = materiaEquivalente.cod85
+          equivalencia.nombrePlan85 = materiaEquivalente.nombre
+        }
+      }
+    }
+  }
+  
+  // Si tenemos materias en plan 1985, agregar esa información
+  if (materiasPlan85.length > 0) {
+    const materia85 = materiasPlan85[0].materia
+    if (!equivalencia.cod85) {
+      equivalencia.cod85 = materia85.cod85
+      equivalencia.nombrePlan85 = materia85.nombre
+    }
+  }
+  
+  // Construir ciclos según orientación
+  const ciclos: any = {}
+  materiasEncontradas.forEach(({ plan, materia }) => {
+    if (plan.año === "2023") {
+      if (plan.orientacion === "Profesorado") {
+        ciclos.ciclo23Prof = materia.ciclo
+      } else if (plan.orientacion === "Licenciatura en Antropología Sociocultural") {
+        ciclos.ciclo23LicSocio = materia.ciclo
+      } else if (plan.orientacion === "Licenciatura en Arqueología") {
+        ciclos.ciclo23LicArqueo = materia.ciclo
+      }
+    } else if (plan.año === "1985") {
+      ciclos.ciclo85 = materia.ciclo
+    }
+  })
+  
+  // Usar la primera materia encontrada para electividad, área y correlatividad
+  const primeraMateria = materiasEncontradas[0].materia
+  
+  return {
+    orientaciones,
+    equivalencia,
+    ciclos,
+    electividad: primeraMateria.electividad || "",
+    area: primeraMateria.area || "",
+    correlatividad: primeraMateria.correlatividad || ""
+  }
 }
 
 function normalizarNombre(nombre: string): string {
@@ -95,16 +174,30 @@ function normalizarNombre(nombre: string): string {
     .trim()
 }
 
-export function getAsignaturasPorCiclo(asignaturas: AsignaturaConPlan[]) {
+export function getAsignaturasPorCiclo(asignaturas: AsignaturaConPlan[], orientacion?: string) {
   const result: { [ciclo: string]: AsignaturaConPlan[] } = {}
   
   asignaturas.forEach(asignatura => {
-    if (asignatura.planInfo?.ciclo) {
-      const ciclo = asignatura.planInfo.ciclo
-      if (!result[ciclo]) {
-        result[ciclo] = []
+    if (asignatura.planInfo?.ciclos) {
+      let ciclo = ""
+      
+      // Determinar el ciclo según la orientación seleccionada
+      if (orientacion === "Profesorado" && asignatura.planInfo.ciclos.ciclo23Prof) {
+        ciclo = asignatura.planInfo.ciclos.ciclo23Prof
+      } else if (orientacion === "Licenciatura en Antropología Sociocultural" && asignatura.planInfo.ciclos.ciclo23LicSocio) {
+        ciclo = asignatura.planInfo.ciclos.ciclo23LicSocio
+      } else if (orientacion === "Licenciatura en Arqueología" && asignatura.planInfo.ciclos.ciclo23LicArqueo) {
+        ciclo = asignatura.planInfo.ciclos.ciclo23LicArqueo
+      } else if (asignatura.planInfo.ciclos.ciclo85) {
+        ciclo = asignatura.planInfo.ciclos.ciclo85
       }
-      result[ciclo].push(asignatura)
+      
+      if (ciclo) {
+        if (!result[ciclo]) {
+          result[ciclo] = []
+        }
+        result[ciclo].push(asignatura)
+      }
     } else {
       // Asignaturas sin información de plan
       if (!result['Sin clasificar']) {
@@ -137,4 +230,33 @@ export function getAsignaturasPorArea(asignaturas: AsignaturaConPlan[]) {
   })
   
   return result
+}
+
+export function filtrarAsignaturasPorOrientacion(
+  asignaturas: AsignaturaConPlan[], 
+  orientacionesSeleccionadas: string[]
+): AsignaturaConPlan[] {
+  if (orientacionesSeleccionadas.length === 0) {
+    return asignaturas
+  }
+  
+  return asignaturas.filter(asignatura => {
+    // Si no tiene información de plan, no filtrar
+    if (!asignatura.planInfo?.orientaciones) {
+      return true
+    }
+    
+    // Verificar si alguna de las orientaciones seleccionadas coincide
+    return orientacionesSeleccionadas.some(orientacionSeleccionada =>
+      asignatura.planInfo!.orientaciones.includes(orientacionSeleccionada)
+    )
+  })
+}
+
+export function getOrientacionesDisponibles(): string[] {
+  return [
+    "Profesorado",
+    "Licenciatura en Antropología Sociocultural",
+    "Licenciatura en Arqueología"
+  ]
 }

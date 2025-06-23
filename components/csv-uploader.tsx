@@ -501,7 +501,7 @@ export function CSVUploader() {
             >
               {loading ? "Procesando..." : "Procesar CSV"}
             </Button>
-            
+
             <Button
               onClick={clearData}
               variant="destructive"
