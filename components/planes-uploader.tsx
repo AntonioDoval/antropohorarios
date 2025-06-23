@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Upload, FileText, CheckCircle, AlertCircle, BookOpen } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toStartCase } from "@/lib/text-utils"
 
 interface MateriaDelPlan {
@@ -31,43 +30,103 @@ interface PlanDeEstudios {
   materias: MateriaDelPlan[]
 }
 
+interface PlanConfig {
+  id: string
+  titulo: string
+  año: string
+  orientacion: string
+  descripcion: string
+  file: File | null
+  loading: boolean
+  message: { type: "success" | "error"; text: string } | null
+  preview: PlanDeEstudios | null
+}
+
 export function PlanesUploader() {
-  const [file, setFile] = useState<File | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
-  const [preview, setPreview] = useState<PlanDeEstudios | null>(null)
-  const [planConfig, setPlanConfig] = useState({
-    año: "2023",
-    orientacion: "",
-  })
-
-  const orientaciones = [
-    { value: "profesorado", label: "Profesorado" },
-    { value: "licenciatura-sociocultural", label: "Licenciatura en Antropología Sociocultural" },
-    { value: "licenciatura-arqueologia", label: "Licenciatura en Arqueología" },
-  ]
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
-    if (selectedFile && selectedFile.type === "text/csv") {
-      setFile(selectedFile)
-      setMessage(null)
-    } else {
-      setMessage({ type: "error", text: "Por favor selecciona un archivo CSV válido" })
+  const [planes, setPlanes] = useState<PlanConfig[]>([
+    {
+      id: "plan-1985",
+      titulo: "Plan 1985: Profesorado y Licenciatura (ambas orientaciones)",
+      año: "1985",
+      orientacion: "general",
+      descripcion: "Archivo único para profesorado y licenciatura (orientaciones sociocultural y arqueología)",
+      file: null,
+      loading: false,
+      message: null,
+      preview: null
+    },
+    {
+      id: "plan-2023-prof",
+      titulo: "Plan 2023: Profesorado",
+      año: "2023",
+      orientacion: "profesorado",
+      descripcion: "Plan específico para profesorado",
+      file: null,
+      loading: false,
+      message: null,
+      preview: null
+    },
+    {
+      id: "plan-2023-lic-arqueo",
+      titulo: "Plan 2023: Licenciatura - Orientación Arqueología",
+      año: "2023",
+      orientacion: "licenciatura-arqueologia",
+      descripcion: "Plan específico para licenciatura en arqueología",
+      file: null,
+      loading: false,
+      message: null,
+      preview: null
+    },
+    {
+      id: "plan-2023-lic-socio",
+      titulo: "Plan 2023: Licenciatura - Orientación Sociocultural",
+      año: "2023",
+      orientacion: "licenciatura-sociocultural",
+      descripcion: "Plan específico para licenciatura sociocultural",
+      file: null,
+      loading: false,
+      message: null,
+      preview: null
     }
+  ])
+
+  const handleFileChange = (planId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    
+    setPlanes(prevPlanes => 
+      prevPlanes.map(plan => {
+        if (plan.id === planId) {
+          if (selectedFile && selectedFile.type === "text/csv") {
+            return {
+              ...plan,
+              file: selectedFile,
+              message: null
+            }
+          } else {
+            return {
+              ...plan,
+              file: null,
+              message: { type: "error", text: "Por favor selecciona un archivo CSV válido" }
+            }
+          }
+        }
+        return plan
+      })
+    )
   }
 
-  const processCSV = async () => {
-    if (!file || !planConfig.orientacion) {
-      setMessage({ type: "error", text: "Por favor selecciona un archivo y una orientación" })
-      return
-    }
+  const processCSV = async (planId: string) => {
+    const plan = planes.find(p => p.id === planId)
+    if (!plan?.file) return
 
-    setLoading(true)
-    setMessage(null)
+    setPlanes(prevPlanes => 
+      prevPlanes.map(p => 
+        p.id === planId ? { ...p, loading: true, message: null } : p
+      )
+    )
 
     try {
-      const text = await file.text()
+      const text = await plan.file.text()
       const lines = text.split("\n").filter((line) => line.trim())
 
       if (lines.length < 2) {
@@ -105,8 +164,11 @@ export function PlanesUploader() {
       const headers = parseCSVLine(lines[0])
       console.log("Headers encontrados:", headers)
 
-      // Verificar que tenemos las columnas esperadas
-      const expectedHeaders = ["Cod85", "Cod23", "Nom23", "Nom23_corto", "Nom23_siglas", "Ciclo23", "Electividad23", "Area23", "Correlatividad23"]
+      // Para plan 1985, usar headers diferentes
+      const expectedHeaders = plan.año === "1985" 
+        ? ["Cod85", "Cod23", "Nom85", "Nom85_corto", "Nom85_siglas", "Ciclo85", "Electividad85", "Area85", "Correlatividad85"]
+        : ["Cod85", "Cod23", "Nom23", "Nom23_corto", "Nom23_siglas", "Ciclo23", "Electividad23", "Area23", "Correlatividad23"]
+
       const hasRequiredHeaders = expectedHeaders.every(header => headers.includes(header))
 
       if (!hasRequiredHeaders) {
@@ -128,21 +190,29 @@ export function PlanesUploader() {
           row[header] = values[index] || ""
         })
 
-        const nombre = row["Nom23"]?.trim()
+        const nombreField = plan.año === "1985" ? "Nom85" : "Nom23"
+        const nombre = row[nombreField]?.trim()
         if (!nombre) {
           continue // Saltar filas sin nombre de materia
         }
+
+        const nombreCortoField = plan.año === "1985" ? "Nom85_corto" : "Nom23_corto"
+        const nombreSiglasField = plan.año === "1985" ? "Nom85_siglas" : "Nom23_siglas"
+        const cicloField = plan.año === "1985" ? "Ciclo85" : "Ciclo23"
+        const electividadField = plan.año === "1985" ? "Electividad85" : "Electividad23"
+        const areaField = plan.año === "1985" ? "Area85" : "Area23"
+        const correlatividadField = plan.año === "1985" ? "Correlatividad85" : "Correlatividad23"
 
         materias.push({
           cod85: row["Cod85"]?.trim() || "",
           cod23: row["Cod23"]?.trim() || "",
           nombre: toStartCase(nombre),
-          nombreCorto: row["Nom23_corto"]?.trim() || "",
-          nombreSiglas: row["Nom23_siglas"]?.trim() || "",
-          ciclo: row["Ciclo23"]?.trim() || "",
-          electividad: row["Electividad23"]?.trim() || "",
-          area: row["Area23"]?.trim() || "",
-          correlatividad: row["Correlatividad23"]?.trim() || "",
+          nombreCorto: row[nombreCortoField]?.trim() || "",
+          nombreSiglas: row[nombreSiglasField]?.trim() || "",
+          ciclo: row[cicloField]?.trim() || "",
+          electividad: row[electividadField]?.trim() || "",
+          area: row[areaField]?.trim() || "",
+          correlatividad: row[correlatividadField]?.trim() || "",
         })
       }
 
@@ -150,33 +220,63 @@ export function PlanesUploader() {
         throw new Error("No se encontraron materias válidas en el archivo CSV")
       }
 
-      const orientacionLabel = orientaciones.find(o => o.value === planConfig.orientacion)?.label || planConfig.orientacion
+      // Determinar orientación para guardar
+      let orientacionLabel = ""
+      if (plan.año === "1985") {
+        orientacionLabel = "Plan 1985 General"
+      } else {
+        const orientacionMap: { [key: string]: string } = {
+          "profesorado": "Profesorado",
+          "licenciatura-arqueologia": "Licenciatura en Arqueología",
+          "licenciatura-sociocultural": "Licenciatura en Antropología Sociocultural"
+        }
+        orientacionLabel = orientacionMap[plan.orientacion] || plan.orientacion
+      }
 
       const planProcesado: PlanDeEstudios = {
-        año: planConfig.año,
-        titulo: `Plan ${planConfig.año}`,
+        año: plan.año,
+        titulo: `Plan ${plan.año}`,
         orientacion: orientacionLabel,
         materias: materias,
       }
 
-      setPreview(planProcesado)
-      setMessage({
-        type: "success",
-        text: `Se procesaron ${materias.length} materias para ${orientacionLabel}. Revisa la vista previa y confirma para guardar.`,
-      })
+      setPlanes(prevPlanes => 
+        prevPlanes.map(p => 
+          p.id === planId ? {
+            ...p,
+            preview: planProcesado,
+            message: {
+              type: "success",
+              text: `Se procesaron ${materias.length} materias para ${plan.titulo}. Revisa la vista previa y confirma para guardar.`,
+            }
+          } : p
+        )
+      )
     } catch (error) {
       console.error("Error procesando CSV:", error)
-      setMessage({
-        type: "error",
-        text: error instanceof Error ? error.message : "Error al procesar el archivo CSV",
-      })
+      setPlanes(prevPlanes => 
+        prevPlanes.map(p => 
+          p.id === planId ? {
+            ...p,
+            message: {
+              type: "error",
+              text: error instanceof Error ? error.message : "Error al procesar el archivo CSV",
+            }
+          } : p
+        )
+      )
     } finally {
-      setLoading(false)
+      setPlanes(prevPlanes => 
+        prevPlanes.map(p => 
+          p.id === planId ? { ...p, loading: false } : p
+        )
+      )
     }
   }
 
-  const saveData = () => {
-    if (!preview) return
+  const saveData = (planId: string) => {
+    const plan = planes.find(p => p.id === planId)
+    if (!plan?.preview) return
 
     // Obtener datos existentes
     const existingData = localStorage.getItem("planes-estudios-antropologia")
@@ -184,32 +284,49 @@ export function PlanesUploader() {
 
     // Buscar si ya existe un plan con la misma configuración
     const planExistenteIndex = planesActuales.findIndex(
-      (plan: PlanDeEstudios) => plan.año === preview.año && plan.orientacion === preview.orientacion
+      (existingPlan: PlanDeEstudios) => 
+        existingPlan.año === plan.preview!.año && 
+        existingPlan.orientacion === plan.preview!.orientacion
     )
 
     if (planExistenteIndex >= 0) {
       // Reemplazar plan existente
-      planesActuales[planExistenteIndex] = preview
+      planesActuales[planExistenteIndex] = plan.preview
     } else {
       // Agregar nuevo plan
-      planesActuales.push(preview)
+      planesActuales.push(plan.preview)
     }
 
     localStorage.setItem("planes-estudios-antropologia", JSON.stringify(planesActuales))
-    setMessage({
-      type: "success",
-      text: "Plan de estudios guardado exitosamente.",
-    })
-    setPreview(null)
-    setFile(null)
+    
+    setPlanes(prevPlanes => 
+      prevPlanes.map(p => 
+        p.id === planId ? {
+          ...p,
+          message: {
+            type: "success",
+            text: "Plan de estudios guardado exitosamente.",
+          },
+          preview: null,
+          file: null
+        } : p
+      )
+    )
   }
 
   const clearAllData = () => {
     localStorage.removeItem("planes-estudios-antropologia")
-    setMessage({
-      type: "success",
-      text: "Todos los planes de estudios han sido eliminados.",
-    })
+    setPlanes(prevPlanes => 
+      prevPlanes.map(p => ({
+        ...p,
+        message: {
+          type: "success",
+          text: "Todos los planes de estudios han sido eliminados.",
+        },
+        preview: null,
+        file: null
+      }))
+    )
   }
 
   // Obtener planes guardados para mostrar en el resumen
@@ -224,76 +341,81 @@ export function PlanesUploader() {
             Configuración del Plan de Estudios
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="año-plan" className="text-uba-primary">
-                Año del Plan
-              </Label>
-              <Select
-                value={planConfig.año}
-                onValueChange={(value) => setPlanConfig((prev) => ({ ...prev, año: value }))}
-              >
-                <SelectTrigger className="mt-1 bg-white">
-                  <SelectValue placeholder="Seleccionar año" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="2023">2023</SelectItem>
-                  <SelectItem value="1985">1985</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="orientacion" className="text-uba-primary">
-                Título/Orientación
-              </Label>
-              <Select
-                value={planConfig.orientacion}
-                onValueChange={(value) => setPlanConfig((prev) => ({ ...prev, orientacion: value }))}
-              >
-                <SelectTrigger className="mt-1 bg-white">
-                  <SelectValue placeholder="Seleccionar orientación" />
-                </SelectTrigger>
-                <SelectContent>
-                  {orientaciones.map((orientacion) => (
-                    <SelectItem key={orientacion.value} value={orientacion.value}>
-                      {orientacion.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        <CardContent>
+          <div className="space-y-4">
+            {planes.map((plan) => (
+              <Card key={plan.id} className="bg-white border border-gray-300">
+                <CardHeader className="bg-uba-primary text-white">
+                  <CardTitle className="text-sm font-medium">
+                    {plan.titulo}
+                  </CardTitle>
+                  <p className="text-xs text-uba-secondary">
+                    {plan.descripcion}
+                  </p>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <Input
+                        type="file"
+                        accept=".csv"
+                        onChange={(e) => handleFileChange(plan.id, e)}
+                        className="bg-white border-gray-300"
+                      />
+                    </div>
+                    <Button
+                      onClick={() => processCSV(plan.id)}
+                      disabled={!plan.file || plan.loading}
+                      className="bg-uba-primary hover:bg-uba-primary/90 text-white px-6"
+                    >
+                      {plan.loading ? "Procesando..." : "Cargar"}
+                    </Button>
+                    {plan.preview && (
+                      <Button
+                        onClick={() => saveData(plan.id)}
+                        className="bg-green-600 hover:bg-green-700 text-white px-6"
+                      >
+                        Confirmar
+                      </Button>
+                    )}
+                  </div>
 
-      <Card className="bg-gray-50 border-gray-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-uba-primary">
-            <Upload className="h-5 w-5" />
-            Cargar Archivo CSV del Plan
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="csv-plan" className="text-uba-primary">
-              Seleccionar archivo CSV
-            </Label>
-            <Input id="csv-plan" type="file" accept=".csv" onChange={handleFileChange} className="mt-1 bg-white" />
-            <p className="text-sm text-gray-600 mt-1">
-              El archivo debe incluir columnas: Cod85, Cod23, Nom23, Nom23_corto, Nom23_siglas, Ciclo23, Electividad23, Area23, Correlatividad23
-            </p>
+                  {plan.message && (
+                    <Alert className={`mt-3 ${plan.message.type === "error" ? "border-red-200 bg-red-50" : "border-green-200 bg-green-50"}`}>
+                      {plan.message.type === "error" ? (
+                        <AlertCircle className="h-4 w-4 text-red-600" />
+                      ) : (
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      )}
+                      <AlertDescription className={plan.message.type === "error" ? "text-red-800" : "text-green-800"}>
+                        {plan.message.text}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {plan.preview && (
+                    <div className="mt-4 p-3 bg-gray-50 rounded border">
+                      <div className="text-sm font-medium text-uba-primary mb-2">
+                        Vista previa: {plan.preview.materias.length} materias procesadas
+                      </div>
+                      <div className="max-h-32 overflow-y-auto text-xs text-gray-600">
+                        {plan.preview.materias.slice(0, 5).map((materia, index) => (
+                          <div key={index} className="mb-1">
+                            {materia.nombre} ({materia.ciclo})
+                          </div>
+                        ))}
+                        {plan.preview.materias.length > 5 && (
+                          <div className="text-gray-500">... y {plan.preview.materias.length - 5} más</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
-          <div className="space-y-3">
-            <Button
-              onClick={processCSV}
-              disabled={!file || !planConfig.orientacion || loading}
-              className="w-full bg-uba-primary hover:bg-uba-primary/90"
-            >
-              {loading ? "Procesando..." : "Procesar CSV"}
-            </Button>
-            
+          <div className="mt-6">
             <Button
               onClick={clearAllData}
               variant="destructive"
@@ -302,19 +424,6 @@ export function PlanesUploader() {
               Limpiar Todos los Planes
             </Button>
           </div>
-
-          {message && (
-            <Alert className={message.type === "error" ? "border-red-200 bg-red-50" : "border-green-200 bg-green-50"}>
-              {message.type === "error" ? (
-                <AlertCircle className="h-4 w-4 text-red-600" />
-              ) : (
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              )}
-              <AlertDescription className={message.type === "error" ? "text-red-800" : "text-green-800"}>
-                {message.text}
-              </AlertDescription>
-            </Alert>
-          )}
         </CardContent>
       </Card>
 
@@ -338,60 +447,6 @@ export function PlanesUploader() {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Vista previa */}
-      {preview && (
-        <Card className="bg-gray-50 border-gray-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-uba-primary">
-              <FileText className="h-5 w-5" />
-              Vista Previa del Plan
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Botón confirmar arriba */}
-            <div className="mb-6">
-              <Button onClick={saveData} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 text-lg">
-                ✓ Confirmar y Guardar Plan de Estudios
-              </Button>
-            </div>
-
-            {/* Resumen */}
-            <div className="bg-white p-4 rounded-lg border mb-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-uba-primary">
-                  {preview.titulo} - {preview.orientacion}
-                </div>
-                <div className="text-lg text-gray-600 mt-1">
-                  {preview.materias.length} materias procesadas
-                </div>
-              </div>
-            </div>
-
-            {/* Lista de materias */}
-            <div className="max-h-80 overflow-y-auto mb-6">
-              <div className="grid gap-2">
-                {preview.materias.map((materia, index) => (
-                  <div key={index} className="border rounded p-3 bg-white text-sm">
-                    <div className="font-medium text-uba-primary">{materia.nombre}</div>
-                    <div className="text-gray-600 text-xs grid grid-cols-2 gap-2 mt-1">
-                      <span>Código 2023: {materia.cod23}</span>
-                      <span>Código 1985: {materia.cod85}</span>
-                      <span>Ciclo: {materia.ciclo}</span>
-                      <span>Área: {materia.area || "No especificada"}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Botón confirmar abajo */}
-            <Button onClick={saveData} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 text-lg">
-              ✓ Confirmar y Guardar Plan de Estudios
-            </Button>
           </CardContent>
         </Card>
       )}
