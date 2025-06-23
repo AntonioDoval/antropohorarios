@@ -289,67 +289,34 @@ export function CSVUploader() {
         }
 
         // Leer información de relación entre clases de las columnas V y AE
-        const relacionTeoricos = row["Indicar relación entre los dos horarios de teóricos"]?.trim() || ""
-        const relacionTeoricoPracticos = row["Indicar relación entre los dos horarios de teórico-prácticos"]?.trim() || ""
-
-        console.log("Relación entre teóricos:", relacionTeoricos)
-        console.log("Relación entre teórico-prácticos:", relacionTeoricoPracticos)
+        const relacionTeoricos = row["Relación entre teóricos (si corresponde)"]?.trim() || ""
+        const relacionTeoricoPracticos = row["Relación entre teórico-prácticos (si corresponde)"]?.trim() || ""
 
         // Determinar si las clases deben agruparse
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
-        // Para teóricos: analizar la relación
-        if (relacionTeoricos && clases.filter(c => c.tipo === "Teórico").length > 1) {
-          const relacionTeoricosLower = relacionTeoricos.toLowerCase()
-          if (
-            relacionTeoricosLower.includes("mismo") || 
-            relacionTeoricosLower.includes("dividido") ||
-            relacionTeoricosLower.includes("conjunto") ||
-            relacionTeoricosLower.includes("complementario") ||
-            relacionTeoricosLower.includes("se dicta en dos horarios") ||
-            relacionTeoricosLower.includes("son complementarios")
-          ) {
-            agrupacionClases["Teórico"] = "conjunto"
-            console.log("Teóricos marcados como conjunto")
-          } else if (
-            relacionTeoricosLower.includes("elegir") ||
-            relacionTeoricosLower.includes("opción") ||
-            relacionTeoricosLower.includes("alternativa") ||
-            relacionTeoricosLower.includes("deben elegir") ||
-            relacionTeoricosLower.includes("estudiantes deben elegir")
-          ) {
-            agrupacionClases["Teórico"] = "elegir"
-            console.log("Teóricos marcados como elegir")
-          }
+        if (relacionTeoricos.toLowerCase().includes("mismo") || relacionTeoricos.toLowerCase().includes("dividido")) {
+          agrupacionClases["Teórico"] = "conjunto"
+        } else if (
+          relacionTeoricos.toLowerCase().includes("elegir") ||
+          relacionTeoricos.toLowerCase().includes("opción")
+        ) {
+          agrupacionClases["Teórico"] = "elegir"
         }
 
-        // Para teórico-prácticos: analizar la relación
-        if (relacionTeoricoPracticos && clases.filter(c => c.tipo === "Teórico-Práctico").length > 1) {
-          const relacionTeoricoPracticosLower = relacionTeoricoPracticos.toLowerCase()
-          if (
-            relacionTeoricoPracticosLower.includes("mismo") ||
-            relacionTeoricoPracticosLower.includes("dividido") ||
-            relacionTeoricoPracticosLower.includes("conjunto") ||
-            relacionTeoricoPracticosLower.includes("complementario") ||
-            relacionTeoricoPracticosLower.includes("se dicta en dos horarios") ||
-            relacionTeoricoPracticosLower.includes("son complementarios")
-          ) {
-            agrupacionClases["Teórico-Práctico"] = "conjunto"
-            console.log("Teórico-prácticos marcados como conjunto")
-          } else if (
-            relacionTeoricoPracticosLower.includes("elegir") ||
-            relacionTeoricoPracticosLower.includes("opción") ||
-            relacionTeoricoPracticosLower.includes("alternativa") ||
-            relacionTeoricoPracticosLower.includes("deben elegir") ||
-            relacionTeoricoPracticosLower.includes("estudiantes deben elegir")
-          ) {
-            agrupacionClases["Teórico-Práctico"] = "elegir"
-            console.log("Teórico-prácticos marcados como elegir")
-          }
+        if (
+          relacionTeoricoPracticos.toLowerCase().includes("mismo") ||
+          relacionTeoricoPracticos.toLowerCase().includes("dividido")
+        ) {
+          agrupacionClases["Teórico-Práctico"] = "conjunto"
+        } else if (
+          relacionTeoricoPracticos.toLowerCase().includes("elegir") ||
+          relacionTeoricoPracticos.toLowerCase().includes("opción")
+        ) {
+          agrupacionClases["Teórico-Práctico"] = "elegir"
         }
 
         console.log(`Clases encontradas: ${clases.length}`)
-        console.log("Agrupación de clases:", agrupacionClases)
 
         // Ajustar numeración para tipos con una sola clase
         const tiposClase = ["Teórico", "Teórico-Práctico", "Práctico"]
@@ -360,30 +327,21 @@ export function CSVUploader() {
           }
         })
 
-        // Obtener la orientación de la asignatura (columna R)
-        const orientacionSeminarioRegularOptativa = row["Orientación (seminario regular y optativa/electiva)"]?.trim() || "";
-        let orientacionAsignatura = "";
-
-        if (tipoAsignatura === "Seminario regular" || tipoAsignatura === "Materia optativa/electiva" || tipoAsignatura === "Seminario PST") {
-            orientacionAsignatura = orientacionSeminarioRegularOptativa;
-        }
-
         // Agregar la asignatura (cada fila es una asignatura)
-        const asignatura: Asignatura = {
+        data.push({
           id: `asignatura-${i}-${Date.now()}`,
           materia: toStartCase(titulo),
           catedra: toStartCase(catedra || "Sin especificar"),
           tipoAsignatura: tipoAsignatura || "No especificado",
           modalidadAprobacion: modalidadAprobacion || "No especificado",
           modalidadCursada: modalidadCursada || "No especificado",
-          orientacion: orientacionAsignatura || undefined,
           agrupacionClases: agrupacionClases, // Agregar esta nueva propiedad
           aclaraciones:
             row[
               "De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)"
             ]?.trim() || "",
           clases: clases,
-        }
+        })
 
         console.log(`Asignatura agregada: "${titulo}" - Cátedra: "${catedra}"`)
       }
@@ -424,14 +382,6 @@ export function CSVUploader() {
     })
     setPreview([])
     setFile(null)
-  }
-
-  const clearData = () => {
-    localStorage.removeItem("horarios-antropologia")
-    setMessage({
-      type: "success",
-      text: "Datos actuales limpiados exitosamente.",
-    })
   }
 
   return (
@@ -502,23 +452,13 @@ export function CSVUploader() {
             </p>
           </div>
 
-          <div className="space-y-3">
-            <Button
-              onClick={processCSV}
-              disabled={!file || loading}
-              className="w-full bg-uba-primary hover:bg-uba-primary/90"
-            >
-              {loading ? "Procesando..." : "Procesar CSV"}
-            </Button>
-
-            <Button
-              onClick={clearData}
-              variant="destructive"
-              className="w-full"
-            >
-              Limpiar Datos Actuales
-            </Button>
-          </div>
+          <Button
+            onClick={processCSV}
+            disabled={!file || loading}
+            className="w-full bg-uba-primary hover:bg-uba-primary/90"
+          >
+            {loading ? "Procesando..." : "Procesar CSV"}
+          </Button>
 
           {message && (
             <Alert className={message.type === "error" ? "border-red-200 bg-red-50" : "border-green-200 bg-green-50"}>
@@ -540,46 +480,36 @@ export function CSVUploader() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-uba-primary">
               <FileText className="h-5 w-5" />
-              Vista Previa
+              Vista Previa ({preview.length} asignaturas)
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Botón confirmar arriba */}
-            <div className="mb-6">
-              <Button onClick={saveData} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 text-lg">
-                ✓ Confirmar y Guardar Horarios
-              </Button>
-            </div>
-
-            {/* Resumen simplificado */}
-            <div className="bg-white p-4 rounded-lg border mb-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-uba-primary">
-                  {preview.length} asignaturas procesadas
-                </div>
-                <div className="text-lg text-gray-600 mt-1">
-                  {preview.reduce((total, asig) => total + asig.clases.length, 0)} clases en total
-                </div>
-              </div>
-            </div>
-
-            {/* Lista completa de asignaturas */}
-            <div className="max-h-80 overflow-y-auto mb-6">
+            <div className="max-h-96 overflow-y-auto mb-4">
               <div className="grid gap-2">
-                {preview.map((asignatura, index) => (
+                {preview.slice(0, 5).map((asignatura, index) => (
                   <div key={index} className="border rounded p-3 bg-white text-sm">
-                    <div className="font-medium text-uba-primary">{asignatura.materia}</div>
-                    <div className="text-gray-600 text-xs">
-                      Cátedra: {asignatura.catedra} | {asignatura.clases.length} clase{asignatura.clases.length !== 1 ? 's' : ''}
+                    <div className="font-medium mb-2">{asignatura.materia}</div>
+                    <div className="text-gray-600 mb-2">
+                      <strong>Tipo:</strong> {asignatura.tipoAsignatura || "No especificado"} |{" "}
+                      <strong>Cátedra:</strong> {asignatura.catedra} | <strong>Modalidad:</strong>{" "}
+                      {asignatura.modalidadCursada} | <strong>Aprobación:</strong> {asignatura.modalidadAprobacion}
+                    </div>
+                    <div className="space-y-1">
+                      {asignatura.clases.map((clase, claseIndex) => (
+                        <div key={claseIndex} className="text-xs bg-gray-100 p-2 rounded">
+                          {clase.tipo} {clase.numero !== 0 ? clase.numero : ""} | {clase.dia} {clase.horario}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
+                {preview.length > 5 && (
+                  <div className="text-center text-gray-500 py-2">... y {preview.length - 5} asignaturas más</div>
+                )}
               </div>
             </div>
-
-            {/* Botón confirmar abajo */}
-            <Button onClick={saveData} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 text-lg">
-              ✓ Confirmar y Guardar Horarios
+            <Button onClick={saveData} className="w-full bg-uba-primary hover:bg-uba-primary/90">
+              Confirmar y Guardar Horarios
             </Button>
           </CardContent>
         </Card>
