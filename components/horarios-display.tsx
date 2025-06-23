@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -565,20 +564,10 @@ export function HorariosDisplay() {
       <div className="space-y-4">
         {/* Header section con márgenes reducidos */}
         <div className="mb-4">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
-              <h1 className="text-5xl font-bold text-uba-primary mb-2">
-                {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
-              </h1>
-            </div>
-            <Link href="/planes-estudio">
-              <Button variant="outline" className="bg-uba-primary text-white hover:bg-uba-primary/90">
-                <BookOpen className="h-4 w-4 mr-2" />
-                Planes de estudio y trayectoria
-              </Button>
-            </Link>
-          </div>
+          <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
+          <h1 className="text-5xl font-bold text-uba-primary mb-2">
+            {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
+          </h1>
         <h2 className="text-2xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
           <p className="text-gray-700 text-lg mb-3 leading-relaxed">
             Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo la{" "}
