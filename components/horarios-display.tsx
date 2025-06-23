@@ -563,39 +563,39 @@ export function HorariosDisplay() {
     <TooltipProvider>
       <div className="space-y-4">
         {/* Header section con márgenes reducidos */}
-        <div className="mb-4"></div>
-        <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
-        <h1 className="text-5xl font-bold text-uba-primary mb-2">
-          {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
-        </h1>
+        <div className="mb-4">
+          <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
+          <h1 className="text-5xl font-bold text-uba-primary mb-2">
+            {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
+          </h1>
         <h2 className="text-2xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
-        <p className="text-gray-700 text-lg mb-3 leading-relaxed">
-          Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo la{" "}
-          <span className="font-semibold">comisión de prácticos</span> que prefieras. Abajo podés visualizar la lista de{" "}
-          <span className="font-semibold">tu selección</span> y ver cómo quedaría tu{" "}
-          <span className="font-semibold">cronograma</span> semanal.
-        </p>
+          <p className="text-gray-700 text-lg mb-3 leading-relaxed">
+            Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo la{" "}
+            <span className="font-semibold">comisión de prácticos</span> que prefieras. Abajo podés visualizar la lista de{" "}
+            <span className="font-semibold">tu selección</span> y ver cómo quedaría tu{" "}
+            <span className="font-semibold">cronograma</span> semanal.
+          </p>
 
-        {/* Alert de aclaración más grande y amarillo */}
-        <Alert className="border-yellow-300 bg-yellow-100 p-4">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl mt-0.5">⚠️</div>
-            <AlertDescription className="text-gray-800 text-base">
-              <span className="font-semibold">Aclaración:</span> esta herramienta es para visualizar y planificar
-              horarios. Para realizar las inscripciones debés hacerlo por{" "}
-              <a
-                href="https://suiganew.filo.uba.ar/"
-                className="text-blue-600 hover:text-blue-800 font-semibold underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                SUIGA
-              </a>
-              .
-            </AlertDescription>
-          </div>
-        </Alert>
-      </div>
+          {/* Alert de aclaración más grande y amarillo */}
+          <Alert className="border-yellow-300 bg-yellow-100 p-4">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl mt-0.5">⚠️</div>
+              <AlertDescription className="text-gray-800 text-base">
+                <span className="font-semibold">Aclaración:</span> esta herramienta es para visualizar y planificar
+                horarios. Para realizar las inscripciones debés hacerlo por{" "}
+                <a
+                  href="https://suiganew.filo.uba.ar/"
+                  className="text-blue-600 hover:text-blue-800 font-semibold underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  SUIGA
+                </a>
+                .
+              </AlertDescription>
+            </div>
+          </Alert>
+        </div>
 
       {/* Buscador y filtros */}
       <Card className="bg-gray-50 border-gray-200">
