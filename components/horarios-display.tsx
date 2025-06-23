@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { AlertTriangle, BookOpen, Calendar, FileText, Notebook, Search, X } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { AlertTriangle, BookOpen, Calendar, FileText, Info, Notebook, Search, X } from "lucide-react"
 import { 
   enrichAsignaturasWithPlanInfo, 
   getAsignaturasPorCiclo, 
@@ -209,7 +210,8 @@ export function HorariosDisplay() {
       // Filtro por orientación
       const coincideOrientacion =
         filtros.orientaciones.length === 0 ||
-        (asignatura.orientacion && filtros.orientaciones.includes(asignatura.orientacion))
+        (asignatura.planInfo?.orientaciones && 
+         asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient)))
 
       return coincideBusqueda && coincideTipo && coincideModalidad && coincideOrientacion
     })
@@ -549,7 +551,8 @@ export function HorariosDisplay() {
   const seleccionFormateada = getSeleccionFormateada()
 
   return (
-    <div className="space-y-4">
+    <TooltipProvider>
+      <div className="space-y-4"></div>
       {/* Header section con márgenes reducidos */}
       <div className="mb-4">
         <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
@@ -645,7 +648,7 @@ export function HorariosDisplay() {
 
               {/* Filtros por orientación */}
               <div>
-                <h4 className="text-sm font-medium text-uba-primary mb-3">Orientación</h4>
+                <h4 className="text-sm font-medium text-uba-primary mb-3">Carrera/Orientación</h4>
                 <div className="space-y-2">
                   {opcionesOrientacion.map((orientacion) => (
                     <div key={orientacion} className="flex items-center space-x-2">
@@ -735,7 +738,20 @@ export function HorariosDisplay() {
                         </div>
                       </div>
                     </div>
-                    <div className="mr-4">
+                    <div className="flex items-center gap-3 mr-4">
+                      {/* Tooltip de correlatividad */}
+                      {asignatura.planInfo?.correlatividad && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-4 w-4 text-white opacity-70 hover:opacity-100 cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p><strong>Correlatividad:</strong> {asignatura.planInfo.correlatividad}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={() => toggleAsignatura(asignatura.id)}
@@ -954,6 +970,7 @@ export function HorariosDisplay() {
           </Card>
         </div>
       )}
-    </div>
+      </div>
+    </TooltipProvider>
   )
 }
