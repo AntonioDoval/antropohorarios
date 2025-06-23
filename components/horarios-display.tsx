@@ -74,6 +74,7 @@ export function HorariosDisplay() {
     asignaturas: [],
     clases: {},
   })
+  const [asignaturasEnriquecidas, setAsignaturasEnriquecidas] = useState<AsignaturaConPlan[]>([])
 
   useEffect(() => {
     const savedData = localStorage.getItem("horarios-antropologia")
@@ -95,6 +96,13 @@ export function HorariosDisplay() {
     }
     setLoading(false)
   }, [])
+
+  useEffect(() => {
+    if (data?.asignaturas) {
+      const enriched = enrichAsignaturasWithPlanInfo(data.asignaturas)
+      setAsignaturasEnriquecidas(enriched)
+    }
+  }, [data])
 
   // Función para obtener el icono según el tipo de asignatura
   const getAsignaturaIcon = (asignatura: Asignatura) => {
@@ -165,7 +173,7 @@ export function HorariosDisplay() {
   }
 
   // Función para obtener valores únicos para los filtros
-  const getValoresUnicos = (asignaturas: Asignatura[]) => {
+  const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
     const tiposAsignatura = [...new Set(asignaturas.map((a) => a.tipoAsignatura).filter(Boolean))]
     const modalidadesAprobacion = [
       ...new Set(
@@ -189,7 +197,7 @@ export function HorariosDisplay() {
   ]
 
   // Función para filtrar asignaturas
-  const filtrarAsignaturas = (asignaturas: Asignatura[]) => {
+  const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
       // Filtro por búsqueda
       const coincideBusqueda =
@@ -330,7 +338,7 @@ export function HorariosDisplay() {
 
     // Recopilar todas las clases seleccionadas
     seleccion.asignaturas.forEach((asignaturaId) => {
-      const asignatura = data.asignaturas.find((a) => a.id === asignaturaId)
+      const asignatura = asignaturasEnriquecidas.find((a) => a.id === asignaturaId)
       if (!asignatura) return
 
       const clasesAsignatura = seleccion.clases[asignaturaId] || {}
@@ -444,7 +452,7 @@ export function HorariosDisplay() {
     }> = []
 
     seleccion.asignaturas.forEach((asignaturaId) => {
-      const asignatura = data.asignaturas.find((a) => a.id === asignaturaId)
+      const asignatura = asignaturasEnriquecidas.find((a) => a.id === asignaturaId)
       if (!asignatura) return
 
       const clasesSeleccionadas: Array<{ nombre: string; dia: string; horario: string }> = []
@@ -545,14 +553,15 @@ export function HorariosDisplay() {
   }
 
   // Ordenar asignaturas alfabéticamente y aplicar filtros
-  const asignaturasOrdenadas = [...data.asignaturas].sort((a, b) => a.materia.localeCompare(b.materia))
+  const asignaturasOrdenadas = [...asignaturasEnriquecidas].sort((a, b) => a.materia.localeCompare(b.materia))
   const asignaturasFiltradas = filtrarAsignaturas(asignaturasOrdenadas)
-  const valoresUnicos = getValoresUnicos(data.asignaturas)
+  const valoresUnicos = getValoresUnicos(asignaturasEnriquecidas)
+
   const seleccionFormateada = getSeleccionFormateada()
 
   return (
     <TooltipProvider>
-      <div className="space-y-4"></div>
+      <div className="space-y-4">
       {/* Header section con márgenes reducidos */}
       <div className="mb-4">
         <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
@@ -669,7 +678,7 @@ export function HorariosDisplay() {
             {/* Botón para limpiar filtros */}
             <div className="flex justify-between items-center pt-2">
               <p className="text-sm text-gray-600 italic">
-                Mostrando {asignaturasFiltradas.length} de {data.asignaturas.length} asignaturas
+                Mostrando {asignaturasFiltradas.length} de {asignaturasEnriquecidas.length} asignaturas
               </p>
               <Button
                 variant="outline"
@@ -741,7 +750,7 @@ export function HorariosDisplay() {
                     <div className="flex items-center gap-3 mr-4">
                       {/* Tooltip de correlatividad */}
                       {asignatura.planInfo?.correlatividad && (
-                        <TooltipProvider>
+                        
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="h-4 w-4 text-white opacity-70 hover:opacity-100 cursor-help" />
@@ -750,7 +759,7 @@ export function HorariosDisplay() {
                               <p><strong>Correlatividad:</strong> {asignatura.planInfo.correlatividad}</p>
                             </TooltipContent>
                           </Tooltip>
-                        </TooltipProvider>
+                        
                       )}
                       <Checkbox
                         checked={isSelected}
@@ -970,7 +979,3 @@ export function HorariosDisplay() {
           </Card>
         </div>
       )}
-      </div>
-    </TooltipProvider>
-  )
-}
