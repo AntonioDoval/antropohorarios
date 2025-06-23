@@ -750,7 +750,7 @@ export function HorariosDisplay() {
                     <div className="flex items-center gap-3 mr-4">
                       {/* Tooltip de correlatividad */}
                       {asignatura.planInfo?.correlatividad && (
-                        
+
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="h-4 w-4 text-white opacity-70 hover:opacity-100 cursor-help" />
@@ -759,7 +759,7 @@ export function HorariosDisplay() {
                               <p><strong>Correlatividad:</strong> {asignatura.planInfo.correlatividad}</p>
                             </TooltipContent>
                           </Tooltip>
-                        
+
                       )}
                       <Checkbox
                         checked={isSelected}
@@ -979,3 +979,7 @@ export function HorariosDisplay() {
           </Card>
         </div>
       )}
+</div>
+      )}
+      </div>
+    </TooltipProvider>
