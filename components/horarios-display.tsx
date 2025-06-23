@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { AlertTriangle, BookOpen, Calendar, FileText, Notebook, Search, X } from "lucide-react"
+import { enrichAsignaturasWithPlanInfo, getAsignaturasPorCiclo, type AsignaturaConPlan } from "@/lib/planes-utils"
 
 interface Clase {
   id: string
