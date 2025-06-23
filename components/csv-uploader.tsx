@@ -360,21 +360,30 @@ export function CSVUploader() {
           }
         })
 
+        // Obtener la orientación de la asignatura (columna R)
+        const orientacionSeminarioRegularOptativa = row["Orientación (seminario regular y optativa/electiva)"]?.trim() || "";
+        let orientacionAsignatura = "";
+
+        if (tipoAsignatura === "Seminario regular" || tipoAsignatura === "Materia optativa/electiva" || tipoAsignatura === "Seminario PST") {
+            orientacionAsignatura = orientacionSeminarioRegularOptativa;
+        }
+
         // Agregar la asignatura (cada fila es una asignatura)
-        data.push({
+        const asignatura: Asignatura = {
           id: `asignatura-${i}-${Date.now()}`,
           materia: toStartCase(titulo),
           catedra: toStartCase(catedra || "Sin especificar"),
           tipoAsignatura: tipoAsignatura || "No especificado",
           modalidadAprobacion: modalidadAprobacion || "No especificado",
           modalidadCursada: modalidadCursada || "No especificado",
+          orientacion: orientacionAsignatura || undefined,
           agrupacionClases: agrupacionClases, // Agregar esta nueva propiedad
           aclaraciones:
             row[
               "De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)"
             ]?.trim() || "",
           clases: clases,
-        })
+        }
 
         console.log(`Asignatura agregada: "${titulo}" - Cátedra: "${catedra}"`)
       }
