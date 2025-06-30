@@ -111,7 +111,7 @@ export function HorariosDisplay() {
   const getAsignaturaIcon = (asignatura: Asignatura, isSelected = false) => {
     const tipoAsignatura = asignatura.tipoAsignatura || ""
     const titulo = asignatura.materia.toLowerCase()
-    const iconColor = isSelected ? "text-blue-200" : "text-uba-secondary"
+    const iconColor = isSelected ? "text-[#1c2554]" : "text-uba-secondary"
 
     // Lista de asignaturas anuales específicas
     const asignaturasAnuales = [
@@ -831,7 +831,7 @@ export function HorariosDisplay() {
               }`}>
                 <CardHeader className={`pb-3 rounded-t-lg transition-all duration-200 ${
                   isSelected 
-                    ? "bg-blue-600 text-white border-2 border-blue-700" 
+                    ? "bg-[#46bfb0] text-white border-2 border-[#46bfb0]" 
                     : "bg-uba-primary text-white"
                 }`}>
                   <div className="flex items-start justify-between">
@@ -1089,7 +1089,6 @@ export function HorariosDisplay() {
       {seleccionFormateada.length > 0 && (
         <div className="mt-8">
           <div className="flex items-center gap-3 mb-4">
-            <Calendar className="h-6 w-6 text-uba-primary" />
             <h2 className="text-2xl font-bold text-uba-primary">Tu Cronograma Semanal</h2>
           </div>
 
@@ -1204,8 +1203,14 @@ export function HorariosDisplay() {
             return (
               <Card className="bg-white border-gray-200">
                 <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[900px]">
+                  <div className="relative">
+                    <div className="overflow-x-auto">
+                      {/* Indicador de scroll para pantallas pequeñas */}
+                      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 md:hidden"></div>
+                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-20 md:hidden">
+                        →
+                      </div>
+                      <table className="w-full min-w-[900px]">
                       <thead>
                         <tr className="bg-uba-primary text-white">
                           <th className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[100px]">
@@ -1274,7 +1279,8 @@ export function HorariosDisplay() {
                           </tr>
                         ))}
                       </tbody>
-                    </table>
+                      </table>
+                    </div>
                   </div>
 
                   {/* Leyenda de colores */}
