@@ -813,9 +813,9 @@ export function HorariosDisplay() {
       })()}
 
       {/* Lista de asignaturas */}
-      <div className="space-y-6">
+      <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-4">
         {asignaturasFiltradas.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12 col-span-full">
             <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
             <p className="text-gray-600">Intenta ajustar los filtros de búsqueda.</p>
           </div>
@@ -823,39 +823,37 @@ export function HorariosDisplay() {
           asignaturasFiltradas.map((asignatura) => {
             const isSelected = seleccion.asignaturas.includes(asignatura.id)
             return (
-              <Card key={asignatura.id} className={`w-full transition-all duration-200 ${
+              <Card key={asignatura.id} className={`break-inside-avoid mb-4 transition-all duration-200 ${
                 isSelected 
                   ? "border-uba-secondary border-2 shadow-lg bg-uba-secondary/5" 
                   : "border-uba-primary/20 hover:border-uba-primary/40"
               }`}>
-                <CardHeader className={`pb-4 rounded-t-lg transition-all duration-200 ${
+                <CardHeader className={`pb-3 rounded-t-lg transition-all duration-200 ${
                   isSelected 
                     ? "bg-uba-secondary text-white" 
                     : "bg-uba-primary text-white"
                 }`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-2 flex-1">
                       {getAsignaturaIcon(asignatura)}
-                      <div>
-                        <CardTitle className="text-xl">{getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)}</CardTitle>
-                        <div className="text-sm text-white">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg leading-tight">{getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)}</CardTitle>
+                        <div className="text-xs text-white/90 mt-1">
                           <span className="font-medium">Cátedra:</span> {asignatura.catedra}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 mr-4">
+                    <div className="flex items-center gap-2 ml-2 flex-shrink-0">
                       {/* Tooltip de correlatividad */}
                       {asignatura.planInfo?.correlatividad && (
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="h-4 w-4 text-white opacity-70 hover:opacity-100 cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p><strong>Correlatividad:</strong> {asignatura.planInfo.correlatividad}</p>
-                            </TooltipContent>
-                          </Tooltip>
-
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-4 w-4 text-white opacity-70 hover:opacity-100 cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p><strong>Correlatividad:</strong> {asignatura.planInfo.correlatividad}</p>
+                          </TooltipContent>
+                        </Tooltip>
                       )}
                       <Checkbox
                         checked={isSelected}
@@ -865,9 +863,9 @@ export function HorariosDisplay() {
                     </div>
                   </div>
                 </CardHeader>
-              <CardContent className="space-y-4 pt-4">
+              <CardContent className="space-y-3 pt-3">
                 {/* Características de la asignatura */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1">
                   <Badge variant="secondary" className="text-xs bg-uba-secondary/20 text-uba-primary">
                     {asignatura.modalidadCursada}
                   </Badge>
@@ -881,15 +879,37 @@ export function HorariosDisplay() {
                 </div>
 
                 {asignatura.aclaraciones && (
-                  <div className="text-sm text-uba-primary bg-uba-secondary/10 p-3 rounded-lg">
+                  <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
                     <em>{asignatura.aclaraciones}</em>
                   </div>
                 )}
 
                 {/* Clases agrupadas por tipo */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
                     const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
+                    
+                    // Función para obtener colores según tipo de clase
+                    const getClassColors = (tipo: string, isSelected: boolean) => {
+                      switch (tipo) {
+                        case "Teórico":
+                          return isSelected 
+                            ? "bg-blue-100 border-blue-300 text-blue-800"
+                            : "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                        case "Teórico-Práctico":
+                          return isSelected
+                            ? "bg-purple-100 border-purple-300 text-purple-800"
+                            : "bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
+                        case "Práctico":
+                          return isSelected
+                            ? "bg-green-100 border-green-300 text-green-800"
+                            : "bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+                        default:
+                          return isSelected
+                            ? "bg-gray-100 border-gray-300 text-gray-800"
+                            : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+                      }
+                    }
 
                     return (
                       <div key={grupo.tipo}>
@@ -898,39 +918,29 @@ export function HorariosDisplay() {
                             value={seleccion.clases[asignatura.id]?.[grupo.tipo] || ""}
                             onValueChange={(value) => seleccionarClase(asignatura.id, grupo.tipo, value)}
                           >
-                            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="space-y-1">
                               {grupo.clases.map((clase) => {
                                 const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
                                 return (
-                                  <div key={clase.id} className={`border rounded-lg p-3 transition-all duration-200 ${
-                                    isClassSelected 
-                                      ? "border-uba-secondary bg-uba-secondary/10 shadow-md" 
-                                      : "border-uba-primary/20 bg-gray-50 hover:border-uba-primary/40"
+                                  <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
+                                    getClassColors(clase.tipo, isClassSelected)
                                   }`}>
-                                    <div className="flex justify-between items-start mb-2">
-                                      <Badge variant="outline" className={`text-xs ${
-                                        isClassSelected 
-                                          ? "border-uba-secondary text-uba-secondary" 
-                                          : "border-uba-primary/50 text-uba-primary"
-                                      }`}>
+                                    <div className="flex justify-between items-start mb-1">
+                                      <Badge variant="outline" className={`text-xs border-current`}>
                                         {clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
                                       </Badge>
                                       <div className="flex items-center">
                                         <RadioGroupItem
                                           value={clase.id}
                                           id={clase.id}
-                                          className={`${
-                                            isClassSelected 
-                                              ? "data-[state=checked]:bg-uba-secondary data-[state=checked]:border-uba-secondary" 
-                                              : "data-[state=checked]:bg-uba-primary data-[state=checked]:border-uba-primary"
-                                          }`}
+                                          className="data-[state=checked]:bg-current data-[state=checked]:border-current"
                                         />
                                       </div>
                                     </div>
-                                    <div className="text-sm text-gray-600 space-y-1">
-                                      <div className="flex items-center gap-2">
-                                        <span className="font-medium text-uba-primary">{clase.dia}</span>
-                                        <span>{clase.horario}</span>
+                                    <div className="text-xs space-y-0.5">
+                                      <div className="flex items-center gap-1">
+                                        <span className="font-medium">{clase.dia}</span>
+                                        <span className="opacity-75">{clase.horario}</span>
                                       </div>
                                     </div>
                                   </div>
@@ -939,33 +949,27 @@ export function HorariosDisplay() {
                             </div>
                           </RadioGroup>
                         ) : (
-                          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                          <div className="space-y-1">
                             {grupo.clases.map((clase, index) => (
-                              <div key={clase.id} className={`border rounded-lg p-3 transition-all duration-200 ${
-                                isSelected 
-                                  ? "border-uba-secondary/30 bg-uba-secondary/10" 
-                                  : "border-uba-primary/20 bg-gray-50"
+                              <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
+                                getClassColors(clase.tipo, isSelected)
                               }`}>
-                                <div className="flex justify-between items-start mb-2">
-                                  <Badge variant="outline" className={`text-xs ${
-                                    isSelected 
-                                      ? "border-uba-secondary/50 text-uba-secondary" 
-                                      : "border-uba-primary/50 text-uba-primary"
-                                  }`}>
+                                <div className="flex justify-between items-start mb-1">
+                                  <Badge variant="outline" className="text-xs border-current">
                                     {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
                                       ? `${clase.tipo} ${index + 1}`
                                       : clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
                                   </Badge>
                                   {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
-                                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                                    <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-300">
                                       Complementario
                                     </Badge>
                                   )}
                                 </div>
-                                <div className="text-sm text-gray-600 space-y-1">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-medium text-uba-primary">{clase.dia}</span>
-                                    <span>{clase.horario}</span>
+                                <div className="text-xs space-y-0.5">
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-medium">{clase.dia}</span>
+                                    <span className="opacity-75">{clase.horario}</span>
                                   </div>
                                 </div>
                               </div>
@@ -981,7 +985,7 @@ export function HorariosDisplay() {
                   (() => {
                     const tiposFaltantes = getClasesFaltantes(asignatura, seleccion.clases[asignatura.id] || {})
                     return tiposFaltantes.length > 0 ? (
-                      <div className="text-red-600 text-sm italic mt-3 p-2 bg-red-50 rounded border border-red-200">
+                      <div className="text-red-600 text-xs italic p-2 bg-red-50 rounded border border-red-200">
                         Falta seleccionar horario de{" "}
                         {tiposFaltantes.map((tipo, index) => (
                           <span key={tipo}>
