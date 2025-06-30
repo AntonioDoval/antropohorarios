@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Switch } from "@/components/ui/switch"
 import { AlertTriangle, BookOpen, Calendar, FileText, Info, Notebook, Search, X } from "lucide-react"
 import { 
   enrichAsignaturasWithPlanInfo, 
@@ -54,6 +55,7 @@ interface Filtros {
   tiposAsignatura: string[]
   modalidadesAprobacion: string[]
   orientaciones: string[]
+  planEstudios: "2023" | "1985"
 }
 
 interface Seleccion {
@@ -69,6 +71,7 @@ export function HorariosDisplay() {
     tiposAsignatura: [],
     modalidadesAprobacion: [],
     orientaciones: [],
+    planEstudios: "2023",
   })
   const [seleccion, setSeleccion] = useState<Seleccion>({
     asignaturas: [],
@@ -189,20 +192,19 @@ export function HorariosDisplay() {
     }
   }
 
-  // Opciones fijas para orientación
-  const opcionesOrientacion = [
-    "Profesorado",
-    "Licenciatura - Orientación Arqueológica",
-    "Licenciatura - Orientación Sociocultural",
-  ]
+  // Opciones para orientación según el plan seleccionado
+  const opcionesOrientacion = getOrientacionesPorPlan(filtros.planEstudios)
 
   // Función para filtrar asignaturas
   const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
+      // Obtener el nombre según el plan seleccionado para la búsqueda
+      const nombreParaBusqueda = getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)
+      
       // Filtro por búsqueda
       const coincideBusqueda =
         filtros.busqueda === "" ||
-        asignatura.materia.toLowerCase().includes(filtros.busqueda.toLowerCase()) ||
+        nombreParaBusqueda.toLowerCase().includes(filtros.busqueda.toLowerCase()) ||
         asignatura.catedra.toLowerCase().includes(filtros.busqueda.toLowerCase())
 
       // Filtro por tipo de asignatura
@@ -215,14 +217,58 @@ export function HorariosDisplay() {
         filtros.modalidadesAprobacion.length === 0 ||
         filtros.modalidadesAprobacion.includes(asignatura.modalidadAprobacion)
 
-      // Filtro por orientación
-      const coincideOrientacion =
-        filtros.orientaciones.length === 0 ||
-        (asignatura.planInfo?.orientaciones && 
-         asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient)))
+      // Filtro por orientación según el plan seleccionado
+      const coincideOrientacion = (() => {
+        if (filtros.orientaciones.length === 0) return true
+        
+        if (filtros.planEstudios === "1985") {
+          // Para plan 1985, verificar si tiene equivalencia para el plan 1985
+          return filtros.orientaciones.includes("Plan 1985 General") && 
+                 (asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.planInfo?.equivalencia?.cod85)
+        } else {
+          // Para plan 2023, usar la lógica existente
+          return asignatura.planInfo?.orientaciones && 
+                 asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient))
+        }
+      })()
 
       return coincideBusqueda && coincideTipo && coincideModalidad && coincideOrientacion
     })
+  }
+
+  // Función para obtener el nombre de la asignatura según el plan seleccionado
+  const getNombreAsignaturaPorPlan = (asignatura: AsignaturaConPlan, plan: "2023" | "1985"): string => {
+    if (plan === "1985") {
+      // Usar el nombre equivalente del plan 1985 si existe
+      return asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.materia
+    }
+    // Para plan 2023, usar el nombre actual o el nombre del plan 2023
+    return asignatura.planInfo?.equivalencia?.nombrePlan23 || asignatura.materia
+  }
+
+  // Función para filtrar asignaturas por plan de estudios
+  const filtrarAsignaturasPorPlan = (asignaturas: AsignaturaConPlan[], plan: "2023" | "1985"): AsignaturaConPlan[] => {
+    if (plan === "2023") {
+      return asignaturas // Mostrar todas las asignaturas para plan 2023
+    }
+    
+    // Para plan 1985, solo mostrar asignaturas que tienen equivalencia
+    return asignaturas.filter(asignatura => 
+      asignatura.planInfo?.equivalencia?.nombrePlan85 || 
+      asignatura.planInfo?.equivalencia?.cod85
+    )
+  }
+
+  // Función para obtener orientaciones disponibles según el plan
+  const getOrientacionesPorPlan = (plan: "2023" | "1985"): string[] => {
+    if (plan === "1985") {
+      return ["Plan 1985 General"]
+    }
+    return [
+      "Profesorado",
+      "Licenciatura en Antropología Sociocultural", 
+      "Licenciatura en Arqueología"
+    ]
   }
 
   // Función para limpiar filtros
@@ -232,6 +278,7 @@ export function HorariosDisplay() {
       tiposAsignatura: [],
       modalidadesAprobacion: [],
       orientaciones: [],
+      planEstudios: filtros.planEstudios, // Mantener el plan seleccionado
     })
   }
 
@@ -355,7 +402,7 @@ export function HorariosDisplay() {
             const fin = parseInt(horarioParts[1].split(":")[0])
 
             clasesSeleccionadas.push({
-              asignatura: asignatura.materia,
+              asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
               clase: `${clase.tipo} ${grupo.clases.length > 1 ? grupo.clases.indexOf(clase) + 1 : ""}`.trim(),
               dia: clase.dia,
               inicio,
@@ -371,7 +418,7 @@ export function HorariosDisplay() {
             const fin = parseInt(horarioParts[1].split(":")[0])
 
             clasesSeleccionadas.push({
-              asignatura: asignatura.materia,
+              asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
               clase: clase.tipo,
               dia: clase.dia,
               inicio,
@@ -387,7 +434,7 @@ export function HorariosDisplay() {
                 const fin = parseInt(horarioParts[1].split(":")[0])
 
                 clasesSeleccionadas.push({
-                  asignatura: asignatura.materia,
+                  asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
                   clase: `${clase.tipo} ${clase.numero}`,
                   dia: clase.dia,
                   inicio,
@@ -515,7 +562,7 @@ export function HorariosDisplay() {
       })
 
       resultado.push({
-        asignatura: asignatura.materia,
+        asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
         catedra: asignatura.catedra,
         clases: clasesSeleccionadas,
         tiposFaltantes: tiposFaltantes.length > 0 ? tiposFaltantes : undefined,
@@ -552,8 +599,13 @@ export function HorariosDisplay() {
     }
   }
 
-  // Ordenar asignaturas alfabéticamente y aplicar filtros
-  const asignaturasOrdenadas = [...asignaturasEnriquecidas].sort((a, b) => a.materia.localeCompare(b.materia))
+  // Filtrar por plan de estudios primero, luego ordenar alfabéticamente y aplicar filtros
+  const asignaturasPorPlan = filtrarAsignaturasPorPlan(asignaturasEnriquecidas, filtros.planEstudios)
+  const asignaturasOrdenadas = [...asignaturasPorPlan].sort((a, b) => {
+    const nombreA = getNombreAsignaturaPorPlan(a, filtros.planEstudios)
+    const nombreB = getNombreAsignaturaPorPlan(b, filtros.planEstudios)
+    return nombreA.localeCompare(nombreB)
+  })
   const asignaturasFiltradas = filtrarAsignaturas(asignaturasOrdenadas)
   const valoresUnicos = getValoresUnicos(asignaturasEnriquecidas)
 
@@ -601,6 +653,37 @@ export function HorariosDisplay() {
       <Card className="bg-gray-50 border-gray-200">
         <CardContent className="pt-6">
           <div className="space-y-4">
+            {/* Switch para Plan de Estudios */}
+            <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
+              <div className="flex items-center space-x-3">
+                <BookOpen className="h-5 w-5 text-uba-primary" />
+                <div>
+                  <h4 className="text-sm font-medium text-uba-primary">Plan de Estudios</h4>
+                  <p className="text-xs text-gray-600">
+                    {filtros.planEstudios === "2023" ? "Plan 2023 - Nombres actuales" : "Plan 1985 - Nombres históricos"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className={`text-sm ${filtros.planEstudios === "1985" ? "font-medium text-uba-primary" : "text-gray-500"}`}>
+                  1985
+                </span>
+                <Switch
+                  checked={filtros.planEstudios === "2023"}
+                  onCheckedChange={(checked) => {
+                    setFiltros((prev) => ({ 
+                      ...prev, 
+                      planEstudios: checked ? "2023" : "1985",
+                      orientaciones: [] // Limpiar orientaciones al cambiar de plan
+                    }))
+                  }}
+                />
+                <span className={`text-sm ${filtros.planEstudios === "2023" ? "font-medium text-uba-primary" : "text-gray-500"}`}>
+                  2023
+                </span>
+              </div>
+            </div>
+
             {/* Campo de búsqueda */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -741,7 +824,7 @@ export function HorariosDisplay() {
                     <div className="flex items-center gap-3">
                       {getAsignaturaIcon(asignatura)}
                       <div>
-                        <CardTitle className="text-xl">{asignatura.materia}</CardTitle>
+                        <CardTitle className="text-xl">{getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)}</CardTitle>
                         <div className="text-sm text-white">
                           <span className="font-medium">Cátedra:</span> {asignatura.catedra}
                         </div>
