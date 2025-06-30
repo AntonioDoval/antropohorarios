@@ -132,7 +132,7 @@ export function CSVUploader() {
         const tituloOptativa = row["Título de materia optativa/electiva"]?.trim() || ""
 
         let titulo = ""
-        
+
         // Determinar título según tipo de asignatura
         if (tipoAsignatura === "Seminario regular" && tituloSeminario) {
           titulo = "Seminario: " + tituloSeminario
@@ -158,7 +158,7 @@ export function CSVUploader() {
         const catedraOptativa = row["Cátedra de la materia optativa/electiva"]?.trim() || ""
 
         let catedra = ""
-        
+
         if (tipoAsignatura === "Seminario regular" && catedraSeminario) {
           catedra = catedraSeminario
         } else if (tipoAsignatura === "Materia o seminario anual" && catedraAnual) {
@@ -178,7 +178,7 @@ export function CSVUploader() {
         const modalidadCursadaOptativa = row["Modalidad de cursada (materia optativa/electiva)"]?.trim() || ""
 
         let modalidadCursada = ""
-        
+
         if (tipoAsignatura === "Seminario regular" && modalidadCursadaSeminario) {
           modalidadCursada = modalidadCursadaSeminario
         } else if (tipoAsignatura === "Materia o seminario anual" && modalidadCursadaAnual) {
@@ -192,20 +192,26 @@ export function CSVUploader() {
         console.log("Modalidad de cursada:", modalidadCursada)
 
         // Obtener modalidad de aprobación
+        const modalidadAprobacionSeminario = row["Modalidad de aprobación del seminario"]?.trim() || ""
+        const modalidadAprobacionAnual = row["Modalidad de aprobación de la asignatura anual"]?.trim() || ""
         const modalidadAprobacionCuatrimestral = row["Modalidad de aprobación de la materia"]?.trim() || ""
         const modalidadAprobacionOptativa = row["Modalidad de aprobación (materia optativa/electiva)"]?.trim() || ""
 
         let modalidadAprobacion = ""
 
-        // Asignar modalidad de aprobación según tipo
-        if (tipoAsignatura === "Seminario regular" || tipoAsignatura === "Materia o seminario anual") {
-          modalidadAprobacion = "NO CORRESPONDE"
+        if (tipoAsignatura === "Seminario regular" && modalidadAprobacionSeminario) {
+          modalidadAprobacion = modalidadAprobacionSeminario
+        } else if (tipoAsignatura === "Materia o seminario anual" && modalidadAprobacionAnual) {
+          modalidadAprobacion = modalidadAprobacionAnual
         } else if (tipoAsignatura === "Materia cuatrimestral regular" && modalidadAprobacionCuatrimestral) {
           modalidadAprobacion = modalidadAprobacionCuatrimestral
         } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva" && modalidadAprobacionOptativa) {
           modalidadAprobacion = modalidadAprobacionOptativa
-        } else {
-          modalidadAprobacion = "No especificado"
+        }
+
+        // Si no hay modalidad especificada o es "NO CORRESPONDE", asignar "Trabajo final"
+        if (!modalidadAprobacion || modalidadAprobacion === "NO CORRESPONDE" || modalidadAprobacion === "No corresponde") {
+          modalidadAprobacion = "Trabajo final"
         }
 
         console.log("Modalidad de aprobación:", modalidadAprobacion)
@@ -371,7 +377,7 @@ export function CSVUploader() {
         // Obtener la orientación de la asignatura
         const orientacionSeminario = row["Orientación del seminario"]?.trim() || ""
         const orientacionOptativa = row["Orientación (materia optativa/electiva)"]?.trim() || ""
-        
+
         let orientacionAsignatura = ""
 
         if (tipoAsignatura === "Seminario regular" && orientacionSeminario) {
@@ -398,7 +404,7 @@ export function CSVUploader() {
         }
 
         console.log(`Asignatura agregada: "${titulo}" - Cátedra: "${catedra}"`)
-        
+
         // Agregar la asignatura al array de datos
         data.push(asignatura)
       }
