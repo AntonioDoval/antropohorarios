@@ -125,19 +125,23 @@ export function CSVUploader() {
         const tipoAsignatura = row["Tipo de asignatura"]?.trim() || ""
         console.log("Tipo de asignatura:", tipoAsignatura)
 
-        // Obtener título de las columnas D, G, J, N (ignorar las vacías)
+        // Obtener título según el tipo de asignatura
         const tituloSeminario = row["Título del seminario"]?.trim() || ""
         const tituloAnual = row["Título de la asignatura anual"]?.trim() || ""
         const tituloCuatrimestral = row["Título de materia cuatrimestral"]?.trim() || ""
         const tituloOptativa = row["Título de materia optativa/electiva"]?.trim() || ""
 
-        let titulo = tituloSeminario || tituloAnual || tituloCuatrimestral || tituloOptativa || ""
-
-        // Agregar prefijo para seminarios
-        if (tipoAsignatura === "Seminario regular" && titulo) {
-          titulo = "Seminario: " + titulo
-        } else if (tipoAsignatura === "Seminario PST" && titulo) {
-          titulo = "Seminario PST: " + titulo
+        let titulo = ""
+        
+        // Determinar título según tipo de asignatura
+        if (tipoAsignatura === "Seminario regular" && tituloSeminario) {
+          titulo = "Seminario: " + tituloSeminario
+        } else if (tipoAsignatura === "Materia o seminario anual" && tituloAnual) {
+          titulo = tituloAnual
+        } else if (tipoAsignatura === "Materia cuatrimestral regular" && tituloCuatrimestral) {
+          titulo = tituloCuatrimestral
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva" && tituloOptativa) {
+          titulo = tituloOptativa
         }
 
         console.log("Título determinado:", titulo)
@@ -147,57 +151,61 @@ export function CSVUploader() {
           continue
         }
 
-        // Obtener cátedra de las columnas E, H, K, O (ignorar las vacías)
+        // Obtener cátedra según el tipo de asignatura
         const catedraSeminario = row["Cátedra del seminario"]?.trim() || ""
         const catedraAnual = row["Cátedra de asignatura anual"]?.trim() || ""
         const catedraCuatrimestral = row["Cátedra de la materia"]?.trim() || ""
         const catedraOptativa = row["Cátedra de la materia optativa/electiva"]?.trim() || ""
 
-        const catedra = catedraSeminario || catedraAnual || catedraCuatrimestral || catedraOptativa || ""
+        let catedra = ""
+        
+        if (tipoAsignatura === "Seminario regular" && catedraSeminario) {
+          catedra = catedraSeminario
+        } else if (tipoAsignatura === "Materia o seminario anual" && catedraAnual) {
+          catedra = catedraAnual
+        } else if (tipoAsignatura === "Materia cuatrimestral regular" && catedraCuatrimestral) {
+          catedra = catedraCuatrimestral
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva" && catedraOptativa) {
+          catedra = catedraOptativa
+        }
 
         console.log("Cátedra:", catedra)
 
-        // Obtener modalidad de cursada de las columnas F, I, M, Q
+        // Obtener modalidad de cursada según el tipo de asignatura
         const modalidadCursadaSeminario = row["Modalidad de cursada del seminario"]?.trim() || ""
         const modalidadCursadaAnual = row["Modalidad de cursada de la asignatura anual"]?.trim() || ""
         const modalidadCursadaCuatrimestral = row["Modalidad de cursada de la materia"]?.trim() || ""
         const modalidadCursadaOptativa = row["Modalidad de cursada (materia optativa/electiva)"]?.trim() || ""
 
-        const modalidadCursada =
-          modalidadCursadaSeminario ||
-          modalidadCursadaAnual ||
-          modalidadCursadaCuatrimestral ||
-          modalidadCursadaOptativa ||
-          ""
+        let modalidadCursada = ""
+        
+        if (tipoAsignatura === "Seminario regular" && modalidadCursadaSeminario) {
+          modalidadCursada = modalidadCursadaSeminario
+        } else if (tipoAsignatura === "Materia o seminario anual" && modalidadCursadaAnual) {
+          modalidadCursada = modalidadCursadaAnual
+        } else if (tipoAsignatura === "Materia cuatrimestral regular" && modalidadCursadaCuatrimestral) {
+          modalidadCursada = modalidadCursadaCuatrimestral
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva" && modalidadCursadaOptativa) {
+          modalidadCursada = modalidadCursadaOptativa
+        }
 
         console.log("Modalidad de cursada:", modalidadCursada)
 
-        // Obtener modalidad de aprobación de las columnas L, P
+        // Obtener modalidad de aprobación
         const modalidadAprobacionCuatrimestral = row["Modalidad de aprobación de la materia"]?.trim() || ""
         const modalidadAprobacionOptativa = row["Modalidad de aprobación (materia optativa/electiva)"]?.trim() || ""
 
-        // Lista de asignaturas anuales específicas
-        const asignaturasAnuales = [
-          "didáctica especial y prácticas de la enseñanza",
-          "seminario de investigación en antropologia sociocultural",
-          "seminario de investigacion en arqueologia",
-          "metodología e investigación antropológica",
-          "metodología y técnicas de la investigación arqueológica",
-        ]
-
         let modalidadAprobacion = ""
 
-        // Verificar si es una asignatura anual específica (comparación insensible a mayúsculas)
-        const esAsignaturaAnual = asignaturasAnuales.some((asigAnual) =>
-          titulo.toLowerCase().includes(asigAnual.toLowerCase()),
-        )
-
-        // Asignar modalidad de aprobación
-        if (esAsignaturaAnual || tipoAsignatura === "Seminario regular" || tipoAsignatura === "Seminario PST") {
+        // Asignar modalidad de aprobación según tipo
+        if (tipoAsignatura === "Seminario regular" || tipoAsignatura === "Materia o seminario anual") {
           modalidadAprobacion = "NO CORRESPONDE"
+        } else if (tipoAsignatura === "Materia cuatrimestral regular" && modalidadAprobacionCuatrimestral) {
+          modalidadAprobacion = modalidadAprobacionCuatrimestral
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva" && modalidadAprobacionOptativa) {
+          modalidadAprobacion = modalidadAprobacionOptativa
         } else {
-          // Para otros tipos, usar el valor del CSV
-          modalidadAprobacion = modalidadAprobacionCuatrimestral || modalidadAprobacionOptativa || "No especificado"
+          modalidadAprobacion = "No especificado"
         }
 
         console.log("Modalidad de aprobación:", modalidadAprobacion)
@@ -360,12 +368,16 @@ export function CSVUploader() {
           }
         })
 
-        // Obtener la orientación de la asignatura (columna R)
-        const orientacionSeminarioRegularOptativa = row["Orientación (seminario regular y optativa/electiva)"]?.trim() || "";
-        let orientacionAsignatura = "";
+        // Obtener la orientación de la asignatura
+        const orientacionSeminario = row["Orientación del seminario"]?.trim() || ""
+        const orientacionOptativa = row["Orientación (materia optativa/electiva)"]?.trim() || ""
+        
+        let orientacionAsignatura = ""
 
-        if (tipoAsignatura === "Seminario regular" || tipoAsignatura === "Materia optativa/electiva" || tipoAsignatura === "Seminario PST") {
-            orientacionAsignatura = orientacionSeminarioRegularOptativa;
+        if (tipoAsignatura === "Seminario regular" && orientacionSeminario) {
+            orientacionAsignatura = orientacionSeminario
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva" && orientacionOptativa) {
+            orientacionAsignatura = orientacionOptativa
         }
 
         // Agregar la asignatura (cada fila es una asignatura)
@@ -498,7 +510,7 @@ export function CSVUploader() {
             </Label>
             <Input id="csv-file" type="file" accept=".csv" onChange={handleFileChange} className="mt-1 bg-white" />
             <p className="text-sm text-gray-600 mt-1">
-              El archivo debe incluir columnas: materia, codigo, dia, horario, aula, profesor, cuatrimestre
+              El archivo debe ser un CSV exportado desde Google Forms con las columnas estándar del formulario de carga de horarios
             </p>
           </div>
 
