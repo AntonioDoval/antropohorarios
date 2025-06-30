@@ -398,6 +398,9 @@ export function CSVUploader() {
         }
 
         console.log(`Asignatura agregada: "${titulo}" - Cátedra: "${catedra}"`)
+        
+        // Agregar la asignatura al array de datos
+        data.push(asignatura)
       }
 
       console.log(`\nTotal de asignaturas procesadas: ${data.length}`)
