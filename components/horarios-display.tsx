@@ -108,9 +108,10 @@ export function HorariosDisplay() {
   }, [data])
 
   // Función para obtener el icono según el tipo de asignatura
-  const getAsignaturaIcon = (asignatura: Asignatura) => {
+  const getAsignaturaIcon = (asignatura: Asignatura, isSelected = false) => {
     const tipoAsignatura = asignatura.tipoAsignatura || ""
     const titulo = asignatura.materia.toLowerCase()
+    const iconColor = isSelected ? "text-blue-200" : "text-uba-secondary"
 
     // Lista de asignaturas anuales específicas
     const asignaturasAnuales = [
@@ -124,14 +125,14 @@ export function HorariosDisplay() {
     const esAsignaturaAnual = asignaturasAnuales.some((asigAnual) => titulo.includes(asigAnual.toLowerCase()))
 
     if (tipoAsignatura === "Seminario PST") {
-      return <Notebook className="h-5 w-5 text-uba-secondary" />
+      return <Notebook className={`h-5 w-5 ${iconColor}`} />
     } else if (tipoAsignatura === "Seminario regular") {
-      return <FileText className="h-5 w-5 text-uba-secondary" />
+      return <FileText className={`h-5 w-5 ${iconColor}`} />
     } else if (esAsignaturaAnual || tipoAsignatura === "Asignatura anual") {
-      return <Calendar className="h-5 w-5 text-uba-secondary" />
+      return <Calendar className={`h-5 w-5 ${iconColor}`} />
     } else {
       // Materias cuatrimestrales
-      return <BookOpen className="h-5 w-5 text-uba-secondary" />
+      return <BookOpen className={`h-5 w-5 ${iconColor}`} />
     }
   }
 
@@ -830,12 +831,12 @@ export function HorariosDisplay() {
               }`}>
                 <CardHeader className={`pb-3 rounded-t-lg transition-all duration-200 ${
                   isSelected 
-                    ? "bg-uba-secondary text-white" 
+                    ? "bg-blue-600 text-white border-2 border-blue-700" 
                     : "bg-uba-primary text-white"
                 }`}>
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-2 flex-1">
-                      {getAsignaturaIcon(asignatura)}
+                      {getAsignaturaIcon(asignatura, isSelected)}
                       <div className="flex-1 min-w-0">
                         <CardTitle className="text-lg leading-tight">{getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)}</CardTitle>
                         <div className="text-xs text-white/90 mt-1">
@@ -858,7 +859,11 @@ export function HorariosDisplay() {
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={() => toggleAsignatura(asignatura.id)}
-                        className="border-white data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-uba-secondary"
+                        className={`${
+                          isSelected 
+                            ? "border-blue-200 data-[state=checked]:bg-blue-200 data-[state=checked]:border-blue-200 data-[state=checked]:text-blue-700"
+                            : "border-white data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-uba-secondary"
+                        }`}
                       />
                     </div>
                   </div>
@@ -894,16 +899,16 @@ export function HorariosDisplay() {
                       switch (tipo) {
                         case "Teórico":
                           return isSelected 
-                            ? "bg-blue-100 border-blue-300 text-blue-800"
-                            : "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                            ? "bg-gray-200 border-gray-400 text-gray-800"
+                            : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
                         case "Teórico-Práctico":
                           return isSelected
-                            ? "bg-purple-100 border-purple-300 text-purple-800"
-                            : "bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
+                            ? "bg-gray-100 border-gray-300 text-gray-700"
+                            : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
                         case "Práctico":
                           return isSelected
-                            ? "bg-green-100 border-green-300 text-green-800"
-                            : "bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+                            ? "bg-blue-100 border-blue-300 text-blue-800"
+                            : "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
                         default:
                           return isSelected
                             ? "bg-gray-100 border-gray-300 text-gray-800"
