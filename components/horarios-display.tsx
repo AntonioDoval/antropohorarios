@@ -192,6 +192,18 @@ export function HorariosDisplay() {
     }
   }
 
+  // Función para obtener orientaciones disponibles según el plan
+  const getOrientacionesPorPlan = (plan: "2023" | "1985"): string[] => {
+    if (plan === "1985") {
+      return ["Plan 1985 General"]
+    }
+    return [
+      "Profesorado",
+      "Licenciatura en Antropología Sociocultural", 
+      "Licenciatura en Arqueología"
+    ]
+  }
+
   // Opciones para orientación según el plan seleccionado
   const opcionesOrientacion = getOrientacionesPorPlan(filtros.planEstudios)
 
@@ -200,7 +212,7 @@ export function HorariosDisplay() {
     return asignaturas.filter((asignatura) => {
       // Obtener el nombre según el plan seleccionado para la búsqueda
       const nombreParaBusqueda = getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)
-      
+
       // Filtro por búsqueda
       const coincideBusqueda =
         filtros.busqueda === "" ||
@@ -220,7 +232,7 @@ export function HorariosDisplay() {
       // Filtro por orientación según el plan seleccionado
       const coincideOrientacion = (() => {
         if (filtros.orientaciones.length === 0) return true
-        
+
         if (filtros.planEstudios === "1985") {
           // Para plan 1985, verificar si tiene equivalencia para el plan 1985
           return filtros.orientaciones.includes("Plan 1985 General") && 
@@ -251,24 +263,12 @@ export function HorariosDisplay() {
     if (plan === "2023") {
       return asignaturas // Mostrar todas las asignaturas para plan 2023
     }
-    
+
     // Para plan 1985, solo mostrar asignaturas que tienen equivalencia
     return asignaturas.filter(asignatura => 
       asignatura.planInfo?.equivalencia?.nombrePlan85 || 
       asignatura.planInfo?.equivalencia?.cod85
     )
-  }
-
-  // Función para obtener orientaciones disponibles según el plan
-  const getOrientacionesPorPlan = (plan: "2023" | "1985"): string[] => {
-    if (plan === "1985") {
-      return ["Plan 1985 General"]
-    }
-    return [
-      "Profesorado",
-      "Licenciatura en Antropología Sociocultural", 
-      "Licenciatura en Arqueología"
-    ]
   }
 
   // Función para limpiar filtros
