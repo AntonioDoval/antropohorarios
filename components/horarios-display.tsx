@@ -1075,6 +1075,219 @@ export function HorariosDisplay() {
           </Card>
         </div>
       )}
+
+      {/* Cronograma Semanal */}
+      {seleccionFormateada.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-4">
+            <Calendar className="h-6 w-6 text-uba-primary" />
+            <h2 className="text-2xl font-bold text-uba-primary">Tu Cronograma Semanal</h2>
+          </div>
+
+          {(() => {
+            // Generar datos del cronograma
+            const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+            const horariosCompletos: Array<{
+              asignatura: string
+              catedra: string
+              clase: string
+              dia: string
+              inicio: number
+              fin: number
+              color: string
+            }> = []
+
+            // Paleta de colores para diferentes asignaturas
+            const colores = [
+              "bg-blue-200 text-blue-800 border-blue-300",
+              "bg-green-200 text-green-800 border-green-300", 
+              "bg-purple-200 text-purple-800 border-purple-300",
+              "bg-yellow-200 text-yellow-800 border-yellow-300",
+              "bg-pink-200 text-pink-800 border-pink-300",
+              "bg-indigo-200 text-indigo-800 border-indigo-300",
+              "bg-red-200 text-red-800 border-red-300",
+              "bg-teal-200 text-teal-800 border-teal-300"
+            ]
+
+            // Recopilar todas las clases seleccionadas con colores
+            seleccion.asignaturas.forEach((asignaturaId, asignaturaIndex) => {
+              const asignatura = asignaturasEnriquecidas.find((a) => a.id === asignaturaId)
+              if (!asignatura) return
+
+              const clasesAsignatura = seleccion.clases[asignaturaId] || {}
+              const gruposClases = agruparClasesPorTipo(asignatura.clases)
+              const colorAsignatura = colores[asignaturaIndex % colores.length]
+
+              gruposClases.forEach((grupo) => {
+                const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
+
+                if (agrupacion === "conjunto") {
+                  // Si es conjunto, agregar todas las clases del grupo
+                  grupo.clases.forEach((clase) => {
+                    const horarioParts = clase.horario.split(" - ")
+                    const inicio = parseInt(horarioParts[0].split(":")[0])
+                    const fin = parseInt(horarioParts[1].split(":")[0])
+
+                    horariosCompletos.push({
+                      asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
+                      catedra: asignatura.catedra,
+                      clase: `${clase.tipo} ${grupo.clases.length > 1 ? grupo.clases.indexOf(clase) + 1 : ""}`.trim(),
+                      dia: clase.dia,
+                      inicio,
+                      fin,
+                      color: colorAsignatura
+                    })
+                  })
+                } else {
+                  // Para clases que requieren selección o únicas
+                  if (grupo.clases.length === 1) {
+                    const clase = grupo.clases[0]
+                    const horarioParts = clase.horario.split(" - ")
+                    const inicio = parseInt(horarioParts[0].split(":")[0])
+                    const fin = parseInt(horarioParts[1].split(":")[0])
+
+                    horariosCompletos.push({
+                      asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
+                      catedra: asignatura.catedra,
+                      clase: clase.tipo,
+                      dia: clase.dia,
+                      inicio,
+                      fin,
+                      color: colorAsignatura
+                    })
+                  } else {
+                    const claseSeleccionadaId = clasesAsignatura[grupo.tipo]
+                    if (claseSeleccionadaId) {
+                      const clase = grupo.clases.find((c) => c.id === claseSeleccionadaId)
+                      if (clase) {
+                        const horarioParts = clase.horario.split(" - ")
+                        const inicio = parseInt(horarioParts[0].split(":")[0])
+                        const fin = parseInt(horarioParts[1].split(":")[0])
+
+                        horariosCompletos.push({
+                          asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
+                          catedra: asignatura.catedra,
+                          clase: `${clase.tipo} ${clase.numero}`,
+                          dia: clase.dia,
+                          inicio,
+                          fin,
+                          color: colorAsignatura
+                        })
+                      }
+                    }
+                  }
+                }
+              })
+            })
+
+            // Determinar rango de horarios (8:00 a 22:00)
+            const horaInicio = 8
+            const horaFin = 22
+            const intervalos = []
+            for (let hora = horaInicio; hora < horaFin; hora += 2) {
+              intervalos.push({
+                inicio: hora,
+                fin: hora + 2,
+                label: `${hora}:00-${hora + 2}:00`
+              })
+            }
+
+            return (
+              <Card className="bg-white border-gray-200">
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[900px]">
+                      <thead>
+                        <tr className="bg-uba-primary text-white">
+                          <th className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[100px]">
+                            Horario
+                          </th>
+                          {diasSemana.map((dia) => (
+                            <th key={dia} className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[140px]">
+                              {dia}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {intervalos.map((intervalo) => (
+                          <tr key={intervalo.label} className="h-20">
+                            <td className="border border-gray-300 p-2 text-center font-medium text-sm bg-gray-50 text-uba-primary">
+                              {intervalo.label}
+                            </td>
+                            {diasSemana.map((dia) => {
+                              const clasesEnIntervalo = horariosCompletos.filter(
+                                (clase) =>
+                                  clase.dia === dia &&
+                                  clase.inicio < intervalo.fin &&
+                                  clase.fin > intervalo.inicio
+                              )
+
+                              return (
+                                <td key={dia} className="border border-gray-300 p-1 align-top relative">
+                                  {clasesEnIntervalo.map((clase, index) => {
+                                    // Calcular posición y altura proporcional
+                                    const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
+                                    const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
+                                    const alturaTotal = intervalo.fin - intervalo.inicio
+                                    
+                                    const topPercent = (inicioRelativo / alturaTotal) * 100
+                                    const heightPercent = ((finRelativo - inicioRelativo) / alturaTotal) * 100
+
+                                    return (
+                                      <div
+                                        key={index}
+                                        className={`absolute left-1 right-1 rounded-md border-2 p-1 text-xs overflow-hidden ${clase.color}`}
+                                        style={{
+                                          top: `${topPercent}%`,
+                                          height: `${heightPercent}%`,
+                                          minHeight: '24px'
+                                        }}
+                                      >
+                                        <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
+                                          {clase.asignatura.length > 25 
+                                            ? `${clase.asignatura.substring(0, 22)}...`
+                                            : clase.asignatura
+                                          }
+                                        </div>
+                                        <div className="text-xs leading-tight truncate">
+                                          {clase.clase}
+                                        </div>
+                                        <div className="text-xs opacity-75 truncate">
+                                          {clase.inicio}:00-{clase.fin}:00
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Leyenda de colores */}
+                  <div className="p-4 bg-gray-50 border-t">
+                    <h4 className="text-sm font-semibold text-uba-primary mb-3">Leyenda de asignaturas:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {seleccionFormateada.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
+                          <span className="text-sm text-gray-700 truncate">
+                            {item.asignatura} ({item.catedra})
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })()}
+        </div>
+      )}
       </div>
     </TooltipProvider>
   )
