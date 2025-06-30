@@ -195,7 +195,12 @@ export function HorariosDisplay() {
   // Función para obtener orientaciones disponibles según el plan
   const getOrientacionesPorPlan = (plan: "2023" | "1985"): string[] => {
     if (plan === "1985") {
-      return ["Plan 1985 General"]
+      return [
+        "Profesorado - Orientación Sociocultural",
+        "Profesorado - Orientación Arqueología",
+        "Licenciatura en Antropología Sociocultural",
+        "Licenciatura en Arqueología"
+      ]
     }
     return [
       "Profesorado",
@@ -234,9 +239,17 @@ export function HorariosDisplay() {
         if (filtros.orientaciones.length === 0) return true
 
         if (filtros.planEstudios === "1985") {
-          // Para plan 1985, verificar si tiene equivalencia para el plan 1985
-          return filtros.orientaciones.includes("Plan 1985 General") && 
-                 (asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.planInfo?.equivalencia?.cod85)
+          // Para plan 1985, verificar si la orientación de la asignatura coincide con las seleccionadas
+          // y que tenga equivalencia para el plan 1985
+          const tieneEquivalencia = asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.planInfo?.equivalencia?.cod85
+          if (!tieneEquivalencia) return false
+          
+          // Si no hay orientaciones seleccionadas, mostrar todas las que tengan equivalencia
+          if (filtros.orientaciones.length === 0) return true
+          
+          // Verificar si alguna de las orientaciones de la asignatura coincide con las seleccionadas
+          return asignatura.planInfo?.orientaciones && 
+                 asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient))
         } else {
           // Para plan 2023, usar la lógica existente
           return asignatura.planInfo?.orientaciones && 

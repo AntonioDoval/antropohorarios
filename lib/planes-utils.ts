@@ -256,6 +256,8 @@ export function filtrarAsignaturasPorOrientacion(
 export function getOrientacionesDisponibles(): string[] {
   return [
     "Profesorado",
+    "Profesorado - Orientación Sociocultural",
+    "Profesorado - Orientación Arqueología",
     "Licenciatura en Antropología Sociocultural",
     "Licenciatura en Arqueología"
   ]

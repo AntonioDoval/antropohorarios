@@ -1,4 +1,3 @@
-
 "use client"
 
 import type React from "react"
@@ -45,11 +44,44 @@ interface PlanConfig {
 export function PlanesUploader() {
   const [planes, setPlanes] = useState<PlanConfig[]>([
     {
-      id: "plan-1985",
-      titulo: "Plan 1985: Profesorado y Licenciatura (ambas orientaciones)",
+      id: "plan-1985-lic-arqueo",
+      titulo: "Plan 1985: Licenciatura - Orientación Arqueología",
       año: "1985",
-      orientacion: "general",
-      descripcion: "Archivo único para profesorado y licenciatura (orientaciones sociocultural y arqueología)",
+      orientacion: "licenciatura-arqueologia",
+      descripcion: "Plan específico para licenciatura en arqueología",
+      file: null,
+      loading: false,
+      message: null,
+      preview: null
+    },
+    {
+      id: "plan-1985-lic-socio",
+      titulo: "Plan 1985: Licenciatura - Orientación Sociocultural",
+      año: "1985",
+      orientacion: "licenciatura-sociocultural",
+      descripcion: "Plan específico para licenciatura sociocultural",
+      file: null,
+      loading: false,
+      message: null,
+      preview: null
+    },
+        {
+      id: "plan-1985-prof-arqueo",
+      titulo: "Plan 1985: Profesorado - Orientación Arqueología",
+      año: "1985",
+      orientacion: "profesorado-arqueologia",
+      descripcion: "Plan específico para profesorado en arqueología",
+      file: null,
+      loading: false,
+      message: null,
+      preview: null
+    },
+    {
+      id: "plan-1985-prof-socio",
+      titulo: "Plan 1985: Profesorado - Orientación Sociocultural",
+      año: "1985",
+      orientacion: "profesorado-sociocultural",
+      descripcion: "Plan específico para profesorado sociocultural",
       file: null,
       loading: false,
       message: null,
@@ -92,7 +124,7 @@ export function PlanesUploader() {
 
   const handleFileChange = (planId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
-    
+
     setPlanes(prevPlanes => 
       prevPlanes.map(plan => {
         if (plan.id === planId) {
@@ -222,16 +254,16 @@ export function PlanesUploader() {
 
       // Determinar orientación para guardar
       let orientacionLabel = ""
-      if (plan.año === "1985") {
-        orientacionLabel = "Plan 1985 General"
-      } else {
-        const orientacionMap: { [key: string]: string } = {
-          "profesorado": "Profesorado",
-          "licenciatura-arqueologia": "Licenciatura en Arqueología",
-          "licenciatura-sociocultural": "Licenciatura en Antropología Sociocultural"
-        }
-        orientacionLabel = orientacionMap[plan.orientacion] || plan.orientacion
+
+      const orientacionMap: { [key: string]: string } = {
+        "profesorado-sociocultural": "Profesorado - Orientación Sociocultural",
+        "profesorado-arqueologia": "Profesorado - Orientación Arqueología", 
+        "licenciatura-sociocultural": "Licenciatura en Antropología Sociocultural",
+        "licenciatura-arqueologia": "Licenciatura en Arqueología",
+        "profesorado": "Profesorado"
       }
+      
+      orientacionLabel = orientacionMap[plan.orientacion] || plan.orientacion
 
       const planProcesado: PlanDeEstudios = {
         año: plan.año,
@@ -298,7 +330,7 @@ export function PlanesUploader() {
     }
 
     localStorage.setItem("planes-estudios-antropologia", JSON.stringify(planesActuales))
-    
+
     setPlanes(prevPlanes => 
       prevPlanes.map(p => 
         p.id === planId ? {
