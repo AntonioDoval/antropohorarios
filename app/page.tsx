@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, Suspense } from "react"
 import { HorariosDisplay } from "@/components/horarios-display"
 import { Footer } from "@/components/footer"
 import { initializeDefaultData } from "@/lib/default-data"
