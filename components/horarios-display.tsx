@@ -53,7 +53,7 @@ interface HorariosData {
 interface Filtros {
   busqueda: string
   tiposAsignatura: string[]
-  modalidadesAprobacion: string[]
+  modalidadAprobacion: string // Cambio a string singular para selección única
   orientaciones: string[]
   planEstudios: "2023" | "1985"
 }
@@ -69,7 +69,7 @@ export function HorariosDisplay() {
   const [filtros, setFiltros] = useState<Filtros>({
     busqueda: "",
     tiposAsignatura: [],
-    modalidadesAprobacion: [],
+    modalidadAprobacion: "todas", // Por defecto "todas"
     orientaciones: [],
     planEstudios: "2023",
   })
@@ -179,11 +179,26 @@ export function HorariosDisplay() {
   // Función para obtener valores únicos para los filtros
   const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
     const tiposAsignatura = [...new Set(asignaturas.map((a) => a.tipoAsignatura).filter(Boolean))]
+    
+    // Agregar "Seminario PST" si no existe
+    if (!tiposAsignatura.includes("Seminario PST")) {
+      tiposAsignatura.push("Seminario PST")
+    }
+
     const modalidadesAprobacion = [
       ...new Set(
         asignaturas
-          .map((a) => a.modalidadAprobacion)
-          .filter((m) => m && m !== "NO CORRESPONDE" && m !== "No corresponde"),
+          .map((a) => {
+            // Si no está especificada o es "NO CORRESPONDE", asignar "Trabajo final"
+            if (!a.modalidadAprobacion || 
+                a.modalidadAprobacion === "NO CORRESPONDE" || 
+                a.modalidadAprobacion === "No corresponde" || 
+                a.modalidadAprobacion.toLowerCase() === "no especificada") {
+              return "Trabajo final"
+            }
+            return a.modalidadAprobacion
+          })
+          .filter(Boolean),
       ),
     ]
 
@@ -231,9 +246,18 @@ export function HorariosDisplay() {
         (asignatura.tipoAsignatura && filtros.tiposAsignatura.includes(asignatura.tipoAsignatura))
 
       // Filtro por modalidad de aprobación
-      const coincideModalidad =
-        filtros.modalidadesAprobacion.length === 0 ||
-        filtros.modalidadesAprobacion.includes(asignatura.modalidadAprobacion)
+      const coincideModalidad = (() => {
+        if (filtros.modalidadAprobacion === "todas") return true
+        
+        const modalidadReal = (!asignatura.modalidadAprobacion || 
+                              asignatura.modalidadAprobacion === "NO CORRESPONDE" || 
+                              asignatura.modalidadAprobacion === "No corresponde" || 
+                              asignatura.modalidadAprobacion.toLowerCase() === "no especificada") 
+                              ? "Trabajo final" 
+                              : asignatura.modalidadAprobacion
+        
+        return modalidadReal === filtros.modalidadAprobacion
+      })()
 
       // Filtro por orientación según el plan seleccionado
       const coincideOrientacion = (() => {
@@ -290,14 +314,14 @@ export function HorariosDisplay() {
     setFiltros({
       busqueda: "",
       tiposAsignatura: [],
-      modalidadesAprobacion: [],
+      modalidadAprobacion: "todas",
       orientaciones: [],
       planEstudios: filtros.planEstudios, // Mantener el plan seleccionado
     })
   }
 
   // Función para manejar cambios en checkboxes
-  const toggleFiltro = (tipo: "tiposAsignatura" | "modalidadesAprobacion" | "orientaciones", valor: string) => {
+  const toggleFiltro = (tipo: "tiposAsignatura" | "orientaciones", valor: string) => {
     setFiltros((prev) => ({
       ...prev,
       [tipo]: prev[tipo].includes(valor) ? prev[tipo].filter((item) => item !== valor) : [...prev[tipo], valor],
@@ -668,34 +692,32 @@ export function HorariosDisplay() {
         <CardContent className="pt-6">
           <div className="space-y-4">
             {/* Switch para Plan de Estudios */}
-            <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
-              <div className="flex items-center space-x-3">
-                <BookOpen className="h-5 w-5 text-uba-primary" />
-                <div>
-                  <h4 className="text-sm font-medium text-uba-primary">Plan de Estudios</h4>
-                  <p className="text-xs text-gray-600">
-                    {filtros.planEstudios === "2023" ? "Plan 2023 - Nombres actuales" : "Plan 1985 - Nombres históricos"}
-                  </p>
+            <div className="flex items-center justify-between p-4 bg-[#1c2554] text-white rounded-lg border">
+              <div className="flex items-center space-x-4">
+                <h4 className="text-base font-medium">Plan de Estudios</h4>
+                <div className="flex items-center space-x-3">
+                  <span className={`text-sm ${filtros.planEstudios === "1985" ? "font-medium" : "opacity-70"}`}>
+                    1985
+                  </span>
+                  <Switch
+                    checked={filtros.planEstudios === "2023"}
+                    onCheckedChange={(checked) => {
+                      setFiltros((prev) => ({ 
+                        ...prev, 
+                        planEstudios: checked ? "2023" : "1985",
+                        orientaciones: [] // Limpiar orientaciones al cambiar de plan
+                      }))
+                    }}
+                    className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
+                  />
+                  <span className={`text-sm ${filtros.planEstudios === "2023" ? "font-medium" : "opacity-70"}`}>
+                    2023
+                  </span>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <span className={`text-sm ${filtros.planEstudios === "1985" ? "font-medium text-uba-primary" : "text-gray-500"}`}>
-                  1985
-                </span>
-                <Switch
-                  checked={filtros.planEstudios === "2023"}
-                  onCheckedChange={(checked) => {
-                    setFiltros((prev) => ({ 
-                      ...prev, 
-                      planEstudios: checked ? "2023" : "1985",
-                      orientaciones: [] // Limpiar orientaciones al cambiar de plan
-                    }))
-                  }}
-                />
-                <span className={`text-sm ${filtros.planEstudios === "2023" ? "font-medium text-uba-primary" : "text-gray-500"}`}>
-                  2023
-                </span>
-              </div>
+              <p className="text-xs opacity-80">
+                {filtros.planEstudios === "2023" ? "Plan 2023 - Nombres actuales" : "Plan 1985 - Nombres históricos"}
+              </p>
             </div>
 
             {/* Campo de búsqueda */}
@@ -731,27 +753,6 @@ export function HorariosDisplay() {
                 </div>
               )}
 
-              {/* Filtros por modalidad de aprobación */}
-              {valoresUnicos.modalidadesAprobacion.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-medium text-uba-primary mb-3">Modalidad de aprobación</h4>
-                  <div className="space-y-2">
-                    {valoresUnicos.modalidadesAprobacion.map((modalidad) => (
-                      <div key={modalidad} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`modalidad-${modalidad}`}
-                          checked={filtros.modalidadesAprobacion.includes(modalidad)}
-                          onCheckedChange={() => toggleFiltro("modalidadesAprobacion", modalidad)}
-                        />
-                        <label htmlFor={`modalidad-${modalidad}`} className="text-sm text-gray-700 cursor-pointer">
-                          {modalidad}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Filtros por orientación */}
               <div>
                 <h4 className="text-sm font-medium text-uba-primary mb-3">Carrera/Orientación</h4>
@@ -769,6 +770,42 @@ export function HorariosDisplay() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Filtros por modalidad de aprobación */}
+              <div>
+                <h4 className="text-sm font-medium text-uba-primary mb-3">Modalidad de aprobación</h4>
+                <RadioGroup
+                  value={filtros.modalidadAprobacion}
+                  onValueChange={(value) => setFiltros((prev) => ({ ...prev, modalidadAprobacion: value }))}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="todas" id="modalidad-todas" />
+                      <label htmlFor="modalidad-todas" className="text-sm text-gray-700 cursor-pointer">
+                        Todas
+                      </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Examen final" id="modalidad-examen" />
+                      <label htmlFor="modalidad-examen" className="text-sm text-gray-700 cursor-pointer">
+                        Examen final
+                      </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Promoción directa" id="modalidad-promocion" />
+                      <label htmlFor="modalidad-promocion" className="text-sm text-gray-700 cursor-pointer">
+                        Promoción directa
+                      </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Trabajo final" id="modalidad-trabajo" />
+                      <label htmlFor="modalidad-trabajo" className="text-sm text-gray-700 cursor-pointer">
+                        Trabajo final
+                      </label>
+                    </div>
+                  </div>
+                </RadioGroup>
               </div>
             </div>
 
@@ -874,13 +911,15 @@ export function HorariosDisplay() {
                   <Badge variant="secondary" className="text-xs bg-uba-secondary/20 text-uba-primary">
                     {asignatura.modalidadCursada}
                   </Badge>
-                  {/* Solo mostrar modalidad de aprobación si NO es "No corresponde" */}
-                  {asignatura.modalidadAprobacion !== "NO CORRESPONDE" &&
-                    asignatura.modalidadAprobacion !== "No corresponde" && (
-                      <Badge variant="outline" className="text-xs border-uba-primary text-uba-primary">
-                        {asignatura.modalidadAprobacion}
-                      </Badge>
-                    )}
+                  {/* Mostrar modalidad de aprobación procesada */}
+                  <Badge variant="outline" className="text-xs border-uba-primary text-uba-primary">
+                    {(!asignatura.modalidadAprobacion || 
+                      asignatura.modalidadAprobacion === "NO CORRESPONDE" || 
+                      asignatura.modalidadAprobacion === "No corresponde" || 
+                      asignatura.modalidadAprobacion.toLowerCase() === "no especificada") 
+                      ? "Trabajo final" 
+                      : asignatura.modalidadAprobacion}
+                  </Badge>
                 </div>
 
                 {asignatura.aclaraciones && (
