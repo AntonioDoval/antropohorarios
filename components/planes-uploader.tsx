@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { initializeDefaultData } from "@/lib/default-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -42,6 +43,14 @@ interface PlanConfig {
 }
 
 export function PlanesUploader() {
+  const [hasDefaultData, setHasDefaultData] = useState(false)
+
+  useEffect(() => {
+    initializeDefaultData()
+    const existing = localStorage.getItem("planes-estudios-antropologia")
+    setHasDefaultData(!!existing)
+  }, [])
+
   const [planes, setPlanes] = useState<PlanConfig[]>([
     {
       id: "plan-1985-lic-arqueo",
@@ -337,17 +346,19 @@ export function PlanesUploader() {
           ...p,
           message: {
             type: "success",
-            text: "Plan de estudios guardado exitosamente.",
+            text: "Plan de estudios actualizado exitosamente.",
           },
           preview: null,
           file: null
         } : p
       )
     )
+    setHasDefaultData(true)
   }
 
   const clearAllData = () => {
     localStorage.removeItem("planes-estudios-antropologia")
+    setHasDefaultData(false)
     setPlanes(prevPlanes => 
       prevPlanes.map(p => ({
         ...p,
@@ -372,6 +383,9 @@ export function PlanesUploader() {
             <BookOpen className="h-5 w-5" />
             Configuración del Plan de Estudios
           </CardTitle>
+          <div className="text-sm text-gray-600">
+            <strong>Estado:</strong> {hasDefaultData ? "Datos predeterminados cargados (actualizables mediante nuevos CSV)" : "Sin datos cargados"}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

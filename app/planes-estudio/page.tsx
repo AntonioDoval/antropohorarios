@@ -2,6 +2,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { initializeDefaultData } from "@/lib/default-data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -18,6 +19,7 @@ export default function PlanesEstudioPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    initializeDefaultData()
     const planes = getPlanesDeEstudios()
     setPlanesData(planes)
     setLoading(false)
@@ -25,15 +27,23 @@ export default function PlanesEstudioPage() {
 
   // Obtener el plan actual basado en la selección
   const getCurrentPlan = (): PlanDeEstudios | null => {
-    const orientacionMap: { [key: string]: string } = {
-      "arqueologia": "Licenciatura en Arqueología",
-      "sociocultural": "Licenciatura en Antropología Sociocultural",
-      "profesorado": "Profesorado"
-    }
+    let orientacionBuscada = ""
 
-    const orientacionBuscada = selectedCarrera === "profesorado" 
-      ? "Profesorado" 
-      : orientacionMap[selectedOrientacion]
+    if (selectedCarrera === "profesorado") {
+      if (selectedPlan === "1985") {
+        // Para profesorado 1985, incluir orientación
+        orientacionBuscada = selectedOrientacion === "arqueologia" 
+          ? "Profesorado - Orientación Arqueología"
+          : "Profesorado - Orientación Sociocultural"
+      } else {
+        // Para profesorado 2023, sin orientación específica
+        orientacionBuscada = "Profesorado"
+      }
+    } else if (selectedCarrera === "licenciatura") {
+      orientacionBuscada = selectedOrientacion === "arqueologia" 
+        ? "Licenciatura en Arqueología"
+        : "Licenciatura en Antropología Sociocultural"
+    }
 
     return planesData.find(plan => 
       plan.año === selectedPlan && 
@@ -78,7 +88,13 @@ export default function PlanesEstudioPage() {
   // Obtener título completo del plan
   const getTituloCompleto = () => {
     if (selectedCarrera === "profesorado") {
-      return "Profesorado"
+      if (selectedPlan === "1985") {
+        return selectedOrientacion === "arqueologia" 
+          ? "Profesorado - Orientación Arqueología" 
+          : "Profesorado - Orientación Sociocultural"
+      } else {
+        return "Profesorado"
+      }
     }
     return selectedOrientacion === "arqueologia" 
       ? "Licenciatura - Orientación Arqueología" 
@@ -196,8 +212,8 @@ export default function PlanesEstudioPage() {
               </div>
             </div>
 
-            {/* Orientación (solo para licenciatura) */}
-            {selectedCarrera === "licenciatura" && (
+            {/* Orientación (para licenciatura y profesorado 1985) */}
+            {(selectedCarrera === "licenciatura" || (selectedCarrera === "profesorado" && selectedPlan === "1985")) && (
               <div>
                 <h3 className="text-lg font-medium text-uba-primary mb-3">Orientación</h3>
                 <div className="flex gap-2">

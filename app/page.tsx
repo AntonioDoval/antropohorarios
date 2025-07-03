@@ -1,8 +1,15 @@
-import { Suspense } from "react"
+"use client"
+
+import { useEffect } from "react"
 import { HorariosDisplay } from "@/components/horarios-display"
 import { Footer } from "@/components/footer"
+import { initializeDefaultData } from "@/lib/default-data"
 
 export default function HomePage() {
+  useEffect(() => {
+    initializeDefaultData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header principal */}
