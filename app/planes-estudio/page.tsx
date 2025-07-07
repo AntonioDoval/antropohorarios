@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -163,7 +162,7 @@ export default function PlanesEstudioPage() {
       : "Licenciatura - Orientación Sociocultural"
   }
 
-  const ciclosOrdenados = ["Ciclo de Formación General (CFG)", "Ciclo Profesional Común (CPC)", "Ciclo de Especialización", "Ciclo de Formación Orientado (CFO)"]
+  const ciclosOrdenados = ["Ciclo de Formación General (CFG)", "Ciclo Profesional Común (CPC)", "Ciclo de Especialización", "Ciclo de Formación Orientado (CFO)", "Idiomas"]
 
   return (
     <div className="min-h-screen bg-white">
@@ -325,7 +324,7 @@ export default function PlanesEstudioPage() {
                   .filter(ciclo => materiasPorCiclo[ciclo])
                   .map((ciclo) => {
                     const { materiasObligatorias, gruposElectivos } = agruparMateriasElectivas(materiasPorCiclo[ciclo])
-                    
+
                     return (
                       <Card key={ciclo} className="border-2 border-gray-200">
                         <CardHeader className="bg-gray-50 py-3">
@@ -347,11 +346,27 @@ export default function PlanesEstudioPage() {
                               </ul>
                             )}
 
+                            {/* Título especial para sociocultural 2023 */}
+                            {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).length > 0 && (
+                              <div className="text-sm font-medium text-blue-800 mb-2">
+                                Dos asignaturas a elegir de una misma área:
+                              </div>
+                            )}
+
+                            {/* Título especial para profesorado 2023 */}
+                            {selectedPlan === "2023" && selectedCarrera === "profesorado" && Object.keys(gruposElectivos).filter(key => key.startsWith("eleccion_a_")).length > 0 && (
+                              <div className="text-sm font-medium text-blue-800 mb-2">
+                                Cinco materias a elegir dentro de la oferta de la Licenciatura:
+                              </div>
+                            )}
+
                             {/* Grupos electivos */}
                             {Object.entries(gruposElectivos).map(([key, grupo]) => (
                               <div key={key} className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
                                 <div className="text-sm font-medium text-blue-800 mb-2">
-                                  {grupo.titulo}
+                                  {key.includes("eleccion_b") ? grupo.titulo : 
+                                   (selectedPlan === "2023" && (selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" || selectedCarrera === "profesorado")) ? 
+                                   grupo.titulo : grupo.titulo}
                                 </div>
                                 <ul className="space-y-1">
                                   {grupo.materias.map((materia, index) => (
@@ -359,9 +374,6 @@ export default function PlanesEstudioPage() {
                                       <span className="text-blue-600 font-medium text-sm mt-1">•</span>
                                       <div className="flex-1">
                                         <span className="text-sm text-gray-800">{materia.nombre}</span>
-                                        <Badge variant="secondary" className="ml-2 text-xs bg-blue-100 text-blue-800">
-                                          {materia.electividad}
-                                        </Badge>
                                       </div>
                                     </li>
                                   ))}
@@ -379,7 +391,7 @@ export default function PlanesEstudioPage() {
                   .filter(ciclo => !ciclosOrdenados.includes(ciclo))
                   .map((ciclo) => {
                     const { materiasObligatorias, gruposElectivos } = agruparMateriasElectivas(materiasPorCiclo[ciclo])
-                    
+
                     return (
                       <Card key={ciclo} className="border-2 border-gray-200">
                         <CardHeader className="bg-gray-50 py-3">
@@ -401,11 +413,27 @@ export default function PlanesEstudioPage() {
                               </ul>
                             )}
 
+                            {/* Título especial para sociocultural 2023 */}
+                            {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).length > 0 && (
+                              <div className="text-sm font-medium text-blue-800 mb-2">
+                                Dos asignaturas a elegir de una misma área:
+                              </div>
+                            )}
+
+                            {/* Título especial para profesorado 2023 */}
+                            {selectedPlan === "2023" && selectedCarrera === "profesorado" && Object.keys(gruposElectivos).filter(key => key.startsWith("eleccion_a_")).length > 0 && (
+                              <div className="text-sm font-medium text-blue-800 mb-2">
+                                Cinco materias a elegir dentro de la oferta de la Licenciatura:
+                              </div>
+                            )}
+
                             {/* Grupos electivos */}
                             {Object.entries(gruposElectivos).map(([key, grupo]) => (
                               <div key={key} className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
                                 <div className="text-sm font-medium text-blue-800 mb-2">
-                                  {grupo.titulo}
+                                  {key.includes("eleccion_b") ? grupo.titulo : 
+                                   (selectedPlan === "2023" && (selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" || selectedCarrera === "profesorado")) ? 
+                                   grupo.titulo : grupo.titulo}
                                 </div>
                                 <ul className="space-y-1">
                                   {grupo.materias.map((materia, index) => (
@@ -413,9 +441,6 @@ export default function PlanesEstudioPage() {
                                       <span className="text-blue-600 font-medium text-sm mt-1">•</span>
                                       <div className="flex-1">
                                         <span className="text-sm text-gray-800">{materia.nombre}</span>
-                                        <Badge variant="secondary" className="ml-2 text-xs bg-blue-100 text-blue-800">
-                                          {materia.electividad}
-                                        </Badge>
                                       </div>
                                     </li>
                                   ))}
