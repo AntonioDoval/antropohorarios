@@ -107,16 +107,26 @@ export default function PlanesEstudioPage() {
         }
       } else if (selectedPlan === "2023" && selectedCarrera === "profesorado") {
         // Agrupar por tipo de elección
-        if (materia.electividad.includes("Elección A")) {
-          const orientacionKey = materia.nombre.toLowerCase().includes("arqueolog") ? "eleccion_a_arqueo" : "eleccion_a_socio"
+        if (materia.nombre.toLowerCase().includes("arqueolog")) {
+          const orientacionKey = "prof_arqueo"
           if (!gruposElectivos[orientacionKey]) {
             gruposElectivos[orientacionKey] = {
-              titulo: "Cinco materias a elegir dentro de la oferta de la licenciatura",
+              titulo: "Orientación Arqueología",
               materias: []
             }
           }
           gruposElectivos[orientacionKey].materias.push(materia)
-        } else if (materia.electividad.includes("Elección B")) {
+        } else {
+          const orientacionKey = "prof_socio"
+          if (!gruposElectivos[orientacionKey]) {
+            gruposElectivos[orientacionKey] = {
+              titulo: "Orientación Sociocultural",
+              materias: []
+            }
+          }
+          gruposElectivos[orientacionKey].materias.push(materia)
+        } 
+         if (materia.electividad.includes("Elección B")) {
           if (!gruposElectivos["eleccion_b"]) {
             gruposElectivos["eleccion_b"] = {
               titulo: "2 materias a elección del Departamento de Cs. de la Educación",
@@ -127,7 +137,21 @@ export default function PlanesEstudioPage() {
         } else {
           materiasObligatorias.push(materia)
         }
-      } else {
+      } else if (selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "arqueologia") {
+          if(materia.electividad.includes("Electivas")){
+              const electivasKey = `electivas`;
+              if(!gruposElectivos[electivasKey]){
+                  gruposElectivos[electivasKey] = {
+                      titulo: "Dos materias a elegir entre:",
+                      materias: []
+                  }
+              }
+              gruposElectivos[electivasKey].materias.push(materia);
+          } else {
+              materiasObligatorias.push(materia);
+          }
+      }
+      else {
         // Para otros casos, agrupar por electividad similar
         const electividadKey = `electiva_${materia.electividad}`
         if (!gruposElectivos[electividadKey]) {
@@ -354,9 +378,9 @@ export default function PlanesEstudioPage() {
                             )}
 
                             {/* Título especial para profesorado 2023 */}
-                            {selectedPlan === "2023" && selectedCarrera === "profesorado" && Object.keys(gruposElectivos).filter(key => key.startsWith("eleccion_a_")).length > 0 && (
+                            {selectedPlan === "2023" && selectedCarrera === "profesorado" && (Object.keys(gruposElectivos).includes("prof_arqueo") || Object.keys(gruposElectivos).includes("prof_socio")) && (
                               <div className="text-sm font-medium text-blue-800 mb-2">
-                                Cinco materias a elegir dentro de la oferta de la Licenciatura:
+                                Cinco materias a elegir dentro de la oferta de cualquiera de las orientaciones de la Licenciatura:
                               </div>
                             )}
 
@@ -364,9 +388,7 @@ export default function PlanesEstudioPage() {
                             {Object.entries(gruposElectivos).map(([key, grupo]) => (
                               <div key={key} className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
                                 <div className="text-sm font-medium text-blue-800 mb-2">
-                                  {key.includes("eleccion_b") ? grupo.titulo : 
-                                   (selectedPlan === "2023" && (selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" || selectedCarrera === "profesorado")) ? 
-                                   grupo.titulo : grupo.titulo}
+                                  {grupo.titulo}
                                 </div>
                                 <ul className="space-y-1">
                                   {grupo.materias.map((materia, index) => (
@@ -421,9 +443,9 @@ export default function PlanesEstudioPage() {
                             )}
 
                             {/* Título especial para profesorado 2023 */}
-                            {selectedPlan === "2023" && selectedCarrera === "profesorado" && Object.keys(gruposElectivos).filter(key => key.startsWith("eleccion_a_")).length > 0 && (
+                            {selectedPlan === "2023" && selectedCarrera === "profesorado" && (Object.keys(gruposElectivos).includes("prof_arqueo") || Object.keys(gruposElectivos).includes("prof_socio")) && (
                               <div className="text-sm font-medium text-blue-800 mb-2">
-                                Cinco materias a elegir dentro de la oferta de la Licenciatura:
+                                Cinco materias a elegir dentro de la oferta de cualquiera de las orientaciones de la Licenciatura:
                               </div>
                             )}
 
@@ -431,9 +453,7 @@ export default function PlanesEstudioPage() {
                             {Object.entries(gruposElectivos).map(([key, grupo]) => (
                               <div key={key} className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
                                 <div className="text-sm font-medium text-blue-800 mb-2">
-                                  {key.includes("eleccion_b") ? grupo.titulo : 
-                                   (selectedPlan === "2023" && (selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" || selectedCarrera === "profesorado")) ? 
-                                   grupo.titulo : grupo.titulo}
+                                  {grupo.titulo}
                                 </div>
                                 <ul className="space-y-1">
                                   {grupo.materias.map((materia, index) => (
