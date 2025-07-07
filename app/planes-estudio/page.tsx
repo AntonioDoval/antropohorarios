@@ -370,48 +370,106 @@ export default function PlanesEstudioPage() {
                           <div className="space-y-4">
                             {/* Materias obligatorias */}
                             {materiasObligatorias.length > 0 && (
-                              <ul className="space-y-2">
+                              <div className="space-y-2">
                                 {materiasObligatorias.map((materia, index) => (
-                                  <li key={index} className="flex items-start gap-2">
+                                  <div key={index} className="flex items-start gap-2 py-1">
                                     <span className="text-uba-primary font-medium text-sm mt-1">•</span>
                                     <div className="flex-1">
                                       <span className="text-sm text-gray-800">{materia.nombre}</span>
                                     </div>
-                                  </li>
+                                  </div>
                                 ))}
-                              </ul>
+                              </div>
                             )}
 
                             {/* Título especial para sociocultural 2023 */}
-                            {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).length > 0 && (
-                              <div className="text-sm font-medium text-blue-800 mb-2">
-                                Dos asignaturas a elegir de una misma área:
+                            {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).filter(k => k.startsWith("area_")).length > 0 && (
+                              <div className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400 mt-4">
+                                <div className="text-sm font-medium text-blue-800 mb-3">
+                                  Dos materias a elegir dentro de la misma área temática:
+                                </div>
+                                <div className="space-y-4">
+                                  {Object.entries(gruposElectivos)
+                                    .filter(([key]) => key.startsWith("area_"))
+                                    .map(([key, grupo]) => (
+                                    <div key={key} className="bg-white p-3 rounded border">
+                                      <div className="text-sm font-medium text-blue-800 mb-1">
+                                        {grupo.titulo}
+                                      </div>
+                                      {grupo.subtitle && (
+                                        <div className="text-xs text-gray-600 mb-2 italic">
+                                          ▼ {grupo.subtitle}
+                                        </div>
+                                      )}
+                                      <div className="space-y-1">
+                                        {grupo.materias.map((materia, index) => (
+                                          <div key={index} className="flex items-start gap-2">
+                                            <span className="text-blue-600 font-medium text-sm mt-1">•</span>
+                                            <div className="flex-1">
+                                              <span className="text-sm text-gray-800">{materia.nombre}</span>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             )}
 
                             {/* Título especial para profesorado 2023 */}
                             {selectedPlan === "2023" && selectedCarrera === "profesorado" && (Object.keys(gruposElectivos).includes("prof_arqueo") || Object.keys(gruposElectivos).includes("prof_socio")) && (
-                              <div className="text-sm font-medium text-blue-800 mb-2">
-                                Cinco materias a elegir dentro de la oferta de cualquiera de las orientaciones de la Licenciatura:
+                              <div className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400 mt-4">
+                                <div className="text-sm font-medium text-blue-800 mb-3">
+                                  Cinco materias a elegir dentro de la oferta de cualquiera de las orientaciones de la Licenciatura:
+                                </div>
+                                <div className="space-y-3">
+                                  {Object.entries(gruposElectivos)
+                                    .filter(([key]) => key === "prof_arqueo" || key === "prof_socio")
+                                    .map(([key, grupo]) => (
+                                    <div key={key} className="bg-white p-3 rounded border">
+                                      <div className="text-sm font-medium text-blue-800 mb-2">
+                                        {grupo.titulo}
+                                      </div>
+                                      <div className="space-y-1">
+                                        {grupo.materias.map((materia, index) => (
+                                          <div key={index} className="flex items-start gap-2">
+                                            <span className="text-blue-600 font-medium text-sm mt-1">•</span>
+                                            <div className="flex-1">
+                                              <span className="text-sm text-gray-800">{materia.nombre}</span>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             )}
 
-                            {/* Grupos electivos */}
-                            {Object.entries(gruposElectivos).map(([key, grupo]) => (
+                            {/* Grupos electivos individuales */}
+                            {Object.entries(gruposElectivos)
+                              .filter(([key]) => !key.startsWith("area_") && key !== "prof_arqueo" && key !== "prof_socio")
+                              .map(([key, grupo]) => (
                               <div key={key} className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
                                 <div className="text-sm font-medium text-blue-800 mb-2">
                                   {grupo.titulo}
                                 </div>
-                                <ul className="space-y-1">
+                                {grupo.subtitle && (
+                                  <div className="text-xs text-gray-600 mb-2 italic">
+                                    ▼ {grupo.subtitle}
+                                  </div>
+                                )}
+                                <div className="space-y-1">
                                   {grupo.materias.map((materia, index) => (
-                                    <li key={index} className="flex items-start gap-2">
+                                    <div key={index} className="flex items-start gap-2">
                                       <span className="text-blue-600 font-medium text-sm mt-1">•</span>
                                       <div className="flex-1">
                                         <span className="text-sm text-gray-800">{materia.nombre}</span>
                                       </div>
-                                    </li>
+                                    </div>
                                   ))}
-                                </ul>
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -435,48 +493,106 @@ export default function PlanesEstudioPage() {
                           <div className="space-y-4">
                             {/* Materias obligatorias */}
                             {materiasObligatorias.length > 0 && (
-                              <ul className="space-y-2">
+                              <div className="space-y-2">
                                 {materiasObligatorias.map((materia, index) => (
-                                  <li key={index} className="flex items-start gap-2">
+                                  <div key={index} className="flex items-start gap-2 py-1">
                                     <span className="text-uba-primary font-medium text-sm mt-1">•</span>
                                     <div className="flex-1">
                                       <span className="text-sm text-gray-800">{materia.nombre}</span>
                                     </div>
-                                  </li>
+                                  </div>
                                 ))}
-                              </ul>
+                              </div>
                             )}
 
                             {/* Título especial para sociocultural 2023 */}
-                            {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).length > 0 && (
-                              <div className="text-sm font-medium text-blue-800 mb-2">
-                                Dos asignaturas a elegir de una misma área:
+                            {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).filter(k => k.startsWith("area_")).length > 0 && (
+                              <div className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400 mt-4">
+                                <div className="text-sm font-medium text-blue-800 mb-3">
+                                  Dos materias a elegir dentro de la misma área temática:
+                                </div>
+                                <div className="space-y-4">
+                                  {Object.entries(gruposElectivos)
+                                    .filter(([key]) => key.startsWith("area_"))
+                                    .map(([key, grupo]) => (
+                                    <div key={key} className="bg-white p-3 rounded border">
+                                      <div className="text-sm font-medium text-blue-800 mb-1">
+                                        {grupo.titulo}
+                                      </div>
+                                      {grupo.subtitle && (
+                                        <div className="text-xs text-gray-600 mb-2 italic">
+                                          ▼ {grupo.subtitle}
+                                        </div>
+                                      )}
+                                      <div className="space-y-1">
+                                        {grupo.materias.map((materia, index) => (
+                                          <div key={index} className="flex items-start gap-2">
+                                            <span className="text-blue-600 font-medium text-sm mt-1">•</span>
+                                            <div className="flex-1">
+                                              <span className="text-sm text-gray-800">{materia.nombre}</span>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             )}
 
                             {/* Título especial para profesorado 2023 */}
                             {selectedPlan === "2023" && selectedCarrera === "profesorado" && (Object.keys(gruposElectivos).includes("prof_arqueo") || Object.keys(gruposElectivos).includes("prof_socio")) && (
-                              <div className="text-sm font-medium text-blue-800 mb-2">
-                                Cinco materias a elegir dentro de la oferta de cualquiera de las orientaciones de la Licenciatura:
+                              <div className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400 mt-4">
+                                <div className="text-sm font-medium text-blue-800 mb-3">
+                                  Cinco materias a elegir dentro de la oferta de cualquiera de las orientaciones de la Licenciatura:
+                                </div>
+                                <div className="space-y-3">
+                                  {Object.entries(gruposElectivos)
+                                    .filter(([key]) => key === "prof_arqueo" || key === "prof_socio")
+                                    .map(([key, grupo]) => (
+                                    <div key={key} className="bg-white p-3 rounded border">
+                                      <div className="text-sm font-medium text-blue-800 mb-2">
+                                        {grupo.titulo}
+                                      </div>
+                                      <div className="space-y-1">
+                                        {grupo.materias.map((materia, index) => (
+                                          <div key={index} className="flex items-start gap-2">
+                                            <span className="text-blue-600 font-medium text-sm mt-1">•</span>
+                                            <div className="flex-1">
+                                              <span className="text-sm text-gray-800">{materia.nombre}</span>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             )}
 
-                            {/* Grupos electivos */}
-                            {Object.entries(gruposElectivos).map(([key, grupo]) => (
+                            {/* Grupos electivos individuales */}
+                            {Object.entries(gruposElectivos)
+                              .filter(([key]) => !key.startsWith("area_") && key !== "prof_arqueo" && key !== "prof_socio")
+                              .map(([key, grupo]) => (
                               <div key={key} className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
                                 <div className="text-sm font-medium text-blue-800 mb-2">
                                   {grupo.titulo}
                                 </div>
-                                <ul className="space-y-1">
+                                {grupo.subtitle && (
+                                  <div className="text-xs text-gray-600 mb-2 italic">
+                                    ▼ {grupo.subtitle}
+                                  </div>
+                                )}
+                                <div className="space-y-1">
                                   {grupo.materias.map((materia, index) => (
-                                    <li key={index} className="flex items-start gap-2">
+                                    <div key={index} className="flex items-start gap-2">
                                       <span className="text-blue-600 font-medium text-sm mt-1">•</span>
                                       <div className="flex-1">
                                         <span className="text-sm text-gray-800">{materia.nombre}</span>
                                       </div>
-                                    </li>
+                                    </div>
                                   ))}
-                                </ul>
+                                </div>
                               </div>
                             ))}
                           </div>
