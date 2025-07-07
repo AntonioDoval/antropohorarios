@@ -163,7 +163,15 @@ export function CSVUploader() {
         console.log(`\nProcesando fila ${i}:`)
 
         // Obtener tipo de asignatura (columna C)
-        const tipoAsignatura = row["Tipo de asignatura"]?.trim() || ""
+        const tipoAsignaturaOriginal = row["Tipo de asignatura"]?.trim() || ""
+        
+        // Mapear tipos de asignatura para consistencia con filtros
+        let tipoAsignatura = tipoAsignaturaOriginal
+        if (tipoAsignaturaOriginal === "Materia cuatrimestral regular" || 
+            tipoAsignaturaOriginal === "Materia cuatrimestral optativa/electiva") {
+          tipoAsignatura = "Materia cuatrimestral"
+        }
+        
         console.log("Tipo de asignatura:", tipoAsignatura)
 
         // Obtener título según el tipo de asignatura

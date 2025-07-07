@@ -167,11 +167,13 @@ export function HorariosDisplay() {
   }
 
   const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
-    const tiposAsignatura = [...new Set(asignaturas.map((a) => a.tipoAsignatura).filter(Boolean))]
-    
-    if (!tiposAsignatura.includes("Seminario PST")) {
-      tiposAsignatura.push("Seminario PST")
-    }
+    // Tipos de asignatura en el orden solicitado
+    const tiposAsignatura = [
+      "Materia cuatrimestral",
+      "Seminario regular", 
+      "Seminario PST",
+      "Materia o seminario anual"
+    ]
 
     const modalidadesAprobacion = [
       ...new Set(
@@ -190,24 +192,16 @@ export function HorariosDisplay() {
     ]
 
     return {
-      tiposAsignatura: tiposAsignatura.sort(),
+      tiposAsignatura,
       modalidadesAprobacion: modalidadesAprobacion.sort(),
     }
   }
 
   const getOrientacionesPorPlan = (plan: "2023" | "1985"): string[] => {
-    if (plan === "1985") {
-      return [
-        "Profesorado - Orientación Sociocultural",
-        "Profesorado - Orientación Arqueología",
-        "Licenciatura en Antropología Sociocultural",
-        "Licenciatura en Arqueología"
-      ]
-    }
     return [
       "Profesorado",
-      "Licenciatura en Antropología Sociocultural", 
-      "Licenciatura en Arqueología"
+      "Licenciatura - Sociocultural", 
+      "Licenciatura - Arqueología"
     ]
   }
 
@@ -222,9 +216,21 @@ export function HorariosDisplay() {
         nombreParaBusqueda.toLowerCase().includes(filtros.busqueda.toLowerCase()) ||
         asignatura.catedra.toLowerCase().includes(filtros.busqueda.toLowerCase())
 
-      const coincideTipo =
-        filtros.tiposAsignatura.length === 0 ||
-        (asignatura.tipoAsignatura && filtros.tiposAsignatura.includes(asignatura.tipoAsignatura))
+      const coincideTipo = (() => {
+        if (filtros.tiposAsignatura.length === 0) return true
+        
+        if (!asignatura.tipoAsignatura) return false
+        
+        // Agrupar materias cuatrimestrales regulares y optativas bajo "Materia cuatrimestral"
+        if (filtros.tiposAsignatura.includes("Materia cuatrimestral")) {
+          if (asignatura.tipoAsignatura === "Materia cuatrimestral regular" || 
+              asignatura.tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
+            return true
+          }
+        }
+        
+        return filtros.tiposAsignatura.includes(asignatura.tipoAsignatura)
+      })()
 
       const coincideModalidad = (() => {
         if (filtros.modalidadAprobacion === "todas") return true
@@ -670,11 +676,11 @@ export function HorariosDisplay() {
               />
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-4">
               {valoresUnicos.tiposAsignatura.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-uba-primary mb-3">Tipo de asignatura</h4>
-                  <div className="space-y-2">
+                  <h4 className="text-xs font-medium text-uba-primary mb-2">Tipo de asignatura</h4>
+                  <div className="space-y-1">
                     {valoresUnicos.tiposAsignatura.map((tipo) => (
                       <div key={tipo} className="flex items-center space-x-2">
                         <Checkbox
@@ -682,7 +688,7 @@ export function HorariosDisplay() {
                           checked={filtros.tiposAsignatura.includes(tipo)}
                           onCheckedChange={() => toggleFiltro("tiposAsignatura", tipo)}
                         />
-                        <label htmlFor={`tipo-${tipo}`} className="text-sm text-gray-700 cursor-pointer">
+                        <label htmlFor={`tipo-${tipo}`} className="text-xs text-gray-700 cursor-pointer leading-tight">
                           {tipo}
                         </label>
                       </div>
@@ -692,8 +698,8 @@ export function HorariosDisplay() {
               )}
 
               <div>
-                <h4 className="text-sm font-medium text-uba-primary mb-3">Carrera/Orientación</h4>
-                <div className="space-y-2">
+                <h4 className="text-xs font-medium text-uba-primary mb-2">Carrera/Orientación</h4>
+                <div className="space-y-1">
                   {opcionesOrientacion.map((orientacion) => (
                     <div key={orientacion} className="flex items-center space-x-2">
                       <Checkbox
@@ -701,7 +707,7 @@ export function HorariosDisplay() {
                         checked={filtros.orientaciones.includes(orientacion)}
                         onCheckedChange={() => toggleFiltro("orientaciones", orientacion)}
                       />
-                      <label htmlFor={`orientacion-${orientacion}`} className="text-sm text-gray-700 cursor-pointer">
+                      <label htmlFor={`orientacion-${orientacion}`} className="text-xs text-gray-700 cursor-pointer leading-tight">
                         {orientacion}
                       </label>
                     </div>
@@ -710,33 +716,33 @@ export function HorariosDisplay() {
               </div>
 
               <div>
-                <h4 className="text-sm font-medium text-uba-primary mb-3">Modalidad de aprobación</h4>
+                <h4 className="text-xs font-medium text-uba-primary mb-2">Modalidad de aprobación</h4>
                 <RadioGroup
                   value={filtros.modalidadAprobacion}
                   onValueChange={(value) => setFiltros((prev) => ({ ...prev, modalidadAprobacion: value }))}
                 >
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="todas" id="modalidad-todas" />
-                      <label htmlFor="modalidad-todas" className="text-sm text-gray-700 cursor-pointer">
+                      <label htmlFor="modalidad-todas" className="text-xs text-gray-700 cursor-pointer leading-tight">
                         Todas
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="Examen final" id="modalidad-examen" />
-                      <label htmlFor="modalidad-examen" className="text-sm text-gray-700 cursor-pointer">
+                      <label htmlFor="modalidad-examen" className="text-xs text-gray-700 cursor-pointer leading-tight">
                         Examen final
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="Promoción directa" id="modalidad-promocion" />
-                      <label htmlFor="modalidad-promocion" className="text-sm text-gray-700 cursor-pointer">
+                      <label htmlFor="modalidad-promocion" className="text-xs text-gray-700 cursor-pointer leading-tight">
                         Promoción directa
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="Trabajo final" id="modalidad-trabajo" />
-                      <label htmlFor="modalidad-trabajo" className="text-sm text-gray-700 cursor-pointer">
+                      <label htmlFor="modalidad-trabajo" className="text-xs text-gray-700 cursor-pointer leading-tight">
                         Trabajo final
                       </label>
                     </div>

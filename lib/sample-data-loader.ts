@@ -88,8 +88,8 @@ export function loadSamplePlanes() {
   return planes
 }
 
-export function loadSampleData(): SampleHorario[] {
-  return loadSampleHorarios()
+export async function loadSampleData() {
+  return []
 }
 
 export function loadSampleHorarios(): SampleHorario[] {
