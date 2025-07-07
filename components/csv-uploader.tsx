@@ -1,4 +1,3 @@
-
 "use client"
 
 import type React from "react"
@@ -144,226 +143,144 @@ export function CSVUploader() {
       const headers = parseCSVLine(lines[0])
       const data: Asignatura[] = []
 
-      console.log(`Procesando ${lines.length - 1} filas de datos`)
-      console.log("Headers encontrados:", headers)
-
       for (let i = 1; i < lines.length; i++) {
-        const values = parseCSVLine(lines[i])
-
-        // Asegurar que tenemos suficientes columnas para procesar
-        while (values.length < headers.length) {
-          values.push("")
-        }
-
-        const row: Record<string, string> = {}
-        headers.forEach((header, index) => {
-          row[header] = values[index] || ""
-        })
-
+        const row = parseCSVLine(lines[i])
         console.log(`\nProcesando fila ${i}:`)
 
-        // Obtener tipo de asignatura (columna C)
-        const tipoAsignaturaOriginal = row["Tipo de asignatura"]?.trim() || ""
-        
-        // Mapear tipos de asignatura para consistencia con filtros
-        let tipoAsignatura = tipoAsignaturaOriginal
-        if (tipoAsignaturaOriginal === "Materia cuatrimestral regular" || 
-            tipoAsignaturaOriginal === "Materia cuatrimestral optativa/electiva") {
-          tipoAsignatura = "Materia cuatrimestral"
+        if (row.length < headers.length) {
+          console.log(`Fila ${i} saltada: datos incompletos`)
+          continue
         }
-        
+
+        // Determinar tipo de asignatura y título
+        const tipoAsignatura = row[headers.indexOf("Tipo de asignatura")] || ""
         console.log("Tipo de asignatura:", tipoAsignatura)
 
-        // Obtener título según el tipo de asignatura
-        const tituloSeminario = row["Título del seminario"]?.trim() || ""
-        const tituloAnual = row["Título de la asignatura anual"]?.trim() || ""
-        const tituloCuatrimestral = row["Título de materia cuatrimestral"]?.trim() || ""
-        const tituloOptativa = row["Título de materia optativa/electiva"]?.trim() || ""
-
         let titulo = ""
+        let catedra = ""
+        let modalidadAprobacion = "Promoción Directa"
+        let modalidadCursada = "Presencial"
+        let orientacion = ""
 
-        // Determinar título según tipo de asignatura
-        if (tipoAsignatura === "Seminario regular" && tituloSeminario) {
-          titulo = tituloSeminario
-        } else if (tipoAsignatura === "Materia o seminario anual" && tituloAnual) {
-          titulo = tituloAnual
-        } else if (tipoAsignatura === "Materia cuatrimestral regular" && tituloCuatrimestral) {
-          titulo = tituloCuatrimestral
-        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva" && tituloOptativa) {
-          titulo = tituloOptativa
+        // Determinar título según tipo - revisar todos los campos posibles
+        if (tipoAsignatura.includes("Seminario regular")) {
+          titulo = row[headers.indexOf("Título del seminario")] || ""
+          catedra = row[headers.indexOf("Cátedra del seminario")] || ""
+          orientacion = row[headers.indexOf("Orientación del seminario")] || ""
+        } else if (tipoAsignatura.includes("Seminario PST")) {
+          titulo = row[headers.indexOf("Título del seminario")] || ""
+          catedra = row[headers.indexOf("Cátedra del seminario")] || ""
+          orientacion = row[headers.indexOf("Orientación del seminario")] || ""
+        } else if (tipoAsignatura.includes("anual")) {
+          titulo = row[headers.indexOf("Título de la asignatura anual")] || ""
+          catedra = row[headers.indexOf("Cátedra de asignatura anual")] || ""
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada de la asignatura anual")] || "Presencial"
+        } else if (tipoAsignatura.includes("cuatrimestral regular") || tipoAsignatura === "Materia cuatrimestral") {
+          titulo = row[headers.indexOf("Título de materia cuatrimestral")] || ""
+          catedra = row[headers.indexOf("Cátedra de la materia")] || ""
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la materia")] || "Promoción Directa"
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada de la materia")] || "Presencial"
+        } else if (tipoAsignatura.includes("optativa") || tipoAsignatura.includes("electiva")) {
+          titulo = row[headers.indexOf("Título de materia optativa/electiva")] || ""
+          catedra = row[headers.indexOf("Cátedra de la materia optativa/electiva")] || ""
+          orientacion = row[headers.indexOf("Orientación (materia optativa/electiva)")] || ""
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación (materia optativa/electiva)")] || "Promoción Directa"
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada (materia optativa/electiva)")] || "Presencial"
         }
 
         console.log("Título determinado:", titulo)
 
-        if (!titulo) {
+        if (!titulo.trim()) {
           console.log(`Fila ${i} saltada: sin título de asignatura`)
           continue
         }
 
-        // Obtener cátedra según el tipo de asignatura
-        let catedra = "No especificada"
-        if (tipoAsignatura === "Seminario regular") {
-          catedra = row["Cátedra del seminario"]?.trim() || "No especificada"
-        } else if (tipoAsignatura === "Materia o seminario anual") {
-          catedra = row["Cátedra de asignatura anual"]?.trim() || "No especificada"
-        } else if (tipoAsignatura === "Materia cuatrimestral regular") {
-          catedra = row["Cátedra de la materia"]?.trim() || "No especificada"
-        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
-          catedra = row["Cátedra de la materia optativa/electiva"]?.trim() || "No especificada"
-        }
-
-        // Obtener modalidades según el tipo de asignatura
-        let modalidadAprobacion = "No especificado"
-        let modalidadCursada = "Presencial"
-        
-        if (tipoAsignatura === "Seminario regular") {
-          modalidadAprobacion = "Trabajo final"
-          modalidadCursada = row["Modalidad de cursada del seminario"]?.trim() || "Presencial"
-        } else if (tipoAsignatura === "Materia o seminario anual") {
-          modalidadAprobacion = "Trabajo final"
-          modalidadCursada = row["Modalidad de cursada de la asignatura anual"]?.trim() || "Presencial"
-        } else if (tipoAsignatura === "Materia cuatrimestral regular") {
-          modalidadAprobacion = row["Modalidad de aprobación de la materia"]?.trim() || "Examen final"
-          modalidadCursada = row["Modalidad de cursada de la materia"]?.trim() || "Presencial"
-        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
-          modalidadAprobacion = row["Modalidad de aprobación (materia optativa/electiva)"]?.trim() || "Examen final"
-          modalidadCursada = row["Modalidad de cursada (materia optativa/electiva)"]?.trim() || "Presencial"
-        }
-
-        // Obtener orientación según el tipo de asignatura
-        let orientacionAsignatura = undefined
-        if (tipoAsignatura === "Seminario regular") {
-          orientacionAsignatura = row["Orientación del seminario"]?.trim() || undefined
-        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
-          orientacionAsignatura = row["Orientación (materia optativa/electiva)"]?.trim() || undefined
-        } else if (tipoAsignatura === "Materia o seminario anual") {
-          orientacionAsignatura = row["Orientación de la asignatura anual"]?.trim() || undefined
-        }
-
-        // Obtener aclaraciones
-        const aclaraciones = row["De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)"]?.trim() || 
-                           row["Aclaraciones"]?.trim() || undefined
-
-        // Procesar clases y agrupaciones
+        // Procesar clases
         const clases: Clase[] = []
-        const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
+        let claseId = 1
 
-        // Procesar teóricos
-        const teorico1Dia = row["Teórico 1 - Día"]?.trim()
-        const teorico1Inicio = row["Teórico 1 - horario inicio"]?.trim()
-        const teorico1Fin = row["Teórico 1 - horario finalización"]?.trim()
-        const agregarOtroTeorico = row["¿Agregar otra clase de teóricos?"]?.trim()
-        const relacionTeoricos = row["Indicar relación entre los dos horarios de teóricos"]?.trim()
-        const teorico2Dia = row["Teórico 2 - Día"]?.trim()
-        const teorico2Inicio = row["Teórico 2 - horario inicio"]?.trim()
-        const teorico2Fin = row["Teórico 2 - horario finalización"]?.trim()
+        // Teóricos
+        const teorico1Dia = row[headers.indexOf("Teórico 1 - Día")] || ""
+        const teorico1Inicio = row[headers.indexOf("Teórico 1 - horario inicio")] || ""
+        const teorico1Fin = row[headers.indexOf("Teórico 1 - horario finalización")] || ""
 
         console.log(`Procesando teóricos - Día: ${teorico1Dia}, Inicio: ${teorico1Inicio}, Fin: ${teorico1Fin}`)
 
-        // Agregar primer teórico si existe
         if (teorico1Dia && teorico1Inicio && teorico1Fin) {
-          const horario1 = `${teorico1Inicio} - ${teorico1Fin}`
           clases.push({
-            id: `${data.length + 1}-teorico-1`,
+            id: `clase-${claseId++}`,
             tipo: "Teórico",
             numero: 1,
             dia: teorico1Dia,
-            horario: horario1,
+            horario: `${teorico1Inicio} - ${teorico1Fin}`,
           })
-          console.log(`Teórico 1 agregado: ${teorico1Dia} ${horario1}`)
-
-          // Agregar segundo teórico si existe
-          if (agregarOtroTeorico === "Sí" && teorico2Dia && teorico2Inicio && teorico2Fin) {
-            const horario2 = `${teorico2Inicio} - ${teorico2Fin}`
-            clases.push({
-              id: `${data.length + 1}-teorico-2`,
-              tipo: "Teórico",
-              numero: 2,
-              dia: teorico2Dia,
-              horario: horario2,
-            })
-            console.log(`Teórico 2 agregado: ${teorico2Dia} ${horario2}`)
-
-            // Configurar agrupación de teóricos
-            if (relacionTeoricos && relacionTeoricos.toLowerCase().includes("conjunto")) {
-              agrupacionClases["Teórico"] = "conjunto"
-            } else {
-              agrupacionClases["Teórico"] = "elegir"
-            }
-          }
+          console.log(`Teórico 1 agregado: ${teorico1Dia} ${teorico1Inicio} - ${teorico1Fin}`)
         }
 
-        // Procesar teórico-prácticos
-        const agregarTP = row["¿Agregar clases de teórico-prácticos?"]?.trim()
-        if (agregarTP === "Sí") {
-          const tp1Dia = row["Teórico-Práctico 1 - Día"]?.trim()
-          const tp1Inicio = row["Teórico-Práctico 1 - horario inicio"]?.trim()
-          const tp1Fin = row["Teórico-Práctico 1 - horario finalización"]?.trim()
+        // Teórico 2 (si existe)
+        const teorico2Dia = row[headers.indexOf("Teórico 2 - Día")] || ""
+        const teorico2Inicio = row[headers.indexOf("Teórico 2 - horario inicio")] || ""
+        const teorico2Fin = row[headers.indexOf("Teórico 2 - horario finalización")] || ""
 
-          if (tp1Dia && tp1Inicio && tp1Fin) {
-            const horarioTP = `${tp1Inicio} - ${tp1Fin}`
-            clases.push({
-              id: `${data.length + 1}-teoricopractico-1`,
-              tipo: "Teórico-Práctico",
-              numero: 1,
-              dia: tp1Dia,
-              horario: horarioTP,
-            })
-          }
+        if (teorico2Dia && teorico2Inicio && teorico2Fin) {
+          clases.push({
+            id: `clase-${claseId++}`,
+            tipo: "Teórico",
+            numero: 2,
+            dia: teorico2Dia,
+            horario: `${teorico2Inicio} - ${teorico2Fin}`,
+          })
+          console.log(`Teórico 2 agregado: ${teorico2Dia} ${teorico2Inicio} - ${teorico2Fin}`)
         }
 
-        // Procesar prácticos
-        const agregarPracticos = row["¿Agregar clases de prácticos?"]?.trim()
-        console.log(`Agregar prácticos: ${agregarPracticos}`)
-        
-        if (agregarPracticos === "Sí") {
-          const practico1Dia = row["Práctico 1 - Día"]?.trim()
-          const practico1Inicio = row["Práctico 1 - horario inicio"]?.trim()
-          const practico1Fin = row["Práctico 1 - horario finalización"]?.trim()
-          const agregarOtroPractico = row["¿Agregar otra clase de prácticos?"]?.trim()
-          const relacionPracticos = row["Indicar relación entre los dos horarios de prácticos"]?.trim()
+        // Teórico-Prácticos
+        const tp1Dia = row[headers.indexOf("Teórico-Práctico 1 - Día")] || ""
+        const tp1Inicio = row[headers.indexOf("Teórico-Práctico 1 - horario inicio")] || ""
+        const tp1Fin = row[headers.indexOf("Teórico-Práctico 1 - horario finalización")] || ""
 
-          console.log(`Procesando prácticos - Día: ${practico1Dia}, Inicio: ${practico1Inicio}, Fin: ${practico1Fin}`)
+        if (tp1Dia && tp1Inicio && tp1Fin) {
+          clases.push({
+            id: `clase-${claseId++}`,
+            tipo: "Teórico-Práctico",
+            numero: 1,
+            dia: tp1Dia,
+            horario: `${tp1Inicio} - ${tp1Fin}`,
+          })
+          console.log(`Teórico-Práctico 1 agregado: ${tp1Dia} ${tp1Inicio} - ${tp1Fin}`)
+        }
 
-          // Agregar primer práctico
-          if (practico1Dia && practico1Inicio && practico1Fin) {
-            const horario1 = `${practico1Inicio} - ${practico1Fin}`
+        const tp2Dia = row[headers.indexOf("Teórico-Práctico 2 - Día")] || ""
+        const tp2Inicio = row[headers.indexOf("Teórico-Práctico 2 - horario inicio")] || ""
+        const tp2Fin = row[headers.indexOf("Teórico-Práctico 2 - horario finalización")] || ""
+
+        if (tp2Dia && tp2Inicio && tp2Fin) {
+          clases.push({
+            id: `clase-${claseId++}`,
+            tipo: "Teórico-Práctico",
+            numero: 2,
+            dia: tp2Dia,
+            horario: `${tp2Inicio} - ${tp2Fin}`,
+          })
+          console.log(`Teórico-Práctico 2 agregado: ${tp2Dia} ${tp2Inicio} - ${tp2Fin}`)
+        }
+
+        // Prácticos (hasta 8 posibles)
+        console.log("Procesando prácticos...")
+
+        for (let p = 1; p <= 8; p++) {
+          const practicoDia = row[headers.indexOf(`Práctico ${p} - Día`)] || ""
+          const practicoInicio = row[headers.indexOf(`Práctico ${p} - horario inicio`)] || ""
+          const practicoFin = row[headers.indexOf(`Práctico ${p} - horario finalización`)] || ""
+
+          if (practicoDia && practicoInicio && practicoFin) {
             clases.push({
-              id: `${data.length + 1}-practico-1`,
+              id: `clase-${claseId++}`,
               tipo: "Práctico",
-              numero: 1,
-              dia: practico1Dia,
-              horario: horario1,
+              numero: p,
+              dia: practicoDia,
+              horario: `${practicoInicio} - ${practicoFin}`,
             })
-            console.log(`Práctico 1 agregado: ${practico1Dia} ${horario1}`)
-
-            // Agregar segundo práctico si existe
-            if (agregarOtroPractico === "Sí") {
-              const practico2Dia = row["Práctico 2 - Día"]?.trim()
-              const practico2Inicio = row["Práctico 2 - horario inicio"]?.trim()
-              const practico2Fin = row["Práctico 2 - horario finalización"]?.trim()
-
-              console.log(`Procesando práctico 2 - Día: ${practico2Dia}, Inicio: ${practico2Inicio}, Fin: ${practico2Fin}`)
-
-              if (practico2Dia && practico2Inicio && practico2Fin) {
-                const horario2 = `${practico2Inicio} - ${practico2Fin}`
-                clases.push({
-                  id: `${data.length + 1}-practico-2`,
-                  tipo: "Práctico",
-                  numero: 2,
-                  dia: practico2Dia,
-                  horario: horario2,
-                })
-                console.log(`Práctico 2 agregado: ${practico2Dia} ${horario2}`)
-
-                // Configurar agrupación de prácticos
-                if (relacionPracticos && relacionPracticos.toLowerCase().includes("conjunto")) {
-                  agrupacionClases["Práctico"] = "conjunto"
-                } else {
-                  agrupacionClases["Práctico"] = "elegir"
-                }
-              }
-            }
+            console.log(`Práctico ${p} agregado: ${practicoDia} ${practicoInicio} - ${practicoFin}`)
           }
         }
 
@@ -372,18 +289,18 @@ export function CSVUploader() {
           continue
         }
 
-        // Aplicar formato de título personalizado
-        const tituloFormateado = formatearTituloAsignatura(titulo, tipoAsignatura)
+        // Obtener aclaraciones
+        const aclaracionesIndex = headers.findIndex(h => h.includes("aclaraciones") || h.includes("Aclaraciones"))
+        const aclaraciones = aclaracionesIndex >= 0 ? row[aclaracionesIndex] : ""
 
         const asignatura: Asignatura = {
-          id: (data.length + 1).toString(),
-          materia: tituloFormateado,
-          catedra: catedra,
+          id: `asignatura-${data.length + 1}`,
+          materia: formatearTituloAsignatura(titulo, tipoAsignatura),
+          catedra: catedra || "Sin especificar",
           tipoAsignatura: tipoAsignatura,
-          modalidadAprobacion: modalidadAprobacion || "No especificado",
-          modalidadCursada: modalidadCursada || "No especificado",
-          orientacion: orientacionAsignatura || undefined,
-          agrupacionClases: agrupacionClases,
+          modalidadAprobacion: modalidadAprobacion,
+          modalidadCursada: modalidadCursada,
+          orientacion: orientacion || undefined,
           aclaraciones: aclaraciones || undefined,
           clases: clases,
         }
@@ -468,7 +385,7 @@ export function CSVUploader() {
             </Button>
           </div>
 
-          
+
 
           {message && (
             <Alert className={message.type === "error" ? "border-red-300 bg-red-50" : "border-green-300 bg-green-50"}>
