@@ -137,8 +137,8 @@ export default function PlanesEstudioPage() {
             }
           }
           gruposElectivos[orientacionKey].materias.push(materia)
-        } 
-         if (materia.electividad.includes("Elección B")) {
+        }
+        if (materia.electividad.includes("Elección B")) {
           if (!gruposElectivos["eleccion_b"]) {
             gruposElectivos["eleccion_b"] = {
               titulo: "2 materias a elección del Departamento de Cs. de la Educación",
