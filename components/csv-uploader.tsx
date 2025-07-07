@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,7 +11,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Upload, FileText, CheckCircle, AlertCircle, Calendar } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toStartCase } from "@/lib/text-utils"
-import { initializeDefaultData } from "@/lib/default-data"
 
 interface Clase {
   id: string
@@ -47,20 +47,6 @@ export function CSVUploader() {
     año: new Date().getFullYear().toString(),
     periodo: "1C",
   })
-  const [hasDefaultData, setHasDefaultData] = useState(false);
-
-  useEffect(() => {
-    const checkDefaultData = async () => {
-      const data = localStorage.getItem("horarios-antropologia");
-      if (data) {
-        setHasDefaultData(true);
-      } else {
-        setHasDefaultData(false);
-      }
-    };
-
-    checkDefaultData();
-  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -146,7 +132,7 @@ export function CSVUploader() {
         const tituloOptativa = row["Título de materia optativa/electiva"]?.trim() || ""
 
         let titulo = ""
-
+        
         // Determinar título según tipo de asignatura
         if (tipoAsignatura === "Seminario regular" && tituloSeminario) {
           titulo = "Seminario: " + tituloSeminario
@@ -172,7 +158,7 @@ export function CSVUploader() {
         const catedraOptativa = row["Cátedra de la materia optativa/electiva"]?.trim() || ""
 
         let catedra = ""
-
+        
         if (tipoAsignatura === "Seminario regular" && catedraSeminario) {
           catedra = catedraSeminario
         } else if (tipoAsignatura === "Materia o seminario anual" && catedraAnual) {
@@ -192,7 +178,7 @@ export function CSVUploader() {
         const modalidadCursadaOptativa = row["Modalidad de cursada (materia optativa/electiva)"]?.trim() || ""
 
         let modalidadCursada = ""
-
+        
         if (tipoAsignatura === "Seminario regular" && modalidadCursadaSeminario) {
           modalidadCursada = modalidadCursadaSeminario
         } else if (tipoAsignatura === "Materia o seminario anual" && modalidadCursadaAnual) {
@@ -385,7 +371,7 @@ export function CSVUploader() {
         // Obtener la orientación de la asignatura
         const orientacionSeminario = row["Orientación del seminario"]?.trim() || ""
         const orientacionOptativa = row["Orientación (materia optativa/electiva)"]?.trim() || ""
-
+        
         let orientacionAsignatura = ""
 
         if (tipoAsignatura === "Seminario regular" && orientacionSeminario) {
@@ -412,7 +398,7 @@ export function CSVUploader() {
         }
 
         console.log(`Asignatura agregada: "${titulo}" - Cátedra: "${catedra}"`)
-
+        
         // Agregar la asignatura al array de datos
         data.push(asignatura)
       }
@@ -453,7 +439,6 @@ export function CSVUploader() {
     })
     setPreview([])
     setFile(null)
-    setHasDefaultData(true);
   }
 
   const clearData = () => {
@@ -462,7 +447,6 @@ export function CSVUploader() {
       type: "success",
       text: "Datos actuales limpiados exitosamente.",
     })
-    setHasDefaultData(false);
   }
 
   return (
