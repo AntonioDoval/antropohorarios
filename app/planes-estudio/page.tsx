@@ -92,12 +92,12 @@ export default function PlanesEstudioPage() {
 
       // Lógica específica por plan y carrera
       if (selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural") {
-        // Agrupar por área
+        // Agrupar por área con títulos específicos
         if (materia.area && materia.area.trim()) {
           const areaKey = `area_${materia.area}`
           if (!gruposElectivos[areaKey]) {
             gruposElectivos[areaKey] = {
-              titulo: "Dos asignaturas a elegir de una misma área:",
+              titulo: materia.area, // Usar el título del área directamente
               materias: []
             }
           }
