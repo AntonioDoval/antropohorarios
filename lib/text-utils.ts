@@ -26,11 +26,19 @@ export function toStartCase(text: string): string {
         "sin",
       ]
 
+      // Manejar números romanos completos (como palabras independientes)
+      if (word.match(/^(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)) {
+        return word.toUpperCase()
+      }
+
       // Manejar números romanos al final de palabras
-      if (word.match(/^.*(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)) {
-        const base = word.slice(0, -word.match(/(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)?.[0].length || 0)
-        const roman = word.match(/(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)?.[0].toUpperCase() || ""
-        return base.charAt(0).toUpperCase() + base.slice(1) + roman
+      if (word.match(/^.+(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)) {
+        const romanMatch = word.match(/(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)
+        if (romanMatch) {
+          const base = word.slice(0, -romanMatch[0].length)
+          const roman = romanMatch[0].toUpperCase()
+          return base.charAt(0).toUpperCase() + base.slice(1) + roman
+        }
       }
 
       return index === 0 || !lowercaseWords.includes(word) ? word.charAt(0).toUpperCase() + word.slice(1) : word

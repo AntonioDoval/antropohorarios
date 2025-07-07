@@ -815,16 +815,7 @@ export function HorariosDisplay() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-                      {asignatura.planInfo?.correlatividad && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info className="h-4 w-4 text-white opacity-70 hover:opacity-100 cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p><strong>Correlatividad:</strong> {asignatura.planInfo.correlatividad}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
+                      
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={() => toggleAsignatura(asignatura.id)}

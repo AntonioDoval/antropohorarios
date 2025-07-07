@@ -1,4 +1,3 @@
-
 import { AsignaturaConPlan } from "./planes-utils"
 
 export interface SampleHorario {
@@ -222,7 +221,7 @@ export function loadSampleHorarios(): SampleHorario[] {
     },
     {
       id: "10",
-      materia: "Problemas de Parentesco en Antropología",
+      materia: "Seminario: Problemas de Parentesco en Antropología",
       catedra: "Sendon / Smietniasky",
       tipoAsignatura: "Seminario regular",
       modalidadAprobacion: "Trabajo final",
