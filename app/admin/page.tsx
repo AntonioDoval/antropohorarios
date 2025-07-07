@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState } from "react"
 import { CSVUploader } from "@/components/csv-uploader"
-import { PlanesUploader } from "@/components/planes-uploader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,9 +15,9 @@ import Link from "next/link"
 import { Footer } from "@/components/footer"
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [isAuthenticated, setIsAuthenticated = useState(false)
+  const [password, setPassword = useState("")
+  const [error, setError = useState("")
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -138,21 +137,14 @@ export default function AdminPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="horarios" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsList className="grid w-full grid-cols-1 mb-6">
             <TabsTrigger value="horarios" className="text-lg font-medium">
               Actualizar Horarios
             </TabsTrigger>
-            <TabsTrigger value="planes" className="text-lg font-medium">
-              Actualizar Planes de Estudios
-            </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="horarios">
             <CSVUploader />
-          </TabsContent>
-          
-          <TabsContent value="planes">
-            <PlanesUploader />
           </TabsContent>
         </Tabs>
       </main>
