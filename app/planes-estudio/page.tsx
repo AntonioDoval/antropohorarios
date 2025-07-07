@@ -177,6 +177,7 @@ export default function PlanesEstudioPage() {
 
     return { materiasObligatorias, gruposElectivos }
   }
+  }
 
   const planActual = getCurrentPlan()
   const materiasPorCiclo = planActual ? getMateriasPorCiclo(planActual.materias) : {}
