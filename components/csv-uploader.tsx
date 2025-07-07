@@ -209,50 +209,112 @@ export function CSVUploader() {
         const clases: Clase[] = []
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
-        const tiposClase = ["Teórico", "Teórico-Práctico", "Práctico"]
+        // Procesar teóricos
+        const teorico1Dia = row["Teórico 1 - Día"]?.trim()
+        const teorico1Inicio = row["Teórico 1 - horario inicio"]?.trim()
+        const teorico1Fin = row["Teórico 1 - horario finalización"]?.trim()
+        const agregarOtroTeorico = row["¿Agregar otra clase de teóricos?"]?.trim()
+        const relacionTeoricos = row["Indicar relación entre los dos horarios de teóricos"]?.trim()
+        const teorico2Dia = row["Teórico 2 - Día"]?.trim()
+        const teorico2Inicio = row["Teórico 2 - horario inicio"]?.trim()
+        const teorico2Fin = row["Teórico 2 - horario finalización"]?.trim()
 
-        tiposClase.forEach((tipoClase) => {
-          // Obtener días y horarios para este tipo de clase
-          const diasKey = `Día/s de ${tipoClase.toLowerCase()}`
-          const horariosKey = `Horarios de ${tipoClase.toLowerCase()}`
-          const agrupacionKey = `Agrupación ${tipoClase.toLowerCase()}`
+        // Agregar primer teórico si existe
+        if (teorico1Dia && teorico1Inicio && teorico1Fin) {
+          const horario1 = `${teorico1Inicio} - ${teorico1Fin}`
+          clases.push({
+            id: `${data.length + 1}-teorico-1`,
+            tipo: "Teórico",
+            numero: 1,
+            dia: teorico1Dia,
+            horario: horario1,
+          })
 
-          const dias = row[diasKey]?.trim()
-          const horarios = row[horariosKey]?.trim()
-          const agrupacion = row[agrupacionKey]?.trim()
+          // Agregar segundo teórico si existe
+          if (agregarOtroTeorico === "Sí" && teorico2Dia && teorico2Inicio && teorico2Fin) {
+            const horario2 = `${teorico2Inicio} - ${teorico2Fin}`
+            clases.push({
+              id: `${data.length + 1}-teorico-2`,
+              tipo: "Teórico",
+              numero: 2,
+              dia: teorico2Dia,
+              horario: horario2,
+            })
 
-          if (dias && horarios) {
-            console.log(`${tipoClase} - Días: ${dias}, Horarios: ${horarios}, Agrupación: ${agrupacion}`)
+            // Configurar agrupación de teóricos
+            if (relacionTeoricos && relacionTeoricos.toLowerCase().includes("conjunto")) {
+              agrupacionClases["Teórico"] = "conjunto"
+            } else {
+              agrupacionClases["Teórico"] = "elegir"
+            }
+          }
+        }
 
-            // Dividir por punto y coma para múltiples clases
-            const listaDias = dias.split(";").map((d) => d.trim()).filter(Boolean)
-            const listaHorarios = horarios.split(";").map((h) => h.trim()).filter(Boolean)
+        // Procesar teórico-prácticos
+        const agregarTP = row["¿Agregar clases de teórico-prácticos?"]?.trim()
+        if (agregarTP === "Sí") {
+          const tp1Dia = row["Teórico-Práctico 1 - Día"]?.trim()
+          const tp1Inicio = row["Teórico-Práctico 1 - horario inicio"]?.trim()
+          const tp1Fin = row["Teórico-Práctico 1 - horario finalización"]?.trim()
 
-            // Asegurar que tengamos la misma cantidad de días y horarios
-            const cantidadClases = Math.min(listaDias.length, listaHorarios.length)
+          if (tp1Dia && tp1Inicio && tp1Fin) {
+            const horarioTP = `${tp1Inicio} - ${tp1Fin}`
+            clases.push({
+              id: `${data.length + 1}-teoricopractico-1`,
+              tipo: "Teórico-Práctico",
+              numero: 1,
+              dia: tp1Dia,
+              horario: horarioTP,
+            })
+          }
+        }
 
-            if (cantidadClases > 0) {
-              // Configurar agrupación
-              if (agrupacion && agrupacion.toLowerCase().includes("conjunto")) {
-                agrupacionClases[tipoClase] = "conjunto"
-              } else if (cantidadClases > 1) {
-                agrupacionClases[tipoClase] = "elegir"
-              }
+        // Procesar prácticos
+        const agregarPracticos = row["¿Agregar clases de prácticos?"]?.trim()
+        if (agregarPracticos === "Sí") {
+          const practico1Dia = row["Práctico 1 - Día"]?.trim()
+          const practico1Inicio = row["Práctico 1 - horario inicio"]?.trim()
+          const practico1Fin = row["Práctico 1 - horario finalización"]?.trim()
+          const agregarOtroPractico = row["¿Agregar otra clase de prácticos?"]?.trim()
+          const relacionPracticos = row["Indicar relación entre los dos horarios de prácticos"]?.trim()
 
-              // Crear clases
-              for (let j = 0; j < cantidadClases; j++) {
-                const claseId = `${data.length + 1}-${tipoClase.toLowerCase().replace("-", "")}-${j + 1}`
+          // Agregar primer práctico
+          if (practico1Dia && practico1Inicio && practico1Fin) {
+            const horario1 = `${practico1Inicio} - ${practico1Fin}`
+            clases.push({
+              id: `${data.length + 1}-practico-1`,
+              tipo: "Práctico",
+              numero: 1,
+              dia: practico1Dia,
+              horario: horario1,
+            })
+
+            // Agregar segundo práctico si existe
+            if (agregarOtroPractico === "Sí") {
+              const practico2Dia = row["Práctico 2 - Día"]?.trim()
+              const practico2Inicio = row["Práctico 2 - horario inicio"]?.trim()
+              const practico2Fin = row["Práctico 2 - horario finalización"]?.trim()
+
+              if (practico2Dia && practico2Inicio && practico2Fin) {
+                const horario2 = `${practico2Inicio} - ${practico2Fin}`
                 clases.push({
-                  id: claseId,
-                  tipo: tipoClase,
-                  numero: cantidadClases > 1 ? j + 1 : 0,
-                  dia: listaDias[j] || listaDias[0],
-                  horario: listaHorarios[j] || listaHorarios[0],
+                  id: `${data.length + 1}-practico-2`,
+                  tipo: "Práctico",
+                  numero: 2,
+                  dia: practico2Dia,
+                  horario: horario2,
                 })
+
+                // Configurar agrupación de prácticos
+                if (relacionPracticos && relacionPracticos.toLowerCase().includes("conjunto")) {
+                  agrupacionClases["Práctico"] = "conjunto"
+                } else {
+                  agrupacionClases["Práctico"] = "elegir"
+                }
               }
             }
           }
-        })
+        }
 
         if (clases.length === 0) {
           console.log(`Fila ${i} saltada: sin clases válidas`)
