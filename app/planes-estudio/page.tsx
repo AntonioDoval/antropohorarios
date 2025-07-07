@@ -64,7 +64,7 @@ export default function PlanesEstudioPage() {
     return grupos
   }
 
-  // Agrupar materias por correlatividad
+  // Agrupar materias por correlatividad dentro de un ciclo
   const getMateriasPorCorrelatividad = (materias: MateriaDelPlan[]) => {
     const grupos: { [correlatividad: string]: MateriaDelPlan[] } = {}
 
@@ -181,7 +181,6 @@ export default function PlanesEstudioPage() {
 
   const planActual = getCurrentPlan()
   const materiasPorCiclo = planActual ? getMateriasPorCiclo(planActual.materias) : {}
-  const materiasPorCorrelatividad = planActual ? getMateriasPorCorrelatividad(planActual.materias) : {}
 
   // Obtener título completo del plan
   const getTituloCompleto = () => {
@@ -352,14 +351,13 @@ export default function PlanesEstudioPage() {
               </h1>
             </div>
 
-            {/* Contenido organizado por ciclos con correlatividades */}
-            <div className="grid lg:grid-cols-4 gap-6">
-              {/* Columna principal - Materias (3 columnas) */}
-              <div className="lg:col-span-3 space-y-4">
+            {/* Contenido organizado por ciclos */}
+            <div className="space-y-4">
                 {ciclosOrdenados
                   .filter(ciclo => materiasPorCiclo[ciclo])
                   .map((ciclo) => {
                     const { materiasObligatorias, gruposElectivos } = agruparMateriasElectivas(materiasPorCiclo[ciclo])
+                    const materiasPorCorrelatividad = getMateriasPorCorrelatividad(materiasObligatorias)
 
                     return (
                       <Card key={ciclo} className="border-2 border-gray-200">
@@ -368,19 +366,31 @@ export default function PlanesEstudioPage() {
                         </CardHeader>
                         <CardContent className="p-4">
                           <div className="space-y-4">
-                            {/* Materias obligatorias */}
-                            {materiasObligatorias.length > 0 && (
-                              <div className="space-y-2">
-                                {materiasObligatorias.map((materia, index) => (
-                                  <div key={index} className="flex items-start gap-2 py-1">
-                                    <span className="text-uba-primary font-medium text-sm mt-1">•</span>
-                                    <div className="flex-1">
-                                      <span className="text-sm text-gray-800">{materia.nombre}</span>
+                            {/* Materias obligatorias agrupadas por correlatividad */}
+                            {Object.entries(materiasPorCorrelatividad)
+                              .sort(([a], [b]) => {
+                                // Ordenar poniendo "Sin correlatividad" primero
+                                if (a === "Sin correlatividad") return -1
+                                if (b === "Sin correlatividad") return 1
+                                return a.localeCompare(b)
+                              })
+                              .map(([correlatividad, materias]) => (
+                                <div key={correlatividad} className="space-y-2">
+                                  {correlatividad !== "Sin correlatividad" && (
+                                    <div className="text-xs text-gray-500 italic mb-2 bg-gray-50 p-2 rounded">
+                                      ▼ Correlatividad: {correlatividad}
                                     </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                                  )}
+                                  {materias.map((materia, index) => (
+                                    <div key={index} className="flex items-start gap-2 py-1">
+                                      <span className="text-uba-primary font-medium text-sm mt-1">•</span>
+                                      <div className="flex-1">
+                                        <span className="text-sm text-gray-800">{materia.nombre}</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
 
                             {/* Título especial para sociocultural 2023 */}
                             {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).filter(k => k.startsWith("area_")).length > 0 && (
@@ -483,6 +493,7 @@ export default function PlanesEstudioPage() {
                   .filter(ciclo => !ciclosOrdenados.includes(ciclo))
                   .map((ciclo) => {
                     const { materiasObligatorias, gruposElectivos } = agruparMateriasElectivas(materiasPorCiclo[ciclo])
+                    const materiasPorCorrelatividad = getMateriasPorCorrelatividad(materiasObligatorias)
 
                     return (
                       <Card key={ciclo} className="border-2 border-gray-200">
@@ -491,19 +502,31 @@ export default function PlanesEstudioPage() {
                         </CardHeader>
                         <CardContent className="p-4">
                           <div className="space-y-4">
-                            {/* Materias obligatorias */}
-                            {materiasObligatorias.length > 0 && (
-                              <div className="space-y-2">
-                                {materiasObligatorias.map((materia, index) => (
-                                  <div key={index} className="flex items-start gap-2 py-1">
-                                    <span className="text-uba-primary font-medium text-sm mt-1">•</span>
-                                    <div className="flex-1">
-                                      <span className="text-sm text-gray-800">{materia.nombre}</span>
+                            {/* Materias obligatorias agrupadas por correlatividad */}
+                            {Object.entries(materiasPorCorrelatividad)
+                              .sort(([a], [b]) => {
+                                // Ordenar poniendo "Sin correlatividad" primero
+                                if (a === "Sin correlatividad") return -1
+                                if (b === "Sin correlatividad") return 1
+                                return a.localeCompare(b)
+                              })
+                              .map(([correlatividad, materias]) => (
+                                <div key={correlatividad} className="space-y-2">
+                                  {correlatividad !== "Sin correlatividad" && (
+                                    <div className="text-xs text-gray-500 italic mb-2 bg-gray-50 p-2 rounded">
+                                      ▼ Correlatividad: {correlatividad}
                                     </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                                  )}
+                                  {materias.map((materia, index) => (
+                                    <div key={index} className="flex items-start gap-2 py-1">
+                                      <span className="text-uba-primary font-medium text-sm mt-1">•</span>
+                                      <div className="flex-1">
+                                        <span className="text-sm text-gray-800">{materia.nombre}</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
 
                             {/* Título especial para sociocultural 2023 */}
                             {selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural" && Object.keys(gruposElectivos).filter(k => k.startsWith("area_")).length > 0 && (
@@ -601,42 +624,6 @@ export default function PlanesEstudioPage() {
                     )
                   })}
               </div>
-
-              {/* Columna lateral - Correlatividades (1 columna) */}
-              <div className="lg:col-span-1">
-                <Card className="border-2 border-gray-200 sticky top-4">
-                  <CardHeader className="bg-gray-50 py-3">
-                    <CardTitle className="text-lg text-uba-primary">Correlatividades</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <div className="space-y-4">
-                      {Object.entries(materiasPorCorrelatividad)
-                        .filter(([correlatividad]) => correlatividad !== "Sin correlatividad")
-                        .map(([correlatividad, materias]) => (
-                        <div key={correlatividad} className="text-sm">
-                          <div className="font-medium text-uba-primary mb-2 bg-blue-50 p-2 rounded text-xs">
-                            {correlatividad}
-                          </div>
-                          <div className="space-y-1">
-                            {materias.map((materia, index) => (
-                              <div key={index} className="text-xs text-gray-600 pl-2 border-l-2 border-gray-200">
-                                {materia.nombre}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-
-                      {Object.keys(materiasPorCorrelatividad).filter(c => c !== "Sin correlatividad").length === 0 && (
-                        <div className="text-sm text-gray-500 italic">
-                          No hay información de correlatividades disponible para este plan.
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
           </div>
         )}
       </main>
