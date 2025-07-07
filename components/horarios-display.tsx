@@ -835,9 +835,14 @@ export function HorariosDisplay() {
                   </div>
                 </CardHeader>
               <CardContent className="space-y-3 pt-3">
-                <div className="flex flex-wrap gap-1">
-                  {asignatura.modalidadCursada === "Virtual" || asignatura.modalidadCursada === "Presencial, con 30% de virtualidad asincrónica" ? (
-                    <Badge variant="secondary" className="text-xs bg-uba-secondary/20 text-uba-primary">
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {asignatura.tipoAsignatura && (
+                    <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700">
+                      {asignatura.tipoAsignatura}
+                    </Badge>
+                  )}
+                  {asignatura.modalidadCursada && (asignatura.modalidadCursada === "Virtual" || asignatura.modalidadCursada.includes("virtualidad")) ? (
+                    <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
                       {asignatura.modalidadCursada}
                     </Badge>
                   ) : null}
@@ -849,6 +854,13 @@ export function HorariosDisplay() {
                       ? "Trabajo final" 
                       : asignatura.modalidadAprobacion}
                   </Badge>
+                </div>
+
+                <div className="text-xs text-gray-600 mb-2">
+                  <div><span className="font-medium">Modalidad de cursada:</span> {asignatura.modalidadCursada || "Presencial"}</div>
+                  {asignatura.orientacion && (
+                    <div><span className="font-medium">Orientación:</span> {asignatura.orientacion}</div>
+                  )}
                 </div>
 
                 {asignatura.aclaraciones && (

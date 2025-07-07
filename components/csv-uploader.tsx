@@ -200,18 +200,49 @@ export function CSVUploader() {
           continue
         }
 
-        // Obtener cátedra
-        const catedra = row["Cátedra"]?.trim() || "No especificada"
+        // Obtener cátedra según el tipo de asignatura
+        let catedra = "No especificada"
+        if (tipoAsignatura === "Seminario regular") {
+          catedra = row["Cátedra del seminario"]?.trim() || "No especificada"
+        } else if (tipoAsignatura === "Materia o seminario anual") {
+          catedra = row["Cátedra de asignatura anual"]?.trim() || "No especificada"
+        } else if (tipoAsignatura === "Materia cuatrimestral regular") {
+          catedra = row["Cátedra de la materia"]?.trim() || "No especificada"
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
+          catedra = row["Cátedra de la materia optativa/electiva"]?.trim() || "No especificada"
+        }
 
-        // Obtener modalidades
-        const modalidadAprobacion = row["Modalidad de aprobación"]?.trim() || "No especificado"
-        const modalidadCursada = row["Modalidad de cursada"]?.trim() || "Presencial"
+        // Obtener modalidades según el tipo de asignatura
+        let modalidadAprobacion = "No especificado"
+        let modalidadCursada = "Presencial"
+        
+        if (tipoAsignatura === "Seminario regular") {
+          modalidadAprobacion = "Trabajo final"
+          modalidadCursada = row["Modalidad de cursada del seminario"]?.trim() || "Presencial"
+        } else if (tipoAsignatura === "Materia o seminario anual") {
+          modalidadAprobacion = "Trabajo final"
+          modalidadCursada = row["Modalidad de cursada de la asignatura anual"]?.trim() || "Presencial"
+        } else if (tipoAsignatura === "Materia cuatrimestral regular") {
+          modalidadAprobacion = row["Modalidad de aprobación de la materia"]?.trim() || "Examen final"
+          modalidadCursada = row["Modalidad de cursada de la materia"]?.trim() || "Presencial"
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
+          modalidadAprobacion = row["Modalidad de aprobación (materia optativa/electiva)"]?.trim() || "Examen final"
+          modalidadCursada = row["Modalidad de cursada (materia optativa/electiva)"]?.trim() || "Presencial"
+        }
 
-        // Obtener orientación
-        const orientacionAsignatura = row["Orientación de la asignatura"]?.trim() || undefined
+        // Obtener orientación según el tipo de asignatura
+        let orientacionAsignatura = undefined
+        if (tipoAsignatura === "Seminario regular") {
+          orientacionAsignatura = row["Orientación del seminario"]?.trim() || undefined
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
+          orientacionAsignatura = row["Orientación (materia optativa/electiva)"]?.trim() || undefined
+        } else if (tipoAsignatura === "Materia o seminario anual") {
+          orientacionAsignatura = row["Orientación de la asignatura anual"]?.trim() || undefined
+        }
 
         // Obtener aclaraciones
-        const aclaraciones = row["De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)"]?.trim() || undefined
+        const aclaraciones = row["De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)"]?.trim() || 
+                           row["Aclaraciones"]?.trim() || undefined
 
         // Procesar clases y agrupaciones
         const clases: Clase[] = []
@@ -227,6 +258,8 @@ export function CSVUploader() {
         const teorico2Inicio = row["Teórico 2 - horario inicio"]?.trim()
         const teorico2Fin = row["Teórico 2 - horario finalización"]?.trim()
 
+        console.log(`Procesando teóricos - Día: ${teorico1Dia}, Inicio: ${teorico1Inicio}, Fin: ${teorico1Fin}`)
+
         // Agregar primer teórico si existe
         if (teorico1Dia && teorico1Inicio && teorico1Fin) {
           const horario1 = `${teorico1Inicio} - ${teorico1Fin}`
@@ -237,6 +270,7 @@ export function CSVUploader() {
             dia: teorico1Dia,
             horario: horario1,
           })
+          console.log(`Teórico 1 agregado: ${teorico1Dia} ${horario1}`)
 
           // Agregar segundo teórico si existe
           if (agregarOtroTeorico === "Sí" && teorico2Dia && teorico2Inicio && teorico2Fin) {
@@ -248,6 +282,7 @@ export function CSVUploader() {
               dia: teorico2Dia,
               horario: horario2,
             })
+            console.log(`Teórico 2 agregado: ${teorico2Dia} ${horario2}`)
 
             // Configurar agrupación de teóricos
             if (relacionTeoricos && relacionTeoricos.toLowerCase().includes("conjunto")) {
@@ -279,12 +314,16 @@ export function CSVUploader() {
 
         // Procesar prácticos
         const agregarPracticos = row["¿Agregar clases de prácticos?"]?.trim()
+        console.log(`Agregar prácticos: ${agregarPracticos}`)
+        
         if (agregarPracticos === "Sí") {
           const practico1Dia = row["Práctico 1 - Día"]?.trim()
           const practico1Inicio = row["Práctico 1 - horario inicio"]?.trim()
           const practico1Fin = row["Práctico 1 - horario finalización"]?.trim()
           const agregarOtroPractico = row["¿Agregar otra clase de prácticos?"]?.trim()
           const relacionPracticos = row["Indicar relación entre los dos horarios de prácticos"]?.trim()
+
+          console.log(`Procesando prácticos - Día: ${practico1Dia}, Inicio: ${practico1Inicio}, Fin: ${practico1Fin}`)
 
           // Agregar primer práctico
           if (practico1Dia && practico1Inicio && practico1Fin) {
@@ -296,12 +335,15 @@ export function CSVUploader() {
               dia: practico1Dia,
               horario: horario1,
             })
+            console.log(`Práctico 1 agregado: ${practico1Dia} ${horario1}`)
 
             // Agregar segundo práctico si existe
             if (agregarOtroPractico === "Sí") {
               const practico2Dia = row["Práctico 2 - Día"]?.trim()
               const practico2Inicio = row["Práctico 2 - horario inicio"]?.trim()
               const practico2Fin = row["Práctico 2 - horario finalización"]?.trim()
+
+              console.log(`Procesando práctico 2 - Día: ${practico2Dia}, Inicio: ${practico2Inicio}, Fin: ${practico2Fin}`)
 
               if (practico2Dia && practico2Inicio && practico2Fin) {
                 const horario2 = `${practico2Inicio} - ${practico2Fin}`
@@ -312,6 +354,7 @@ export function CSVUploader() {
                   dia: practico2Dia,
                   horario: horario2,
                 })
+                console.log(`Práctico 2 agregado: ${practico2Dia} ${horario2}`)
 
                 // Configurar agrupación de prácticos
                 if (relacionPracticos && relacionPracticos.toLowerCase().includes("conjunto")) {
@@ -425,20 +468,7 @@ export function CSVUploader() {
             </Button>
           </div>
 
-          <div className="border-t pt-4">
-            <p className="text-sm text-gray-600 mb-3">
-              ¿No tienes un archivo CSV? Puedes cargar datos de ejemplo:
-            </p>
-            <Button 
-              onClick={handleLoadSampleData} 
-              disabled={loading}
-              variant="outline"
-              className="w-full"
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle className="h-4 w-4 mr-2" />}
-              Cargar Datos de Ejemplo
-            </Button>
-          </div>
+          
 
           {message && (
             <Alert className={message.type === "error" ? "border-red-300 bg-red-50" : "border-green-300 bg-green-50"}>
