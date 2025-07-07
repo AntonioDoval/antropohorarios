@@ -836,11 +836,6 @@ export function HorariosDisplay() {
                 </CardHeader>
               <CardContent className="space-y-3 pt-3">
                 <div className="flex flex-wrap gap-1 mb-2">
-                  {asignatura.tipoAsignatura && (
-                    <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700">
-                      {asignatura.tipoAsignatura}
-                    </Badge>
-                  )}
                   {asignatura.modalidadCursada && (asignatura.modalidadCursada === "Virtual" || asignatura.modalidadCursada.includes("virtualidad")) ? (
                     <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
                       {asignatura.modalidadCursada}
@@ -856,12 +851,11 @@ export function HorariosDisplay() {
                   </Badge>
                 </div>
 
-                <div className="text-xs text-gray-600 mb-2">
-                  <div><span className="font-medium">Modalidad de cursada:</span> {asignatura.modalidadCursada || "Presencial"}</div>
-                  {asignatura.orientacion && (
+                {asignatura.orientacion && (
+                  <div className="text-xs text-gray-600 mb-2">
                     <div><span className="font-medium">Orientación:</span> {asignatura.orientacion}</div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {asignatura.aclaraciones && (
                   <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
@@ -923,7 +917,7 @@ export function HorariosDisplay() {
                                     <div className="text-xs space-y-0.5">
                                       <div className="flex items-center gap-1">
                                         <span className="font-medium">{clase.dia}</span>
-                                        <span className="opacity-75">{clase.horario}</span>
+                                        <span className="opacity-75">{clase.horario} hs</span>
                                       </div>
                                     </div>
                                   </div>
@@ -952,7 +946,7 @@ export function HorariosDisplay() {
                                 <div className="text-xs space-y-0.5">
                                   <div className="flex items-center gap-1">
                                     <span className="font-medium">{clase.dia}</span>
-                                    <span className="opacity-75">{clase.horario}</span>
+                                    <span className="opacity-75">{clase.horario} hs</span>
                                   </div>
                                 </div>
                               </div>
@@ -1035,7 +1029,7 @@ export function HorariosDisplay() {
                         <div key={claseIndex} className="text-sm bg-white p-2 rounded border">
                           <span className="font-medium text-uba-primary">{clase.nombre}</span>
                           <span className="text-gray-600 ml-2">
-                            {clase.dia} {clase.horario}
+                            {clase.dia} {clase.horario} hs
                           </span>
                         </div>
                       ))}
@@ -1233,7 +1227,7 @@ export function HorariosDisplay() {
                                           {clase.clase}
                                         </div>
                                         <div className="text-xs opacity-75 truncate">
-                                          {clase.inicio}:00-{clase.fin}:00
+                                          {clase.inicio}:00-{clase.fin}:00 hs
                                         </div>
                                       </div>
                                     )
