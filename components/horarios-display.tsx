@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -53,14 +54,14 @@ interface HorariosData {
 interface Filtros {
   busqueda: string
   tiposAsignatura: string[]
-  modalidadAprobacion: string // Cambio a string singular para selección única
+  modalidadAprobacion: string
   orientaciones: string[]
   planEstudios: "2023" | "1985"
 }
 
 interface Seleccion {
-  asignaturas: string[] // IDs de asignaturas seleccionadas
-  clases: { [asignaturaId: string]: { [tipoClase: string]: string } } // asignaturaId -> tipoClase -> claseId
+  asignaturas: string[]
+  clases: { [asignaturaId: string]: { [tipoClase: string]: string } }
 }
 
 export function HorariosDisplay() {
@@ -69,7 +70,7 @@ export function HorariosDisplay() {
   const [filtros, setFiltros] = useState<Filtros>({
     busqueda: "",
     tiposAsignatura: [],
-    modalidadAprobacion: "todas", // Por defecto "todas"
+    modalidadAprobacion: "todas",
     orientaciones: [],
     planEstudios: "2023",
   })
@@ -84,7 +85,6 @@ export function HorariosDisplay() {
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData)
-        // Manejar formato anterior (solo array) y nuevo formato (objeto con período)
         if (Array.isArray(parsedData)) {
           setData({
             asignaturas: parsedData,
@@ -107,13 +107,11 @@ export function HorariosDisplay() {
     }
   }, [data])
 
-  // Función para obtener el icono según el tipo de asignatura
   const getAsignaturaIcon = (asignatura: Asignatura, isSelected = false) => {
     const tipoAsignatura = asignatura.tipoAsignatura || ""
     const titulo = asignatura.materia.toLowerCase()
     const iconColor = isSelected ? "text-[#1c2554]" : "text-uba-secondary"
 
-    // Lista de asignaturas anuales específicas
     const asignaturasAnuales = [
       "didáctica especial y prácticas de la enseñanza",
       "seminario de investigación en antropologia sociocultural",
@@ -131,12 +129,10 @@ export function HorariosDisplay() {
     } else if (esAsignaturaAnual || tipoAsignatura === "Asignatura anual") {
       return <Calendar className={`h-5 w-5 ${iconColor}`} />
     } else {
-      // Materias cuatrimestrales
       return <BookOpen className={`h-5 w-5 ${iconColor}`} />
     }
   }
 
-  // Función para agrupar clases por tipo
   const agruparClasesPorTipo = (clases: Clase[]) => {
     const grupos: { [tipo: string]: Clase[] } = {}
 
@@ -147,7 +143,6 @@ export function HorariosDisplay() {
       grupos[clase.tipo].push(clase)
     })
 
-    // Ordenar los grupos por tipo (Teórico, Teórico-Práctico, Práctico)
     const ordenTipos = ["Teórico", "Teórico-Práctico", "Práctico"]
     const gruposOrdenados: { tipo: string; clases: Clase[] }[] = []
 
@@ -160,27 +155,20 @@ export function HorariosDisplay() {
     return gruposOrdenados
   }
 
-  // Función para determinar si un grupo de clases requiere selección
   const requiereSeleccion = (asignatura: Asignatura, tipoClase: string, cantidadClases: number) => {
     if (cantidadClases <= 1) return false
 
     const agrupacion = asignatura.agrupacionClases?.[tipoClase]
 
-    // Si está explícitamente marcado como conjunto, no requiere selección
     if (agrupacion === "conjunto") return false
-
-    // Si está explícitamente marcado como elegir, requiere selección
     if (agrupacion === "elegir") return true
 
-    // Si no hay información específica y hay múltiples clases, asumir que requiere selección (lógica por defecto)
     return cantidadClases > 1
   }
 
-  // Función para obtener valores únicos para los filtros
   const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
     const tiposAsignatura = [...new Set(asignaturas.map((a) => a.tipoAsignatura).filter(Boolean))]
     
-    // Agregar "Seminario PST" si no existe
     if (!tiposAsignatura.includes("Seminario PST")) {
       tiposAsignatura.push("Seminario PST")
     }
@@ -189,7 +177,6 @@ export function HorariosDisplay() {
       ...new Set(
         asignaturas
           .map((a) => {
-            // Si no está especificada o es "NO CORRESPONDE", asignar "Trabajo final"
             if (!a.modalidadAprobacion || 
                 a.modalidadAprobacion === "NO CORRESPONDE" || 
                 a.modalidadAprobacion === "No corresponde" || 
@@ -208,7 +195,6 @@ export function HorariosDisplay() {
     }
   }
 
-  // Función para obtener orientaciones disponibles según el plan
   const getOrientacionesPorPlan = (plan: "2023" | "1985"): string[] => {
     if (plan === "1985") {
       return [
@@ -225,27 +211,21 @@ export function HorariosDisplay() {
     ]
   }
 
-  // Opciones para orientación según el plan seleccionado
   const opcionesOrientacion = getOrientacionesPorPlan(filtros.planEstudios)
 
-  // Función para filtrar asignaturas
   const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
-      // Obtener el nombre según el plan seleccionado para la búsqueda
       const nombreParaBusqueda = getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)
 
-      // Filtro por búsqueda
       const coincideBusqueda =
         filtros.busqueda === "" ||
         nombreParaBusqueda.toLowerCase().includes(filtros.busqueda.toLowerCase()) ||
         asignatura.catedra.toLowerCase().includes(filtros.busqueda.toLowerCase())
 
-      // Filtro por tipo de asignatura
       const coincideTipo =
         filtros.tiposAsignatura.length === 0 ||
         (asignatura.tipoAsignatura && filtros.tiposAsignatura.includes(asignatura.tipoAsignatura))
 
-      // Filtro por modalidad de aprobación
       const coincideModalidad = (() => {
         if (filtros.modalidadAprobacion === "todas") return true
         
@@ -259,24 +239,18 @@ export function HorariosDisplay() {
         return modalidadReal === filtros.modalidadAprobacion
       })()
 
-      // Filtro por orientación según el plan seleccionado
       const coincideOrientacion = (() => {
         if (filtros.orientaciones.length === 0) return true
 
         if (filtros.planEstudios === "1985") {
-          // Para plan 1985, verificar si la orientación de la asignatura coincide con las seleccionadas
-          // y que tenga equivalencia para el plan 1985
           const tieneEquivalencia = asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.planInfo?.equivalencia?.cod85
           if (!tieneEquivalencia) return false
           
-          // Si no hay orientaciones seleccionadas, mostrar todas las que tengan equivalencia
           if (filtros.orientaciones.length === 0) return true
           
-          // Verificar si alguna de las orientaciones de la asignatura coincide con las seleccionadas
           return asignatura.planInfo?.orientaciones && 
                  asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient))
         } else {
-          // Para plan 2023, usar la lógica existente
           return asignatura.planInfo?.orientaciones && 
                  asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient))
         }
@@ -286,41 +260,34 @@ export function HorariosDisplay() {
     })
   }
 
-  // Función para obtener el nombre de la asignatura según el plan seleccionado
   const getNombreAsignaturaPorPlan = (asignatura: AsignaturaConPlan, plan: "2023" | "1985"): string => {
     if (plan === "1985") {
-      // Usar el nombre equivalente del plan 1985 si existe
       return asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.materia
     }
-    // Para plan 2023, usar el nombre actual o el nombre del plan 2023
     return asignatura.planInfo?.equivalencia?.nombrePlan23 || asignatura.materia
   }
 
-  // Función para filtrar asignaturas por plan de estudios
   const filtrarAsignaturasPorPlan = (asignaturas: AsignaturaConPlan[], plan: "2023" | "1985"): AsignaturaConPlan[] => {
     if (plan === "2023") {
-      return asignaturas // Mostrar todas las asignaturas para plan 2023
+      return asignaturas
     }
 
-    // Para plan 1985, solo mostrar asignaturas que tienen equivalencia
     return asignaturas.filter(asignatura => 
       asignatura.planInfo?.equivalencia?.nombrePlan85 || 
       asignatura.planInfo?.equivalencia?.cod85
     )
   }
 
-  // Función para limpiar filtros
   const limpiarFiltros = () => {
     setFiltros({
       busqueda: "",
       tiposAsignatura: [],
       modalidadAprobacion: "todas",
       orientaciones: [],
-      planEstudios: filtros.planEstudios, // Mantener el plan seleccionado
+      planEstudios: filtros.planEstudios,
     })
   }
 
-  // Función para manejar cambios en checkboxes
   const toggleFiltro = (tipo: "tiposAsignatura" | "orientaciones", valor: string) => {
     setFiltros((prev) => ({
       ...prev,
@@ -328,19 +295,16 @@ export function HorariosDisplay() {
     }))
   }
 
-  // Funciones para manejar selección
   const toggleAsignatura = (asignaturaId: string) => {
     setSeleccion((prev) => {
       const isSelected = prev.asignaturas.includes(asignaturaId)
 
       if (isSelected) {
-        // Deseleccionar asignatura y limpiar sus clases
         return {
           asignaturas: prev.asignaturas.filter((id) => id !== asignaturaId),
           clases: { ...prev.clases, [asignaturaId]: {} },
         }
       } else {
-        // Seleccionar asignatura
         return {
           ...prev,
           asignaturas: [...prev.asignaturas, asignaturaId],
@@ -359,7 +323,6 @@ export function HorariosDisplay() {
         },
       }
 
-      // Si la asignatura no está seleccionada, agregarla
       const nuevasAsignaturas = prev.asignaturas.includes(asignaturaId)
         ? prev.asignaturas
         : [...prev.asignaturas, asignaturaId]
@@ -371,7 +334,6 @@ export function HorariosDisplay() {
     })
   }
 
-  // Función para obtener tipos de clases faltantes
   const getClasesFaltantes = (asignatura: Asignatura, clasesSeleccionadas: { [tipoClase: string]: string }) => {
     const gruposClases = agruparClasesPorTipo(asignatura.clases)
     const tiposFaltantes: string[] = []
@@ -379,9 +341,7 @@ export function HorariosDisplay() {
     gruposClases.forEach((grupo) => {
       const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
 
-      // Solo marcar como faltante si requiere selección y no se ha seleccionado
       if (agrupacion === "elegir" && grupo.clases.length > 1 && !clasesSeleccionadas[grupo.tipo]) {
-        // Usar nombres completos en plural
         const nombreCompleto =
           grupo.tipo === "Teórico"
             ? "Teóricos"
@@ -392,7 +352,6 @@ export function HorariosDisplay() {
                 : grupo.tipo
         tiposFaltantes.push(nombreCompleto)
       } else if (!agrupacion && grupo.clases.length > 1 && !clasesSeleccionadas[grupo.tipo]) {
-        // Lógica por defecto para clases sin especificación (asumen que requieren selección)
         const nombreCompleto =
           grupo.tipo === "Teórico"
             ? "Teóricos"
@@ -403,13 +362,11 @@ export function HorariosDisplay() {
                 : grupo.tipo
         tiposFaltantes.push(nombreCompleto)
       }
-      // Si agrupacion === "conjunto", nunca marcar como faltante
     })
 
     return tiposFaltantes
   }
 
-  // Función para detectar superposiciones horarias
   const detectarSuperposiciones = () => {
     if (!data) return []
 
@@ -421,7 +378,6 @@ export function HorariosDisplay() {
       fin: number
     }> = []
 
-    // Recopilar todas las clases seleccionadas
     seleccion.asignaturas.forEach((asignaturaId) => {
       const asignatura = asignaturasEnriquecidas.find((a) => a.id === asignaturaId)
       if (!asignatura) return
@@ -433,7 +389,6 @@ export function HorariosDisplay() {
         const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
 
         if (agrupacion === "conjunto") {
-          // Si es conjunto, agregar todas las clases del grupo
           grupo.clases.forEach((clase) => {
             const horarioParts = clase.horario.split(" - ")
             const inicio = parseInt(horarioParts[0].split(":")[0])
@@ -448,7 +403,6 @@ export function HorariosDisplay() {
             })
           })
         } else {
-          // Para clases que requieren selección o únicas
           if (grupo.clases.length === 1) {
             const clase = grupo.clases[0]
             const horarioParts = clase.horario.split(" - ")
@@ -473,7 +427,7 @@ export function HorariosDisplay() {
 
                 clasesSeleccionadas.push({
                   asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
-                  clase: `${clase.tipo} ${clase.numero}`,
+                  clase: `${clase.tipo} ${clase.numero || ""}`.trim(),
                   dia: clase.dia,
                   inicio,
                   fin
@@ -485,7 +439,6 @@ export function HorariosDisplay() {
       })
     })
 
-    // Detectar superposiciones
     const superposiciones: Array<{
       clase1: string
       clase2: string
@@ -498,7 +451,6 @@ export function HorariosDisplay() {
         const clase1 = clasesSeleccionadas[i]
         const clase2 = clasesSeleccionadas[j]
 
-        // Verificar si son el mismo día y se superponen horarios
         if (clase1.dia === clase2.dia) {
           const haySuper = (clase1.inicio < clase2.fin && clase1.fin > clase2.inicio)
 
@@ -517,7 +469,6 @@ export function HorariosDisplay() {
     return superposiciones
   }
 
-  // Función para limpiar selección
   const limpiarSeleccion = () => {
     setSeleccion({
       asignaturas: [],
@@ -525,7 +476,6 @@ export function HorariosDisplay() {
     })
   }
 
-  // Función para obtener la selección formateada
   const getSeleccionFormateada = () => {
     if (!data) return []
 
@@ -549,47 +499,43 @@ export function HorariosDisplay() {
         const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
 
         if (agrupacion === "conjunto") {
-          // Si es conjunto, mostrar todas las clases del grupo
           grupo.clases.forEach((clase, index) => {
             clasesSeleccionadas.push({
               nombre: grupo.clases.length > 1 
                 ? `${clase.tipo} ${index + 1}` 
-                : (clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`),
+                : (clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero || ""}`),
               dia: clase.dia,
               horario: clase.horario,
             })
           })
         } else if (agrupacion === "elegir") {
-          // Si requiere selección, mostrar solo la seleccionada
           const claseSeleccionadaId = clasesAsignatura[grupo.tipo]
           if (claseSeleccionadaId) {
             const clase = grupo.clases.find((c) => c.id === claseSeleccionadaId)
             if (clase) {
               clasesSeleccionadas.push({
-                nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`,
+                nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero || ""}`,
                 dia: clase.dia,
                 horario: clase.horario,
               })
             }
           }
         } else {
-          // Lógica por defecto: si hay una sola clase, mostrarla; si hay múltiples, aplicar lógica anterior
           if (grupo.clases.length === 1) {
             grupo.clases.forEach((clase) => {
               clasesSeleccionadas.push({
-                nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`,
+                nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero || ""}`,
                 dia: clase.dia,
                 horario: clase.horario,
               })
             })
           } else {
-            // Para múltiples clases sin especificación, mantener lógica de selección
             const claseSeleccionadaId = clasesAsignatura[grupo.tipo]
             if (claseSeleccionadaId) {
               const clase = grupo.clases.find((c) => c.id === claseSeleccionadaId)
               if (clase) {
                 clasesSeleccionadas.push({
-                  nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`,
+                  nombre: clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero || ""}`,
                   dia: clase.dia,
                   horario: clase.horario,
                 })
@@ -607,7 +553,6 @@ export function HorariosDisplay() {
       })
     })
 
-    // Ordenar por título de asignatura
     return resultado.sort((a, b) => a.asignatura.localeCompare(b.asignatura))
   }
 
@@ -637,7 +582,6 @@ export function HorariosDisplay() {
     }
   }
 
-  // Filtrar por plan de estudios primero, luego ordenar alfabéticamente y aplicar filtros
   const asignaturasPorPlan = filtrarAsignaturasPorPlan(asignaturasEnriquecidas, filtros.planEstudios)
   const asignaturasOrdenadas = [...asignaturasPorPlan].sort((a, b) => {
     const nombreA = getNombreAsignaturaPorPlan(a, filtros.planEstudios)
@@ -652,7 +596,6 @@ export function HorariosDisplay() {
   return (
     <TooltipProvider>
       <div className="space-y-4">
-        {/* Header section con márgenes reducidos */}
         <div className="mb-4">
           <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
           <h1 className="text-5xl font-bold text-uba-primary mb-2">
@@ -666,7 +609,6 @@ export function HorariosDisplay() {
             <span className="font-semibold">cronograma</span> semanal.
           </p>
 
-          {/* Alert de aclaración más grande y amarillo */}
           <Alert className="border-yellow-300 bg-yellow-100 p-4">
             <div className="flex items-start gap-3">
               <div className="text-2xl mt-0.5">⚠️</div>
@@ -687,11 +629,9 @@ export function HorariosDisplay() {
           </Alert>
         </div>
 
-      {/* Buscador y filtros */}
       <Card className="bg-gray-50 border-gray-200">
         <CardContent className="pt-6">
           <div className="space-y-4">
-            {/* Switch para Plan de Estudios */}
             <div className="flex items-center justify-between p-4 bg-[#1c2554] text-white rounded-lg border">
               <div className="flex items-center space-x-4">
                 <h4 className="text-base font-medium">Plan de Estudios</h4>
@@ -705,7 +645,7 @@ export function HorariosDisplay() {
                       setFiltros((prev) => ({ 
                         ...prev, 
                         planEstudios: checked ? "2023" : "1985",
-                        orientaciones: [] // Limpiar orientaciones al cambiar de plan
+                        orientaciones: []
                       }))
                     }}
                     className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
@@ -720,7 +660,6 @@ export function HorariosDisplay() {
               </p>
             </div>
 
-            {/* Campo de búsqueda */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
@@ -732,7 +671,6 @@ export function HorariosDisplay() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {/* Filtros por tipo de asignatura */}
               {valoresUnicos.tiposAsignatura.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium text-uba-primary mb-3">Tipo de asignatura</h4>
@@ -753,7 +691,6 @@ export function HorariosDisplay() {
                 </div>
               )}
 
-              {/* Filtros por orientación */}
               <div>
                 <h4 className="text-sm font-medium text-uba-primary mb-3">Carrera/Orientación</h4>
                 <div className="space-y-2">
@@ -772,7 +709,6 @@ export function HorariosDisplay() {
                 </div>
               </div>
 
-              {/* Filtros por modalidad de aprobación */}
               <div>
                 <h4 className="text-sm font-medium text-uba-primary mb-3">Modalidad de aprobación</h4>
                 <RadioGroup
@@ -809,7 +745,6 @@ export function HorariosDisplay() {
               </div>
             </div>
 
-            {/* Botón para limpiar filtros */}
             <div className="flex justify-between items-center pt-2">
               <p className="text-sm text-gray-600 italic">
                 Mostrando {asignaturasFiltradas.length} de {asignaturasEnriquecidas.length} asignaturas
@@ -828,7 +763,6 @@ export function HorariosDisplay() {
         </CardContent>
       </Card>
 
-      {/* Advertencias de superposición */}
       {(() => {
         const superposiciones = detectarSuperposiciones()
         return superposiciones.length > 0 ? (
@@ -850,7 +784,6 @@ export function HorariosDisplay() {
         ) : null
       })()}
 
-      {/* Lista de asignaturas */}
       <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-4">
         {asignaturasFiltradas.length === 0 ? (
           <div className="text-center py-12 col-span-full">
@@ -882,7 +815,6 @@ export function HorariosDisplay() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-                      {/* Tooltip de correlatividad */}
                       {asignatura.planInfo?.correlatividad && (
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -906,12 +838,12 @@ export function HorariosDisplay() {
                   </div>
                 </CardHeader>
               <CardContent className="space-y-3 pt-3">
-                {/* Características de la asignatura */}
                 <div className="flex flex-wrap gap-1">
-                  <Badge variant="secondary" className="text-xs bg-uba-secondary/20 text-uba-primary">
-                    {asignatura.modalidadCursada}
-                  </Badge>
-                  {/* Mostrar modalidad de aprobación procesada */}
+                  {asignatura.modalidadCursada === "Virtual" || asignatura.modalidadCursada === "Presencial, con 30% de virtualidad asincrónica" ? (
+                    <Badge variant="secondary" className="text-xs bg-uba-secondary/20 text-uba-primary">
+                      {asignatura.modalidadCursada}
+                    </Badge>
+                  ) : null}
                   <Badge variant="outline" className="text-xs border-uba-primary text-uba-primary">
                     {(!asignatura.modalidadAprobacion || 
                       asignatura.modalidadAprobacion === "NO CORRESPONDE" || 
@@ -928,12 +860,10 @@ export function HorariosDisplay() {
                   </div>
                 )}
 
-                {/* Clases agrupadas por tipo */}
                 <div className="space-y-2">
                   {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
                     const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
                     
-                    // Función para obtener colores según tipo de clase
                     const getClassColors = (tipo: string, isSelected: boolean) => {
                       switch (tipo) {
                         case "Teórico":
@@ -970,8 +900,8 @@ export function HorariosDisplay() {
                                     getClassColors(clase.tipo, isClassSelected)
                                   }`}>
                                     <div className="flex justify-between items-start mb-1">
-                                      <Badge variant="outline" className={`text-xs border-current`}>
-                                        {clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
+                                      <Badge variant="outline" className="text-xs border-current">
+                                        {clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
                                       </Badge>
                                       <div className="flex items-center">
                                         <RadioGroupItem
@@ -1002,7 +932,7 @@ export function HorariosDisplay() {
                                   <Badge variant="outline" className="text-xs border-current">
                                     {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
                                       ? `${clase.tipo} ${index + 1}`
-                                      : clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero}`}
+                                      : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
                                   </Badge>
                                   {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
                                     <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-300">
@@ -1024,7 +954,6 @@ export function HorariosDisplay() {
                     )
                   })}
                 </div>
-                {/* Mensaje de clases faltantes */}
                 {seleccion.asignaturas.includes(asignatura.id) &&
                   (() => {
                     const tiposFaltantes = getClasesFaltantes(asignatura, seleccion.clases[asignatura.id] || {})
@@ -1047,10 +976,8 @@ export function HorariosDisplay() {
         )}
       </div>
 
-      {/* Línea divisoria */}
       {seleccionFormateada.length > 0 && <div className="border-t border-gray-300 my-8"></div>}
 
-      {/* Tu Selección */}
       {seleccionFormateada.length > 0 && (
         <div>
           <div className="flex justify-between items-center mb-4">
@@ -1066,7 +993,6 @@ export function HorariosDisplay() {
             </Button>
           </div>
 
-          {/* Advertencias de superposición en Tu Selección */}
           {(() => {
             const superposiciones = detectarSuperposiciones()
             return superposiciones.length > 0 ? (
@@ -1124,7 +1050,6 @@ export function HorariosDisplay() {
         </div>
       )}
 
-      {/* Cronograma Semanal */}
       {seleccionFormateada.length > 0 && (
         <div className="mt-8">
           <div className="flex items-center gap-3 mb-4">
@@ -1132,7 +1057,6 @@ export function HorariosDisplay() {
           </div>
 
           {(() => {
-            // Generar datos del cronograma
             const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
             const horariosCompletos: Array<{
               asignatura: string
@@ -1144,7 +1068,6 @@ export function HorariosDisplay() {
               color: string
             }> = []
 
-            // Paleta de colores para diferentes asignaturas
             const colores = [
               "bg-blue-200 text-blue-800 border-blue-300",
               "bg-green-200 text-green-800 border-green-300", 
@@ -1156,7 +1079,6 @@ export function HorariosDisplay() {
               "bg-teal-200 text-teal-800 border-teal-300"
             ]
 
-            // Recopilar todas las clases seleccionadas con colores
             seleccion.asignaturas.forEach((asignaturaId, asignaturaIndex) => {
               const asignatura = asignaturasEnriquecidas.find((a) => a.id === asignaturaId)
               if (!asignatura) return
@@ -1169,7 +1091,6 @@ export function HorariosDisplay() {
                 const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
 
                 if (agrupacion === "conjunto") {
-                  // Si es conjunto, agregar todas las clases del grupo
                   grupo.clases.forEach((clase) => {
                     const horarioParts = clase.horario.split(" - ")
                     const inicio = parseInt(horarioParts[0].split(":")[0])
@@ -1186,7 +1107,6 @@ export function HorariosDisplay() {
                     })
                   })
                 } else {
-                  // Para clases que requieren selección o únicas
                   if (grupo.clases.length === 1) {
                     const clase = grupo.clases[0]
                     const horarioParts = clase.horario.split(" - ")
@@ -1214,7 +1134,7 @@ export function HorariosDisplay() {
                         horariosCompletos.push({
                           asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
                           catedra: asignatura.catedra,
-                          clase: `${clase.tipo} ${clase.numero}`,
+                          clase: `${clase.tipo} ${clase.numero || ""}`.trim(),
                           dia: clase.dia,
                           inicio,
                           fin,
@@ -1227,7 +1147,6 @@ export function HorariosDisplay() {
               })
             })
 
-            // Determinar rango de horarios (8:00 a 22:00)
             const horaInicio = 8
             const horaFin = 22
             const intervalos = []
@@ -1244,7 +1163,6 @@ export function HorariosDisplay() {
                 <CardContent className="p-0">
                   <div className="relative">
                     <div className="overflow-x-auto">
-                      {/* Indicador de scroll para pantallas pequeñas */}
                       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 md:hidden"></div>
                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-20 md:hidden">
                         →
@@ -1279,7 +1197,6 @@ export function HorariosDisplay() {
                               return (
                                 <td key={dia} className="border border-gray-300 p-1 align-top relative">
                                   {clasesEnIntervalo.map((clase, index) => {
-                                    // Calcular posición y altura proporcional
                                     const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
                                     const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
                                     const alturaTotal = intervalo.fin - intervalo.inicio
@@ -1322,7 +1239,6 @@ export function HorariosDisplay() {
                     </div>
                   </div>
 
-                  {/* Leyenda de colores */}
                   <div className="p-4 bg-gray-50 border-t">
                     <h4 className="text-sm font-semibold text-uba-primary mb-3">Leyenda de asignaturas:</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">

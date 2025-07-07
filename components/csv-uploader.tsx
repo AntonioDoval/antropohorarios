@@ -1,3 +1,6 @@
+The code will be updated to include sample data loading functionality with a button and corresponding function.
+```
+```replit_final_file
 "use client"
 
 import type React from "react"
@@ -132,7 +135,7 @@ export function CSVUploader() {
         const tituloOptativa = row["Título de materia optativa/electiva"]?.trim() || ""
 
         let titulo = ""
-        
+
         // Determinar título según tipo de asignatura
         if (tipoAsignatura === "Seminario regular" && tituloSeminario) {
           titulo = "Seminario: " + tituloSeminario
@@ -158,7 +161,7 @@ export function CSVUploader() {
         const catedraOptativa = row["Cátedra de la materia optativa/electiva"]?.trim() || ""
 
         let catedra = ""
-        
+
         if (tipoAsignatura === "Seminario regular" && catedraSeminario) {
           catedra = catedraSeminario
         } else if (tipoAsignatura === "Materia o seminario anual" && catedraAnual) {
@@ -178,7 +181,7 @@ export function CSVUploader() {
         const modalidadCursadaOptativa = row["Modalidad de cursada (materia optativa/electiva)"]?.trim() || ""
 
         let modalidadCursada = ""
-        
+
         if (tipoAsignatura === "Seminario regular" && modalidadCursadaSeminario) {
           modalidadCursada = modalidadCursadaSeminario
         } else if (tipoAsignatura === "Materia o seminario anual" && modalidadCursadaAnual) {
@@ -371,7 +374,7 @@ export function CSVUploader() {
         // Obtener la orientación de la asignatura
         const orientacionSeminario = row["Orientación del seminario"]?.trim() || ""
         const orientacionOptativa = row["Orientación (materia optativa/electiva)"]?.trim() || ""
-        
+
         let orientacionAsignatura = ""
 
         if (tipoAsignatura === "Seminario regular" && orientacionSeminario) {
@@ -398,7 +401,7 @@ export function CSVUploader() {
         }
 
         console.log(`Asignatura agregada: "${titulo}" - Cátedra: "${catedra}"`)
-        
+
         // Agregar la asignatura al array de datos
         data.push(asignatura)
       }
@@ -447,6 +450,23 @@ export function CSVUploader() {
       type: "success",
       text: "Datos actuales limpiados exitosamente.",
     })
+  }
+
+  const loadSampleData = async () => {
+    const { loadSampleHorarios, loadSamplePlanes } = await import("@/lib/sample-data-loader")
+
+    // Load sample plans
+    loadSamplePlanes()
+
+    // Load sample horarios
+    const sampleHorarios = loadSampleHorarios()
+
+    setMessage({
+      type: "success",
+      text: "Datos de prueba cargados exitosamente.",
+    })
+    setPreview([])
+    setFile(null)
   }
 
   return (
@@ -532,6 +552,10 @@ export function CSVUploader() {
               className="w-full"
             >
               Limpiar Datos Actuales
+            </Button>
+
+            <Button onClick={loadSampleData} variant="secondary" className="w-full">
+              Cargar Datos de Prueba
             </Button>
           </div>
 
