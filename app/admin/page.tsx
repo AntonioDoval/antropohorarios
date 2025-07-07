@@ -15,9 +15,9 @@ import Link from "next/link"
 import { Footer } from "@/components/footer"
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated = useState(false)
-  const [password, setPassword = useState("")
-  const [error, setError = useState("")
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
