@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -299,7 +300,7 @@ export function CSVUploader() {
   }
 
   const formatearTituloAsignatura = (titulo: string, tipoAsignatura: string): string => {
-    // Aplicar toStartCase para capitalización adecuada
+    // Aplicar toStartCase para capitalización adecuada (solo primera letra)
     let tituloFormateado = toStartCase(titulo)
 
     // Agregar prefijo según tipo de asignatura

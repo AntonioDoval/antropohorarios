@@ -88,6 +88,10 @@ export function loadSamplePlanes() {
   return planes
 }
 
+export function loadSampleData(): SampleHorario[] {
+  return loadSampleHorarios()
+}
+
 export function loadSampleHorarios(): SampleHorario[] {
   const horarios: SampleHorario[] = [
     {

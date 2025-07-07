@@ -41,7 +41,12 @@ export function toStartCase(text: string): string {
         }
       }
 
-      return index === 0 || !lowercaseWords.includes(word) ? word.charAt(0).toUpperCase() + word.slice(1) : word
+      // Solo la primera palabra se capitaliza, el resto según las reglas de artículos/preposiciones
+      if (index === 0) {
+        return word.charAt(0).toUpperCase() + word.slice(1)
+      }
+
+      return lowercaseWords.includes(word) ? word : word.charAt(0).toUpperCase() + word.slice(1)
     })
     .join(" ")
 }
