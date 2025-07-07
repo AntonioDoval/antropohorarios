@@ -92,8 +92,20 @@ export default function PlanesEstudioPage() {
 
       // Lógica específica por plan y carrera
       if (selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "sociocultural") {
+        // Materias específicas para agrupar por separado
+        if (materia.nombre === "Enfoque Cuantitativo de Investigación en Antropología Sociocultural" || 
+            materia.nombre === "Ejercicio Profesional de la Antropología Sociocultural") {
+          const especialKey = "materias_especiales"
+          if (!gruposElectivos[especialKey]) {
+            gruposElectivos[especialKey] = {
+              titulo: "Una materia a elección entre:",
+              materias: []
+            }
+          }
+          gruposElectivos[especialKey].materias.push(materia)
+        }
         // Agrupar por área con títulos específicos
-        if (materia.area && materia.area.trim()) {
+        else if (materia.area && materia.area.trim()) {
           const areaKey = `area_${materia.area}`
           if (!gruposElectivos[areaKey]) {
             gruposElectivos[areaKey] = {
