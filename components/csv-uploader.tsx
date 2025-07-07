@@ -1,6 +1,4 @@
-The code will be updated to include sample data loading functionality with a button and corresponding function.
-```
-```replit_final_file
+
 "use client"
 
 import type React from "react"
@@ -31,7 +29,7 @@ interface Asignatura {
   modalidadAprobacion: string
   modalidadCursada: string
   orientacion?: string
-  agrupacionClases?: { [tipo: string]: "elegir" | "conjunto" } // Agregar esta línea
+  agrupacionClases?: { [tipo: string]: "elegir" | "conjunto" }
   aclaraciones?: string
   clases: Clase[]
 }
@@ -392,7 +390,7 @@ export function CSVUploader() {
           modalidadAprobacion: modalidadAprobacion || "No especificado",
           modalidadCursada: modalidadCursada || "No especificado",
           orientacion: orientacionAsignatura || undefined,
-          agrupacionClases: agrupacionClases, // Agregar esta nueva propiedad
+          agrupacionClases: agrupacionClases,
           aclaraciones:
             row[
               "De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)"
