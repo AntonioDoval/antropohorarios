@@ -150,20 +150,19 @@ export default function PlanesEstudioPage() {
           materiasObligatorias.push(materia)
         }
       } else if (selectedPlan === "2023" && selectedCarrera === "licenciatura" && selectedOrientacion === "arqueologia") {
-          if(materia.electividad.includes("Electivas")){
-              const electivasKey = `electivas`;
-              if(!gruposElectivos[electivasKey]){
-                  gruposElectivos[electivasKey] = {
-                      titulo: "Dos materias a elegir entre:",
-                      materias: []
-                  }
-              }
-              gruposElectivos[electivasKey].materias.push(materia);
-          } else {
-              materiasObligatorias.push(materia);
+        if(materia.electividad.includes("Electivas")){
+          const electivasKey = `electivas`;
+          if(!gruposElectivos[electivasKey]){
+            gruposElectivos[electivasKey] = {
+              titulo: "Dos materias a elegir entre:",
+              materias: []
+            }
           }
-      }
-      else {
+          gruposElectivos[electivasKey].materias.push(materia);
+        } else {
+          materiasObligatorias.push(materia);
+        }
+      } else {
         // Para otros casos, agrupar por electividad similar
         const electividadKey = `electiva_${materia.electividad}`
         if (!gruposElectivos[electividadKey]) {
