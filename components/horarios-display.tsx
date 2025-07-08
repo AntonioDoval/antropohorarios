@@ -176,15 +176,7 @@ export function HorariosDisplay() {
     const modalidadesAprobacion = [
       ...new Set(
         asignaturas
-          .map((a) => {
-            if (!a.modalidadAprobacion || 
-                a.modalidadAprobacion === "NO CORRESPONDE" || 
-                a.modalidadAprobacion === "No corresponde" || 
-                a.modalidadAprobacion.toLowerCase() === "no especificada") {
-              return "Trabajo final"
-            }
-            return a.modalidadAprobacion
-          })
+          .map((a) => a.modalidadAprobacion || "Trabajo final")
           .filter(Boolean),
       ),
     ]
@@ -225,12 +217,7 @@ export function HorariosDisplay() {
       const coincideModalidad = (() => {
         if (filtros.modalidadesAprobacion.length === 0) return true
         
-        const modalidadReal = (!asignatura.modalidadAprobacion || 
-                              asignatura.modalidadAprobacion === "NO CORRESPONDE" || 
-                              asignatura.modalidadAprobacion === "No corresponde" || 
-                              asignatura.modalidadAprobacion.toLowerCase() === "no especificada") 
-                              ? "Trabajo final" 
-                              : asignatura.modalidadAprobacion
+        const modalidadReal = asignatura.modalidadAprobacion || "Trabajo final"
         
         return filtros.modalidadesAprobacion.includes(modalidadReal)
       })()
@@ -794,47 +781,53 @@ export function HorariosDisplay() {
               <CardContent className="space-y-3 pt-3">
                 <div className="flex flex-wrap gap-1 mb-2">
                   {/* Badge de modalidad de cursada */}
-                  {asignatura.modalidadCursada && 
-                    (asignatura.modalidadCursada.toLowerCase() === "virtual" || 
-                     asignatura.modalidadCursada.toLowerCase().includes("virtual")) && 
-                    !asignatura.modalidadCursada.includes("30%") && (
-                    <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-600 border-teal-200 font-medium px-2 py-0.5">
-                      🌐 Virtual
-                    </Badge>
-                  )}
-                  {asignatura.modalidadCursada && 
-                    (asignatura.modalidadCursada.includes("30% virtualidad") || 
-                     asignatura.modalidadCursada.includes("30% virtual")) && (
-                    <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-600 border-sky-200 font-medium px-2 py-0.5">
-                      📱 30% Virtual
-                    </Badge>
-                  )}
+                  {(() => {
+                    const modalidadCursada = asignatura.modalidadCursada || "Presencial"
+                    
+                    if (modalidadCursada.toLowerCase() === "virtual" || 
+                        modalidadCursada.toLowerCase().includes("virtual") && 
+                        !modalidadCursada.includes("30%")) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-700 border-teal-300 px-1.5 py-0.5">
+                          🌐 Virtual
+                        </Badge>
+                      )
+                    } else if (modalidadCursada.includes("30% virtualidad") || 
+                               modalidadCursada.includes("30% virtual")) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-300 px-1.5 py-0.5">
+                          📱 30% Virtual
+                        </Badge>
+                      )
+                    } else {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-300 px-1.5 py-0.5">
+                          👥 Presencial
+                        </Badge>
+                      )
+                    }
+                  })()}
                   
                   {/* Badge de modalidad de aprobación */}
                   {(() => {
-                    const modalidad = (!asignatura.modalidadAprobacion || 
-                      asignatura.modalidadAprobacion === "NO CORRESPONDE" || 
-                      asignatura.modalidadAprobacion === "No corresponde" || 
-                      asignatura.modalidadAprobacion.toLowerCase() === "no especificada") 
-                      ? "Trabajo final" 
-                      : asignatura.modalidadAprobacion
+                    const modalidad = asignatura.modalidadAprobacion || "Trabajo final"
                     
-                    if (modalidad === "Promoción directa") {
+                    if (modalidad === "Promoción directa" || modalidad.toLowerCase().includes("promoción")) {
                       return (
-                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-600 border-green-200 font-medium px-2 py-0.5">
+                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 border-green-300 px-1.5 py-0.5">
                           ✓ Promoción directa
                         </Badge>
                       )
-                    } else if (modalidad === "Examen final") {
+                    } else if (modalidad === "Examen final" || modalidad.toLowerCase().includes("examen")) {
                       return (
-                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-600 border-orange-200 font-medium px-2 py-0.5">
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700 border-orange-300 px-1.5 py-0.5">
                           📝 Examen final
                         </Badge>
                       )
                     } else {
                       return (
-                        <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200 font-medium px-2 py-0.5">
-                          {modalidad}
+                        <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-300 px-1.5 py-0.5">
+                          📄 Trabajo final
                         </Badge>
                       )
                     }

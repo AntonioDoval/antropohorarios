@@ -167,25 +167,35 @@ export function CSVUploader() {
           titulo = row[headers.indexOf("Título del seminario")] || ""
           catedra = row[headers.indexOf("Cátedra del seminario")] || ""
           orientacion = row[headers.indexOf("Orientación del seminario")] || ""
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación del seminario")] || "Trabajo final"
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || "Presencial"
         } else if (tipoAsignatura.includes("Seminario PST")) {
           titulo = row[headers.indexOf("Título del seminario")] || ""
           catedra = row[headers.indexOf("Cátedra del seminario")] || ""
           orientacion = row[headers.indexOf("Orientación del seminario")] || ""
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación del seminario")] || "Trabajo final"
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || "Presencial"
         } else if (tipoAsignatura.includes("anual")) {
           titulo = row[headers.indexOf("Título de la asignatura anual")] || ""
           catedra = row[headers.indexOf("Cátedra de asignatura anual")] || ""
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la asignatura anual")] || "Trabajo final"
           modalidadCursada = row[headers.indexOf("Modalidad de cursada de la asignatura anual")] || "Presencial"
         } else if (tipoAsignatura.includes("cuatrimestral regular") || tipoAsignatura === "Materia cuatrimestral") {
           titulo = row[headers.indexOf("Título de materia cuatrimestral")] || ""
           catedra = row[headers.indexOf("Cátedra de la materia")] || ""
-          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la materia")] || "Promoción Directa"
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la materia")] || "Trabajo final"
           modalidadCursada = row[headers.indexOf("Modalidad de cursada de la materia")] || "Presencial"
         } else if (tipoAsignatura.includes("optativa") || tipoAsignatura.includes("electiva")) {
           titulo = row[headers.indexOf("Título de materia optativa/electiva")] || ""
           catedra = row[headers.indexOf("Cátedra de la materia optativa/electiva")] || ""
           orientacion = row[headers.indexOf("Orientación (materia optativa/electiva)")] || ""
-          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación (materia optativa/electiva)")] || "Promoción Directa"
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación (materia optativa/electiva)")] || "Trabajo final"
           modalidadCursada = row[headers.indexOf("Modalidad de cursada (materia optativa/electiva)")] || "Presencial"
+        }
+
+        // Si no se asignó modalidad de aprobación, usar "Trabajo final" por defecto
+        if (!modalidadAprobacion || modalidadAprobacion.trim() === "") {
+          modalidadAprobacion = "Trabajo final"
         }
 
         console.log("Título determinado:", titulo)
