@@ -158,34 +158,37 @@ export function CSVUploader() {
 
         let titulo = ""
         let catedra = ""
-        let modalidadAprobacion = "Promoción Directa"
-        let modalidadCursada = "Presencial"
+        let modalidadAprobacion = ""
+        let modalidadCursada = ""
         let orientacion = ""
 
-        // Determinar título según tipo - revisar todos los campos posibles
-        if (tipoAsignatura.includes("Seminario regular")) {
+        // Determinar título según tipo - usar el nuevo formato de CSV
+        if (tipoAsignatura === "Seminario regular") {
           titulo = row[headers.indexOf("Título del seminario")] || ""
           catedra = row[headers.indexOf("Cátedra del seminario")] || ""
           orientacion = row[headers.indexOf("Orientación del seminario")] || ""
-          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación del seminario")] || "Trabajo final"
           modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || "Presencial"
-        } else if (tipoAsignatura.includes("Seminario PST")) {
+          // Los seminarios regulares no tienen modalidad de aprobación específica en el CSV
+          modalidadAprobacion = "Trabajo final"
+        } else if (tipoAsignatura === "Seminario PST") {
           titulo = row[headers.indexOf("Título del seminario")] || ""
           catedra = row[headers.indexOf("Cátedra del seminario")] || ""
           orientacion = row[headers.indexOf("Orientación del seminario")] || ""
-          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación del seminario")] || "Trabajo final"
           modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || "Presencial"
-        } else if (tipoAsignatura.includes("anual")) {
+          // Los seminarios PST no tienen modalidad de aprobación específica en el CSV
+          modalidadAprobacion = "Trabajo final"
+        } else if (tipoAsignatura === "Materia o seminario anual") {
           titulo = row[headers.indexOf("Título de la asignatura anual")] || ""
           catedra = row[headers.indexOf("Cátedra de asignatura anual")] || ""
-          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la asignatura anual")] || "Trabajo final"
           modalidadCursada = row[headers.indexOf("Modalidad de cursada de la asignatura anual")] || "Presencial"
-        } else if (tipoAsignatura.includes("cuatrimestral regular") || tipoAsignatura === "Materia cuatrimestral") {
+          // Las materias anuales no tienen modalidad de aprobación específica en el CSV
+          modalidadAprobacion = "Trabajo final"
+        } else if (tipoAsignatura === "Materia cuatrimestral regular") {
           titulo = row[headers.indexOf("Título de materia cuatrimestral")] || ""
           catedra = row[headers.indexOf("Cátedra de la materia")] || ""
           modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la materia")] || "Trabajo final"
           modalidadCursada = row[headers.indexOf("Modalidad de cursada de la materia")] || "Presencial"
-        } else if (tipoAsignatura.includes("optativa") || tipoAsignatura.includes("electiva")) {
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
           titulo = row[headers.indexOf("Título de materia optativa/electiva")] || ""
           catedra = row[headers.indexOf("Cátedra de la materia optativa/electiva")] || ""
           orientacion = row[headers.indexOf("Orientación (materia optativa/electiva)")] || ""
@@ -196,6 +199,11 @@ export function CSVUploader() {
         // Si no se asignó modalidad de aprobación, usar "Trabajo final" por defecto
         if (!modalidadAprobacion || modalidadAprobacion.trim() === "") {
           modalidadAprobacion = "Trabajo final"
+        }
+
+        // Si no se asignó modalidad de cursada, usar "Presencial" por defecto
+        if (!modalidadCursada || modalidadCursada.trim() === "") {
+          modalidadCursada = "Presencial"
         }
 
         console.log("Título determinado:", titulo)
@@ -302,65 +310,16 @@ export function CSVUploader() {
         // Determinar agrupaciones de clases leyendo desde el CSV
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
-        // Leer valores específicos de agrupación desde las columnas V y AE del CSV
-        // Buscar por múltiples variaciones de nombres de columna
-        let agrupacionTeoricos = ""
-        let agrupacionTeoricoPracticos = ""
-        
-        // Columna V (index 21) - Relación entre teóricos
-        const columnaV = 21
-        if (columnaV < headers.length && columnaV < row.length) {
-          agrupacionTeoricos = row[columnaV] || ""
-        }
-        
-        // Columna AE (index 30) - Relación entre teórico-prácticos  
-        const columnaAE = 30
-        if (columnaAE < headers.length && columnaAE < row.length) {
-          agrupacionTeoricoPracticos = row[columnaAE] || ""
-        }
-        
-        // Fallback: intentar buscar por nombre de columna si no se encontró por índice
-        if (!agrupacionTeoricos) {
-          const posiblesTeoricos = [
-            "Indicar relación entre los dos horarios de teóricos",
-            "Relación teóricos",
-            "Agrupación teóricos",
-            "Teóricos relación"
-          ]
-          
-          for (const nombre of posiblesTeoricos) {
-            const index = headers.indexOf(nombre)
-            if (index >= 0 && row[index]) {
-              agrupacionTeoricos = row[index]
-              break
-            }
-          }
-        }
-        
-        if (!agrupacionTeoricoPracticos) {
-          const posiblesTP = [
-            "Indicar relación entre los dos horarios de teórico-prácticos",
-            "Relación teórico-prácticos", 
-            "Agrupación teórico-prácticos",
-            "Teórico-prácticos relación"
-          ]
-          
-          for (const nombre of posiblesTP) {
-            const index = headers.indexOf(nombre)
-            if (index >= 0 && row[index]) {
-              agrupacionTeoricoPracticos = row[index]
-              break
-            }
-          }
-        }
+        // Leer valores específicos de agrupación desde las columnas exactas del CSV
+        const agrupacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")] || ""
+        const agrupacionTeoricoPracticos = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")] || ""
 
         console.log("Agrupaciones leídas del CSV:")
-        console.log("- Teóricos (columna V):", agrupacionTeoricos)
-        console.log("- Teórico-Prácticos (columna AE):", agrupacionTeoricoPracticos)
+        console.log("- Teóricos:", agrupacionTeoricos)
+        console.log("- Teórico-Prácticos:", agrupacionTeoricoPracticos)
 
         // Obtener aclaraciones
-        const aclaracionesIndex = headers.findIndex(h => h.includes("aclaraciones") || h.includes("Aclaraciones"))
-        const aclaraciones = aclaracionesIndex >= 0 ? row[aclaracionesIndex] : ""
+        const aclaraciones = row[headers.indexOf("De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)")] || ""
 
         const asignatura: Asignatura = {
           id: `asignatura-${data.length + 1}`,
@@ -389,8 +348,7 @@ export function CSVUploader() {
             // Determinar si es complementario o electivo basado en el valor del CSV
             const agrupacionLower = agrupacionValue.toLowerCase()
             
-            if (agrupacionLower.includes("mismo teórico") || 
-                agrupacionLower.includes("dividido") ||
+            if (agrupacionLower.includes("mismo teórico dividido") || 
                 agrupacionLower.includes("conjunto") ||
                 agrupacionLower.includes("complementario") ||
                 agrupacionLower.includes("ambos") ||
@@ -406,38 +364,11 @@ export function CSVUploader() {
               agrupacionClases[grupo.tipo] = "elegir"
               console.log(`${grupo.tipo} marcado como electivo (elegir) - valor: "${agrupacionValue}"`)
             } else if (agrupacionValue.trim() !== "") {
-              // Si hay información pero no coincide con los patrones conocidos, analizar el contenido
-              // Por defecto, si no está claro, marcar como conjunto para clases teóricas complementarias
-              if (grupo.tipo === "Teórico" && grupo.clases.length === 2) {
-                agrupacionClases[grupo.tipo] = "conjunto"
-                console.log(`${grupo.tipo} marcado como complementario (conjunto) por contenido no reconocido - valor: "${agrupacionValue}"`)
-              } else {
-                agrupacionClases[grupo.tipo] = "elegir"
-                console.log(`${grupo.tipo} con información no reconocida, marcado como electivo por defecto - valor: "${agrupacionValue}"`)
-              }
-            } else {
-              // Si no hay información específica, aplicar heurística para detectar complementarios
-              // Para teóricos: si hay exactamente 2 teóricos con horarios diferentes pero misma duración, probablemente sean complementarios
-              if (grupo.tipo === "Teórico" && grupo.clases.length === 2) {
-                const clase1 = grupo.clases[0]
-                const clase2 = grupo.clases[1]
-                const duracion1 = parseInt(clase1.horario.split(" - ")[1]) - parseInt(clase1.horario.split(" - ")[0])
-                const duracion2 = parseInt(clase2.horario.split(" - ")[1]) - parseInt(clase2.horario.split(" - ")[0])
-                
-                // Si tienen la misma duración y días diferentes o horarios no superpuestos, probablemente sean complementarios
-                if (duracion1 === duracion2 && (clase1.dia !== clase2.dia || 
-                    !horariosSuperpuestos(clase1.horario, clase2.horario))) {
-                  agrupacionClases[grupo.tipo] = "conjunto"
-                  console.log(`${grupo.tipo} marcado como complementario (conjunto) por heurística - misma duración, diferentes horarios`)
-                } else {
-                  agrupacionClases[grupo.tipo] = "elegir"
-                  console.log(`${grupo.tipo} marcado como electivo (elegir) por heurística - diferentes duraciones o horarios superpuestos`)
-                }
-              } else {
-                agrupacionClases[grupo.tipo] = "elegir"
-                console.log(`${grupo.tipo} sin información específica, marcado como electivo por defecto`)
-              }
+              // Si hay información pero no coincide con los patrones conocidos, marcar como electivo por defecto
+              agrupacionClases[grupo.tipo] = "elegir"
+              console.log(`${grupo.tipo} con información no reconocida, marcado como electivo por defecto - valor: "${agrupacionValue}"`)
             }
+            // Si no hay información específica, no establecer agrupación (comportamiento por defecto en la UI)
           }
         })
 
