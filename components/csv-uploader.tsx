@@ -196,20 +196,36 @@ export function CSVUploader() {
           modalidadCursada = row[headers.indexOf("Modalidad de cursada (materia optativa/electiva)")] || ""
         }
 
+        console.log("Modalidad de aprobación leída del CSV:", modalidadAprobacion)
+        console.log("Tipo de asignatura:", tipoAsignatura)
+
         // Normalizar modalidad de aprobación
         if (!modalidadAprobacion || modalidadAprobacion.trim() === "") {
-          modalidadAprobacion = "Trabajo final"
+          // Solo asignar "Trabajo final" por defecto para seminarios
+          if (tipoAsignatura === "Seminario regular" || tipoAsignatura === "Seminario PST" || tipoAsignatura === "Materia o seminario anual") {
+            modalidadAprobacion = "Trabajo final"
+          } else {
+            // Para materias cuatrimestrales, usar "Examen final" por defecto si no se especifica
+            modalidadAprobacion = "Examen final"
+          }
         } else {
           // Normalizar texto para evitar inconsistencias
-          const aprobacionLower = modalidadAprobacion.toLowerCase()
+          const aprobacionLower = modalidadAprobacion.toLowerCase().trim()
+          console.log("Procesando modalidad:", aprobacionLower)
+          
           if (aprobacionLower.includes("promoción") || aprobacionLower.includes("promocion")) {
             modalidadAprobacion = "Promoción directa"
-          } else if (aprobacionLower.includes("examen") || aprobacionLower.includes("exámen")) {
+          } else if (aprobacionLower.includes("examen") || aprobacionLower.includes("exámen") || aprobacionLower === "examen final") {
             modalidadAprobacion = "Examen final"
-          } else {
+          } else if (aprobacionLower.includes("trabajo") || aprobacionLower === "trabajo final") {
             modalidadAprobacion = "Trabajo final"
+          } else {
+            // Si no coincide con ningún patrón conocido, mantener el valor original normalizado
+            modalidadAprobacion = "Examen final" // Por defecto para casos no reconocidos
           }
         }
+
+        console.log("Modalidad de aprobación final asignada:", modalidadAprobacion)
 
         // Normalizar modalidad de cursada
         if (!modalidadCursada || modalidadCursada.trim() === "") {
