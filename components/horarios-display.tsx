@@ -778,7 +778,7 @@ export function HorariosDisplay() {
                   </div>
                 </CardHeader>
               <CardContent className="space-y-3 pt-3">
-                <divclassName="flex flex-wrap gap-1 mb-2">
+                <div className="flex flex-wrap gap-1 mb-2"></div>
                   {/* Badge de modalidad de cursada */}
                   {(() => {
                     const modalidadCursada = asignatura.modalidadCursada || "Presencial"
