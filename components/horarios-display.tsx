@@ -774,7 +774,7 @@ export function HorariosDisplay() {
                             : "border-white data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-uba-secondary"
                         }`}
                       />
-                    </div>
+                                        </div>
                   </div>
                 </CardHeader>
               <CardContent className="space-y-3 pt-3">
@@ -1241,4 +1241,5 @@ export function HorariosDisplay() {
       }
       </div>
     </TooltipProvider>
-  )}
+  )
+}
