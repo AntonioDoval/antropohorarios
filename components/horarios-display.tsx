@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -18,7 +19,6 @@ import {
   getOrientacionesDisponibles,
   type AsignaturaConPlan 
 } from "@/lib/planes-utils"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Clase {
   id: string
@@ -77,11 +77,6 @@ export function HorariosDisplay() {
     clases: {},
   })
   const [asignaturasEnriquecidas, setAsignaturasEnriquecidas] = useState<AsignaturaConPlan[]>([])
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [tipoFilter, setTipoFilter] = useState("all");
-  const [modalidadFilter, setModalidadFilter] = useState("all");
-  const [plan2023, setPlan2023] = useState(true);
 
   useEffect(() => {
     const savedData = localStorage.getItem("horarios-antropologia")
@@ -200,7 +195,7 @@ export function HorariosDisplay() {
     }
   }
 
-
+  
 
   const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
@@ -213,9 +208,9 @@ export function HorariosDisplay() {
 
       const coincideTipo = (() => {
         if (filtros.tiposAsignatura.length === 0) return true
-
+        
         if (!asignatura.tipoAsignatura) return false
-
+        
         // Agrupar materias cuatrimestrales regulares y optativas bajo "Materia cuatrimestral"
         if (filtros.tiposAsignatura.includes("Materia cuatrimestral")) {
           if (asignatura.tipoAsignatura === "Materia cuatrimestral regular" || 
@@ -223,20 +218,20 @@ export function HorariosDisplay() {
             return true
           }
         }
-
+        
         return filtros.tiposAsignatura.includes(asignatura.tipoAsignatura)
       })()
 
       const coincideModalidad = (() => {
         if (filtros.modalidadAprobacion === "todas") return true
-
+        
         const modalidadReal = (!asignatura.modalidadAprobacion || 
                               asignatura.modalidadAprobacion === "NO CORRESPONDE" || 
                               asignatura.modalidadAprobacion === "No corresponde" || 
                               asignatura.modalidadAprobacion.toLowerCase() === "no especificada") 
                               ? "Trabajo final" 
                               : asignatura.modalidadAprobacion
-
+        
         return modalidadReal === filtros.modalidadAprobacion
       })()
 
@@ -615,80 +610,27 @@ export function HorariosDisplay() {
       <Card className="bg-[#46bfb0]/5 border-[#46bfb0]/20">
         <CardContent className="pt-6">
           <div className="space-y-4">
-            {/* Filtros */}
-        <div className="mb-6 p-3 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-lg border border-cyan-200 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-            {/* Filtro por búsqueda */}
-            <div>
-              <label htmlFor="search" className="block text-xs font-medium text-gray-600 mb-1">
-                Buscar asignatura
-              </label>
-              <Input
-                id="search"
-                type="text"
-                placeholder="Nombre de la asignatura..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-colors bg-white/80 backdrop-blur-sm"
-              />
+            <div className="flex items-center justify-center p-3 bg-[#1c2554] text-white rounded-lg border">
+              <div className="flex items-center space-x-3">
+                <span className="text-sm font-medium">Plan de Estudios:</span>
+                <span className={`text-sm ${filtros.planEstudios === "1985" ? "font-bold" : "opacity-70"}`}>
+                  1985
+                </span>
+                <Switch
+                  checked={filtros.planEstudios === "2023"}
+                  onCheckedChange={(checked) => {
+                    setFiltros((prev) => ({ 
+                      ...prev, 
+                      planEstudios: checked ? "2023" : "1985"
+                    }))
+                  }}
+                  className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
+                />
+                <span className={`text-sm ${filtros.planEstudios === "2023" ? "font-bold" : "opacity-70"}`}>
+                  2023
+                </span>
+              </div>
             </div>
-
-            {/* Filtro por tipo de asignatura */}
-            <div>
-              <label htmlFor="tipo" className="block text-xs font-medium text-gray-600 mb-1">
-                Tipo de asignatura
-              </label>
-              <Select value={tipoFilter} onValueChange={setTipoFilter}>
-                <SelectTrigger className="w-full h-8 text-sm bg-white/80 backdrop-blur-sm border-gray-300 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
-                  <SelectValue placeholder="Seleccionar tipo" />
-                </SelectTrigger>
-                <SelectContent className="max-h-60">
-                  <SelectItem value="all">Todos los tipos</SelectItem>
-                  <SelectItem value="Materia cuatrimestral regular">Materia cuatrimestral (regular)</SelectItem>
-                  <SelectItem value="Materia cuatrimestral optativa">Materia cuatrimestral (optativa)</SelectItem>
-                  <SelectItem value="Seminario regular">Seminario regular</SelectItem>
-                  <SelectItem value="Seminario PST">Seminario PST</SelectItem>
-                  <SelectItem value="Materia anual">Materia anual</SelectItem>
-                  <SelectItem value="Seminario anual">Seminario anual</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Filtro por modalidad de aprobación */}
-            <div>
-              <label htmlFor="modalidad" className="block text-xs font-medium text-gray-600 mb-1">
-                Modalidad de aprobación
-              </label>
-              <Select value={modalidadFilter} onValueChange={setModalidadFilter}>
-                <SelectTrigger className="w-full h-8 text-sm bg-white/80 backdrop-blur-sm border-gray-300 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
-                  <SelectValue placeholder="Seleccionar modalidad" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las modalidades</SelectItem>
-                  <SelectItem value="Promoción directa">Promoción directa</SelectItem>
-                  <SelectItem value="Examen final">Examen final</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Toggle de plan de estudios */}
-          <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-2 bg-white/90 px-3 py-1 rounded-full border border-cyan-300 shadow-sm backdrop-blur-sm">
-              <span className={`text-xs font-medium transition-colors ${plan2023 ? 'text-gray-500' : 'text-cyan-700'}`}>
-                Plan 1985
-              </span>
-              <Switch
-                checked={plan2023}
-                onCheckedChange={setPlan2023}
-                className="data-[state=checked]:bg-cyan-600 scale-75"
-              />
-              <span className={`text-xs font-medium transition-colors ${plan2023 ? 'text-cyan-700' : 'text-gray-500'}`}>
-                Plan 2023
-              </span>
-            </div>
-          </div>
-        </div>
 
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -827,7 +769,7 @@ export function HorariosDisplay() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-
+                      
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={() => toggleAsignatura(asignatura.id)}
@@ -853,7 +795,7 @@ export function HorariosDisplay() {
                       📱 30% Virtual
                     </Badge>
                   )}
-
+                  
                   {/* Badge de modalidad de aprobación */}
                   {(() => {
                     const modalidad = (!asignatura.modalidadAprobacion || 
@@ -862,7 +804,7 @@ export function HorariosDisplay() {
                       asignatura.modalidadAprobacion.toLowerCase() === "no especificada") 
                       ? "Trabajo final" 
                       : asignatura.modalidadAprobacion
-
+                    
                     if (modalidad === "Promoción directa") {
                       return (
                         <Badge variant="secondary" className="text-xs bg-green-100 text-green-600 border-green-200 font-medium px-2 py-0.5">
@@ -885,7 +827,7 @@ export function HorariosDisplay() {
                   })()}
                 </div>
 
-
+                
 
                 {asignatura.aclaraciones && (
                   <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
@@ -896,7 +838,7 @@ export function HorariosDisplay() {
                 <div className="space-y-2">
                   {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
                     const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
-
+                    
                     const getClassColors = (tipo: string, isSelected: boolean) => {
                       switch (tipo) {
                         case "Teórico":
@@ -1237,7 +1179,7 @@ export function HorariosDisplay() {
                                     const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
                                     const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
                                     const alturaTotal = intervalo.fin - intervalo.inicio
-
+                                    
                                     const topPercent = (inicioRelativo / alturaTotal) * 100
                                     const heightPercent = ((finRelativo - inicioRelativo) / alturaTotal) * 100
 
