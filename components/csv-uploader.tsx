@@ -292,15 +292,13 @@ export function CSVUploader() {
         // Determinar agrupaciones de clases leyendo desde el CSV
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
-        // Leer valores específicos de agrupación desde el CSV
-        const agrupacionTeoricos = row[headers.indexOf("Agrupación de teóricos")] || ""
-        const agrupacionTeoricoPracticos = row[headers.indexOf("Agrupación de teórico-prácticos")] || ""
-        const agrupacionPracticos = row[headers.indexOf("Agrupación de prácticos")] || ""
+        // Leer valores específicos de agrupación desde las columnas V y AE del CSV
+        const agrupacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")] || ""
+        const agrupacionTeoricoPracticos = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")] || ""
 
         console.log("Agrupaciones leídas del CSV:")
-        console.log("- Teóricos:", agrupacionTeoricos)
-        console.log("- Teórico-Prácticos:", agrupacionTeoricoPracticos)
-        console.log("- Prácticos:", agrupacionPracticos)
+        console.log("- Teóricos (columna V):", agrupacionTeoricos)
+        console.log("- Teórico-Prácticos (columna AE):", agrupacionTeoricoPracticos)
 
         // Obtener aclaraciones
         const aclaracionesIndex = headers.findIndex(h => h.includes("aclaraciones") || h.includes("Aclaraciones"))
@@ -328,26 +326,27 @@ export function CSVUploader() {
               agrupacionValue = agrupacionTeoricos
             } else if (grupo.tipo === "Teórico-Práctico") {
               agrupacionValue = agrupacionTeoricoPracticos
-            } else if (grupo.tipo === "Práctico") {
-              agrupacionValue = agrupacionPracticos
             }
 
             // Determinar si es complementario o electivo basado en el valor del CSV
-            if (agrupacionValue.includes("mismo teórico dividido") || 
-                agrupacionValue.includes("complementario") ||
-                agrupacionValue.includes("conjunto")) {
+            if (agrupacionValue.includes("mismo teórico") || 
+                agrupacionValue.includes("dividido") ||
+                agrupacionValue.includes("conjunto") ||
+                agrupacionValue.includes("complementario")) {
               agrupacionClases[grupo.tipo] = "conjunto"
-              console.log(`${grupo.tipo} marcado como complementario (conjunto)`)
+              console.log(`${grupo.tipo} marcado como complementario (conjunto) - valor: "${agrupacionValue}"`)
             } else if (agrupacionValue.includes("alternativas") || 
                        agrupacionValue.includes("elegir") ||
+                       agrupacionValue.includes("deben elegir") ||
                        agrupacionValue.includes("electivo")) {
               agrupacionClases[grupo.tipo] = "elegir"
-              console.log(`${grupo.tipo} marcado como electivo (elegir)`)
-            } else {
-              // Si no hay información específica, usar lógica por defecto
+              console.log(`${grupo.tipo} marcado como electivo (elegir) - valor: "${agrupacionValue}"`)
+            } else if (agrupacionValue.trim() !== "") {
+              // Si hay información pero no coincide con los patrones conocidos, analizar el contenido
               agrupacionClases[grupo.tipo] = "elegir"
-              console.log(`${grupo.tipo} sin información específica, marcado como electivo por defecto`)
+              console.log(`${grupo.tipo} con información no reconocida, marcado como electivo por defecto - valor: "${agrupacionValue}"`)
             }
+            // Si no hay información específica (vacío), no establecer agrupación (comportamiento por defecto en la UI)
           }
         })
 
