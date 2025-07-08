@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -55,6 +55,7 @@ interface Filtros {
   tiposAsignatura: string[]
   modalidadesAprobacion: string[]
   planEstudios: "2023" | "1985"
+  horariosSeleccionados: Set<string>
 }
 
 interface Seleccion {
@@ -70,6 +71,7 @@ export function HorariosDisplay() {
     tiposAsignatura: [],
     modalidadesAprobacion: [],
     planEstudios: "2023",
+    horariosSeleccionados: new Set(),
   })
   const [seleccion, setSeleccion] = useState<Seleccion>({
     asignaturas: [],
@@ -188,6 +190,66 @@ export function HorariosDisplay() {
 
 
 
+  // Helper functions for time slot filtering
+  const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+  const bloquesHorarios = [
+    { inicio: 8, fin: 10, label: "08 a 10" },
+    { inicio: 10, fin: 12, label: "10 a 12" },
+    { inicio: 12, fin: 14, label: "12 a 14" },
+    { inicio: 14, fin: 16, label: "14 a 16" },
+    { inicio: 16, fin: 18, label: "16 a 18" },
+    { inicio: 18, fin: 20, label: "18 a 20" },
+    { inicio: 20, fin: 22, label: "20 a 22" },
+  ]
+
+  const getHorarioKey = (dia: string, bloque: { inicio: number; fin: number }) => {
+    return `${dia}-${bloque.inicio}-${bloque.fin}`
+  }
+
+  const claseCoincideConHorario = (clase: Clase, dia: string, bloque: { inicio: number; fin: number }) => {
+    if (clase.dia !== dia) return false
+    
+    const horarioParts = clase.horario.split(" - ")
+    const claseInicio = parseInt(horarioParts[0].split(":")[0])
+    const claseFin = parseInt(horarioParts[1].split(":")[0])
+    
+    // Check if there's any overlap
+    return claseInicio < bloque.fin && claseFin > bloque.inicio
+  }
+
+  const asignaturaTieneClasesEnHorarios = (asignatura: Asignatura) => {
+    if (filtros.horariosSeleccionados.size === 0) return true
+    
+    const gruposClases = agruparClasesPorTipo(asignatura.clases)
+    
+    // Check if ALL class types have at least one option in the selected time slots
+    for (const grupo of gruposClases) {
+      const tieneOpcionEnHorarios = grupo.clases.some(clase => {
+        return Array.from(filtros.horariosSeleccionados).some(horarioKey => {
+          const [dia, inicioStr, finStr] = horarioKey.split('-')
+          const bloque = { inicio: parseInt(inicioStr), fin: parseInt(finStr) }
+          return claseCoincideConHorario(clase, dia, bloque)
+        })
+      })
+      
+      if (!tieneOpcionEnHorarios) {
+        return false
+      }
+    }
+    
+    return true
+  }
+
+  const claseDebeOscurecerse = (clase: Clase) => {
+    if (filtros.horariosSeleccionados.size === 0) return false
+    
+    return !Array.from(filtros.horariosSeleccionados).some(horarioKey => {
+      const [dia, inicioStr, finStr] = horarioKey.split('-')
+      const bloque = { inicio: parseInt(inicioStr), fin: parseInt(finStr) }
+      return claseCoincideConHorario(clase, dia, bloque)
+    })
+  }
+
   const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
       const nombreParaBusqueda = getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)
@@ -221,7 +283,9 @@ export function HorariosDisplay() {
         return filtros.modalidadesAprobacion.includes(modalidadReal)
       })()
 
-      return coincideBusqueda && coincideTipo && coincideModalidad
+      const coincideHorario = asignaturaTieneClasesEnHorarios(asignatura)
+
+      return coincideBusqueda && coincideTipo && coincideModalidad && coincideHorario
     })
   }
 
@@ -249,6 +313,7 @@ export function HorariosDisplay() {
       tiposAsignatura: [],
       modalidadesAprobacion: [],
       planEstudios: filtros.planEstudios,
+      horariosSeleccionados: new Set(),
     })
   }
 
@@ -257,6 +322,22 @@ export function HorariosDisplay() {
       ...prev,
       [tipo]: prev[tipo].includes(valor) ? prev[tipo].filter((item) => item !== valor) : [...prev[tipo], valor],
     }))
+  }
+
+  const toggleHorario = (dia: string, bloque: { inicio: number; fin: number }) => {
+    const horarioKey = getHorarioKey(dia, bloque)
+    setFiltros((prev) => {
+      const nuevosHorarios = new Set(prev.horariosSeleccionados)
+      if (nuevosHorarios.has(horarioKey)) {
+        nuevosHorarios.delete(horarioKey)
+      } else {
+        nuevosHorarios.add(horarioKey)
+      }
+      return {
+        ...prev,
+        horariosSeleccionados: nuevosHorarios,
+      }
+    })
   }
 
   const toggleAsignatura = (asignaturaId: string) => {
@@ -694,6 +775,93 @@ export function HorariosDisplay() {
             </div>
           </div>
 
+          {/* Filtro de días y horarios */}
+          {filtros.horariosSeleccionados.size > 0 && (
+            <div className="bg-white p-3 rounded-lg border border-gray-200 lg:col-span-3">
+              <h4 className="text-xs font-semibold text-uba-primary mb-3">Filtro de días y horarios</h4>
+              <div className="grid grid-cols-7 gap-1 text-xs">
+                {/* Header */}
+                <div className="text-center font-medium text-gray-600 p-1"></div>
+                {diasSemana.map((dia) => (
+                  <div key={dia} className="text-center font-medium text-gray-600 p-1">
+                    {dia}
+                  </div>
+                ))}
+                
+                {/* Time slots */}
+                {bloquesHorarios.map((bloque) => (
+                  <React.Fragment key={bloque.label}>
+                    <div className="text-center font-medium text-gray-600 p-1">
+                      {bloque.label}
+                    </div>
+                    {diasSemana.map((dia) => {
+                      const horarioKey = getHorarioKey(dia, bloque)
+                      const isSelected = filtros.horariosSeleccionados.has(horarioKey)
+                      return (
+                        <Button
+                          key={horarioKey}
+                          variant={isSelected ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => toggleHorario(dia, bloque)}
+                          className={`h-6 p-0 text-xs ${
+                            isSelected 
+                              ? "bg-uba-primary hover:bg-uba-primary/90 text-white" 
+                              : "hover:bg-gray-100"
+                          }`}
+                        >
+                          {bloque.label}
+                        </Button>
+                      )
+                    })}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="lg:col-span-3">
+            <div className="bg-white p-3 rounded-lg border border-gray-200">
+              <h4 className="text-xs font-semibold text-uba-primary mb-3">Filtro de días y horarios</h4>
+              <div className="grid grid-cols-7 gap-1 text-xs">
+                {/* Header */}
+                <div className="text-center font-medium text-gray-600 p-1"></div>
+                {diasSemana.map((dia) => (
+                  <div key={dia} className="text-center font-medium text-gray-600 p-1">
+                    {dia}
+                  </div>
+                ))}
+                
+                {/* Time slots */}
+                {bloquesHorarios.map((bloque) => (
+                  <React.Fragment key={bloque.label}>
+                    <div className="text-center font-medium text-gray-600 p-1">
+                      {bloque.label}
+                    </div>
+                    {diasSemana.map((dia) => {
+                      const horarioKey = getHorarioKey(dia, bloque)
+                      const isSelected = filtros.horariosSeleccionados.has(horarioKey)
+                      return (
+                        <Button
+                          key={horarioKey}
+                          variant={isSelected ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => toggleHorario(dia, bloque)}
+                          className={`h-6 p-0 text-xs ${
+                            isSelected 
+                              ? "bg-uba-primary hover:bg-uba-primary/90 text-white" 
+                              : "hover:bg-gray-100"
+                          }`}
+                        >
+                          {bloque.label}
+                        </Button>
+                      )
+                    })}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Footer with count and clear button */}
           <div className="flex justify-between items-center pt-3 mt-3 border-t border-gray-200">
             <p className="text-xs text-gray-600 font-medium">
@@ -844,24 +1012,26 @@ export function HorariosDisplay() {
                   {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
                     const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
 
-                    const getClassColors = (tipo: string, isSelected: boolean) => {
+                    const getClassColors = (tipo: string, isSelected: boolean, isDimmed: boolean = false) => {
+                      const dimmedStyle = isDimmed ? "opacity-50" : ""
+                      
                       switch (tipo) {
                         case "Teórico":
                           return isSelected 
-                            ? "bg-gray-200 border-gray-400 text-gray-800"
-                            : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                            ? `bg-gray-200 border-gray-400 text-gray-800 ${dimmedStyle}`
+                            : `bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200 ${dimmedStyle}`
                         case "Teórico-Práctico":
                           return isSelected
-                            ? "bg-gray-100 border-gray-300 text-gray-700"
-                            : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
+                            ? `bg-gray-100 border-gray-300 text-gray-700 ${dimmedStyle}`
+                            : `bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100 ${dimmedStyle}`
                         case "Práctico":
                           return isSelected
-                            ? "bg-blue-100 border-blue-300 text-blue-800"
-                            : "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                            ? `bg-blue-100 border-blue-300 text-blue-800 ${dimmedStyle}`
+                            : `bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 ${dimmedStyle}`
                         default:
                           return isSelected
-                            ? "bg-gray-100 border-gray-300 text-gray-800"
-                            : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+                            ? `bg-gray-100 border-gray-300 text-gray-800 ${dimmedStyle}`
+                            : `bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 ${dimmedStyle}`
                       }
                     }
 
@@ -875,9 +1045,10 @@ export function HorariosDisplay() {
                             <div className="space-y-1">
                               {grupo.clases.map((clase) => {
                                 const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
+                                const isDimmed = claseDebeOscurecerse(clase)
                                 return (
                                   <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
-                                    getClassColors(clase.tipo, isClassSelected)
+                                    getClassColors(clase.tipo, isClassSelected, isDimmed)
                                   }`}>
                                     <div className="flex justify-between items-start mb-1">
                                       <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
@@ -906,10 +1077,12 @@ export function HorariosDisplay() {
                           </RadioGroup>
                         ) : (
                           <div className="space-y-1">
-                            {grupo.clases.map((clase, index) => (
-                              <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
-                                getClassColors(clase.tipo, isSelected)
-                              }`}>
+                            {grupo.clases.map((clase, index) => {
+                              const isDimmed = claseDebeOscurecerse(clase)
+                              return (
+                                <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
+                                  getClassColors(clase.tipo, isSelected, isDimmed)
+                                }`}>
                                 <div className="flex justify-between items-start mb-1">
                                   <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
                                     {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
@@ -931,7 +1104,7 @@ export function HorariosDisplay() {
                                   </div>
                                 </div>
                               </div>
-                            ))}
+                            )})
                           </div>
                         )}
                       </div>
