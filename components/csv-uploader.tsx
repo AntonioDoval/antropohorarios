@@ -293,8 +293,41 @@ export function CSVUploader() {
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
         // Leer valores específicos de agrupación desde las columnas V y AE del CSV
-        const agrupacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")] || ""
-        const agrupacionTeoricoPracticos = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")] || ""
+        // Buscar por múltiples variaciones de nombres de columna
+        let agrupacionTeoricos = ""
+        let agrupacionTeoricoPracticos = ""
+        
+        // Intentar diferentes variaciones de nombres de columna para teóricos
+        const posiblesTeoricos = [
+          "Indicar relación entre los dos horarios de teóricos",
+          "Relación teóricos",
+          "Agrupación teóricos",
+          "Teóricos relación"
+        ]
+        
+        for (const nombre of posiblesTeoricos) {
+          const index = headers.indexOf(nombre)
+          if (index >= 0 && row[index]) {
+            agrupacionTeoricos = row[index]
+            break
+          }
+        }
+        
+        // Intentar diferentes variaciones de nombres de columna para teórico-prácticos
+        const posiblesTP = [
+          "Indicar relación entre los dos horarios de teórico-prácticos",
+          "Relación teórico-prácticos", 
+          "Agrupación teórico-prácticos",
+          "Teórico-prácticos relación"
+        ]
+        
+        for (const nombre of posiblesTP) {
+          const index = headers.indexOf(nombre)
+          if (index >= 0 && row[index]) {
+            agrupacionTeoricoPracticos = row[index]
+            break
+          }
+        }
 
         console.log("Agrupaciones leídas del CSV:")
         console.log("- Teóricos (columna V):", agrupacionTeoricos)
@@ -345,8 +378,29 @@ export function CSVUploader() {
               // Si hay información pero no coincide con los patrones conocidos, analizar el contenido
               agrupacionClases[grupo.tipo] = "elegir"
               console.log(`${grupo.tipo} con información no reconocida, marcado como electivo por defecto - valor: "${agrupacionValue}"`)
+            } else {
+              // Si no hay información específica, aplicar heurística para detectar complementarios
+              // Para teóricos: si hay exactamente 2 teóricos con horarios diferentes pero misma duración, probablemente sean complementarios
+              if (grupo.tipo === "Teórico" && grupo.clases.length === 2) {
+                const clase1 = grupo.clases[0]
+                const clase2 = grupo.clases[1]
+                const duracion1 = parseInt(clase1.horario.split(" - ")[1]) - parseInt(clase1.horario.split(" - ")[0])
+                const duracion2 = parseInt(clase2.horario.split(" - ")[1]) - parseInt(clase2.horario.split(" - ")[0])
+                
+                // Si tienen la misma duración y días diferentes o horarios no superpuestos, probablemente sean complementarios
+                if (duracion1 === duracion2 && (clase1.dia !== clase2.dia || 
+                    !horariosSuperpuestos(clase1.horario, clase2.horario))) {
+                  agrupacionClases[grupo.tipo] = "conjunto"
+                  console.log(`${grupo.tipo} marcado como complementario (conjunto) por heurística - misma duración, diferentes horarios`)
+                } else {
+                  agrupacionClases[grupo.tipo] = "elegir"
+                  console.log(`${grupo.tipo} marcado como electivo (elegir) por heurística - diferentes duraciones o horarios superpuestos`)
+                }
+              } else {
+                agrupacionClases[grupo.tipo] = "elegir"
+                console.log(`${grupo.tipo} sin información específica, marcado como electivo por defecto`)
+              }
             }
-            // Si no hay información específica (vacío), no establecer agrupación (comportamiento por defecto en la UI)
           }
         })
 
@@ -503,4 +557,12 @@ function agruparClasesPorTipo(clases: Clase[]): { tipo: string; clases: Clase[] 
   })
 
   return Object.entries(grupos).map(([tipo, clases]) => ({ tipo, clases }))
+}
+
+// Helper function to check if two schedules overlap
+function horariosSuperpuestos(horario1: string, horario2: string): boolean {
+  const [inicio1, fin1] = horario1.split(" - ").map(h => parseInt(h))
+  const [inicio2, fin2] = horario2.split(" - ").map(h => parseInt(h))
+  
+  return inicio1 < fin2 && inicio2 < fin1
 }
