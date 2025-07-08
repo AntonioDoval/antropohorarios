@@ -55,7 +55,6 @@ interface Filtros {
   busqueda: string
   tiposAsignatura: string[]
   modalidadAprobacion: string
-  orientaciones: string[]
   planEstudios: "2023" | "1985"
 }
 
@@ -71,7 +70,6 @@ export function HorariosDisplay() {
     busqueda: "",
     tiposAsignatura: [],
     modalidadAprobacion: "todas",
-    orientaciones: [],
     planEstudios: "2023",
   })
   const [seleccion, setSeleccion] = useState<Seleccion>({
@@ -197,15 +195,7 @@ export function HorariosDisplay() {
     }
   }
 
-  const getOrientacionesPorPlan = (plan: "2023" | "1985"): string[] => {
-    return [
-      "Profesorado",
-      "Licenciatura - Sociocultural", 
-      "Licenciatura - Arqueología"
-    ]
-  }
-
-  const opcionesOrientacion = getOrientacionesPorPlan(filtros.planEstudios)
+  
 
   const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
@@ -245,24 +235,7 @@ export function HorariosDisplay() {
         return modalidadReal === filtros.modalidadAprobacion
       })()
 
-      const coincideOrientacion = (() => {
-        if (filtros.orientaciones.length === 0) return true
-
-        if (filtros.planEstudios === "1985") {
-          const tieneEquivalencia = asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.planInfo?.equivalencia?.cod85
-          if (!tieneEquivalencia) return false
-          
-          if (filtros.orientaciones.length === 0) return true
-          
-          return asignatura.planInfo?.orientaciones && 
-                 asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient))
-        } else {
-          return asignatura.planInfo?.orientaciones && 
-                 asignatura.planInfo.orientaciones.some(orient => filtros.orientaciones.includes(orient))
-        }
-      })()
-
-      return coincideBusqueda && coincideTipo && coincideModalidad && coincideOrientacion
+      return coincideBusqueda && coincideTipo && coincideModalidad
     })
   }
 
@@ -289,12 +262,11 @@ export function HorariosDisplay() {
       busqueda: "",
       tiposAsignatura: [],
       modalidadAprobacion: "todas",
-      orientaciones: [],
       planEstudios: filtros.planEstudios,
     })
   }
 
-  const toggleFiltro = (tipo: "tiposAsignatura" | "orientaciones", valor: string) => {
+  const toggleFiltro = (tipo: "tiposAsignatura", valor: string) => {
     setFiltros((prev) => ({
       ...prev,
       [tipo]: prev[tipo].includes(valor) ? prev[tipo].filter((item) => item !== valor) : [...prev[tipo], valor],
@@ -635,35 +607,29 @@ export function HorariosDisplay() {
           </Alert>
         </div>
 
-      <Card className="bg-gray-50 border-gray-200">
+      <Card className="bg-[#46bfb0]/5 border-[#46bfb0]/20">
         <CardContent className="pt-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-[#1c2554] text-white rounded-lg border">
-              <div className="flex items-center space-x-4">
-                <h4 className="text-base font-medium">Plan de Estudios</h4>
-                <div className="flex items-center space-x-3">
-                  <span className={`text-sm ${filtros.planEstudios === "1985" ? "font-medium" : "opacity-70"}`}>
-                    1985
-                  </span>
-                  <Switch
-                    checked={filtros.planEstudios === "2023"}
-                    onCheckedChange={(checked) => {
-                      setFiltros((prev) => ({ 
-                        ...prev, 
-                        planEstudios: checked ? "2023" : "1985",
-                        orientaciones: []
-                      }))
-                    }}
-                    className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
-                  />
-                  <span className={`text-sm ${filtros.planEstudios === "2023" ? "font-medium" : "opacity-70"}`}>
-                    2023
-                  </span>
-                </div>
+            <div className="flex items-center justify-center p-3 bg-[#1c2554] text-white rounded-lg border">
+              <div className="flex items-center space-x-3">
+                <span className="text-sm font-medium">Plan de Estudios:</span>
+                <span className={`text-sm ${filtros.planEstudios === "1985" ? "font-bold" : "opacity-70"}`}>
+                  1985
+                </span>
+                <Switch
+                  checked={filtros.planEstudios === "2023"}
+                  onCheckedChange={(checked) => {
+                    setFiltros((prev) => ({ 
+                      ...prev, 
+                      planEstudios: checked ? "2023" : "1985"
+                    }))
+                  }}
+                  className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
+                />
+                <span className={`text-sm ${filtros.planEstudios === "2023" ? "font-bold" : "opacity-70"}`}>
+                  2023
+                </span>
               </div>
-              <p className="text-xs opacity-80">
-                {filtros.planEstudios === "2023" ? "Plan 2023 - Nombres actuales" : "Plan 1985 - Nombres históricos"}
-              </p>
             </div>
 
             <div className="relative">
@@ -676,7 +642,7 @@ export function HorariosDisplay() {
               />
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               {valoresUnicos.tiposAsignatura.length > 0 && (
                 <div>
                   <h4 className="text-xs font-medium text-uba-primary mb-2">Tipo de asignatura</h4>
@@ -696,24 +662,6 @@ export function HorariosDisplay() {
                   </div>
                 </div>
               )}
-
-              <div>
-                <h4 className="text-xs font-medium text-uba-primary mb-2">Carrera/Orientación</h4>
-                <div className="space-y-1">
-                  {opcionesOrientacion.map((orientacion) => (
-                    <div key={orientacion} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`orientacion-${orientacion}`}
-                        checked={filtros.orientaciones.includes(orientacion)}
-                        onCheckedChange={() => toggleFiltro("orientaciones", orientacion)}
-                      />
-                      <label htmlFor={`orientacion-${orientacion}`} className="text-xs text-gray-700 cursor-pointer leading-tight">
-                        {orientacion}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
               <div>
                 <h4 className="text-xs font-medium text-uba-primary mb-2">Modalidad de aprobación</h4>
@@ -851,11 +799,7 @@ export function HorariosDisplay() {
                   </Badge>
                 </div>
 
-                {asignatura.orientacion && (
-                  <div className="text-xs text-gray-600 mb-2">
-                    <div><span className="font-medium">Orientación:</span> {asignatura.orientacion}</div>
-                  </div>
-                )}
+                
 
                 {asignatura.aclaraciones && (
                   <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
