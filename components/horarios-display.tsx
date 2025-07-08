@@ -952,7 +952,6 @@ export function HorariosDisplay() {
                     ) : null
                   })()}
               </CardContent>
-            </Card>
             )
           })
         )}
@@ -1237,9 +1236,9 @@ export function HorariosDisplay() {
                 </CardContent>
               </Card>
             )
-          })()}
+          }))
         </div>
-      )}
+      }
       </div>
     </TooltipProvider>
-  )
+  )}
