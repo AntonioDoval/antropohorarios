@@ -832,8 +832,6 @@ export function HorariosDisplay() {
                   })()}
                 </div>
 
-
-
                 {asignatura.aclaraciones && (
                   <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
                     <em>{asignatura.aclaraciones}</em>
