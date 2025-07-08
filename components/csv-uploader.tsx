@@ -297,35 +297,50 @@ export function CSVUploader() {
         let agrupacionTeoricos = ""
         let agrupacionTeoricoPracticos = ""
         
-        // Intentar diferentes variaciones de nombres de columna para teóricos
-        const posiblesTeoricos = [
-          "Indicar relación entre los dos horarios de teóricos",
-          "Relación teóricos",
-          "Agrupación teóricos",
-          "Teóricos relación"
-        ]
+        // Columna V (index 21) - Relación entre teóricos
+        const columnaV = 21
+        if (columnaV < headers.length && columnaV < row.length) {
+          agrupacionTeoricos = row[columnaV] || ""
+        }
         
-        for (const nombre of posiblesTeoricos) {
-          const index = headers.indexOf(nombre)
-          if (index >= 0 && row[index]) {
-            agrupacionTeoricos = row[index]
-            break
+        // Columna AE (index 30) - Relación entre teórico-prácticos  
+        const columnaAE = 30
+        if (columnaAE < headers.length && columnaAE < row.length) {
+          agrupacionTeoricoPracticos = row[columnaAE] || ""
+        }
+        
+        // Fallback: intentar buscar por nombre de columna si no se encontró por índice
+        if (!agrupacionTeoricos) {
+          const posiblesTeoricos = [
+            "Indicar relación entre los dos horarios de teóricos",
+            "Relación teóricos",
+            "Agrupación teóricos",
+            "Teóricos relación"
+          ]
+          
+          for (const nombre of posiblesTeoricos) {
+            const index = headers.indexOf(nombre)
+            if (index >= 0 && row[index]) {
+              agrupacionTeoricos = row[index]
+              break
+            }
           }
         }
         
-        // Intentar diferentes variaciones de nombres de columna para teórico-prácticos
-        const posiblesTP = [
-          "Indicar relación entre los dos horarios de teórico-prácticos",
-          "Relación teórico-prácticos", 
-          "Agrupación teórico-prácticos",
-          "Teórico-prácticos relación"
-        ]
-        
-        for (const nombre of posiblesTP) {
-          const index = headers.indexOf(nombre)
-          if (index >= 0 && row[index]) {
-            agrupacionTeoricoPracticos = row[index]
-            break
+        if (!agrupacionTeoricoPracticos) {
+          const posiblesTP = [
+            "Indicar relación entre los dos horarios de teórico-prácticos",
+            "Relación teórico-prácticos", 
+            "Agrupación teórico-prácticos",
+            "Teórico-prácticos relación"
+          ]
+          
+          for (const nombre of posiblesTP) {
+            const index = headers.indexOf(nombre)
+            if (index >= 0 && row[index]) {
+              agrupacionTeoricoPracticos = row[index]
+              break
+            }
           }
         }
 
@@ -362,22 +377,34 @@ export function CSVUploader() {
             }
 
             // Determinar si es complementario o electivo basado en el valor del CSV
-            if (agrupacionValue.includes("mismo teórico") || 
-                agrupacionValue.includes("dividido") ||
-                agrupacionValue.includes("conjunto") ||
-                agrupacionValue.includes("complementario")) {
+            const agrupacionLower = agrupacionValue.toLowerCase()
+            
+            if (agrupacionLower.includes("mismo teórico") || 
+                agrupacionLower.includes("dividido") ||
+                agrupacionLower.includes("conjunto") ||
+                agrupacionLower.includes("complementario") ||
+                agrupacionLower.includes("ambos") ||
+                agrupacionLower.includes("los dos")) {
               agrupacionClases[grupo.tipo] = "conjunto"
               console.log(`${grupo.tipo} marcado como complementario (conjunto) - valor: "${agrupacionValue}"`)
-            } else if (agrupacionValue.includes("alternativas") || 
-                       agrupacionValue.includes("elegir") ||
-                       agrupacionValue.includes("deben elegir") ||
-                       agrupacionValue.includes("electivo")) {
+            } else if (agrupacionLower.includes("alternativas") || 
+                       agrupacionLower.includes("elegir") ||
+                       agrupacionLower.includes("deben elegir") ||
+                       agrupacionLower.includes("electivo") ||
+                       agrupacionLower.includes("opción") ||
+                       agrupacionLower.includes("opcional")) {
               agrupacionClases[grupo.tipo] = "elegir"
               console.log(`${grupo.tipo} marcado como electivo (elegir) - valor: "${agrupacionValue}"`)
             } else if (agrupacionValue.trim() !== "") {
               // Si hay información pero no coincide con los patrones conocidos, analizar el contenido
-              agrupacionClases[grupo.tipo] = "elegir"
-              console.log(`${grupo.tipo} con información no reconocida, marcado como electivo por defecto - valor: "${agrupacionValue}"`)
+              // Por defecto, si no está claro, marcar como conjunto para clases teóricas complementarias
+              if (grupo.tipo === "Teórico" && grupo.clases.length === 2) {
+                agrupacionClases[grupo.tipo] = "conjunto"
+                console.log(`${grupo.tipo} marcado como complementario (conjunto) por contenido no reconocido - valor: "${agrupacionValue}"`)
+              } else {
+                agrupacionClases[grupo.tipo] = "elegir"
+                console.log(`${grupo.tipo} con información no reconocida, marcado como electivo por defecto - valor: "${agrupacionValue}"`)
+              }
             } else {
               // Si no hay información específica, aplicar heurística para detectar complementarios
               // Para teóricos: si hay exactamente 2 teóricos con horarios diferentes pero misma duración, probablemente sean complementarios

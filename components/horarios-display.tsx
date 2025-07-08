@@ -794,13 +794,17 @@ export function HorariosDisplay() {
               <CardContent className="space-y-3 pt-3">
                 <div className="flex flex-wrap gap-1 mb-2">
                   {/* Badge de modalidad de cursada */}
-                  {(asignatura.modalidadCursada === "Virtual" || 
-                    asignatura.modalidadCursada?.toLowerCase().includes("virtual")) && (
+                  {asignatura.modalidadCursada && 
+                    (asignatura.modalidadCursada.toLowerCase() === "virtual" || 
+                     asignatura.modalidadCursada.toLowerCase().includes("virtual")) && 
+                    !asignatura.modalidadCursada.includes("30%") && (
                     <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-600 border-teal-200 font-medium px-2 py-0.5">
                       🌐 Virtual
                     </Badge>
                   )}
-                  {asignatura.modalidadCursada && asignatura.modalidadCursada.includes("30% virtualidad") && (
+                  {asignatura.modalidadCursada && 
+                    (asignatura.modalidadCursada.includes("30% virtualidad") || 
+                     asignatura.modalidadCursada.includes("30% virtual")) && (
                     <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-600 border-sky-200 font-medium px-2 py-0.5">
                       📱 30% Virtual
                     </Badge>
