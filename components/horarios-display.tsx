@@ -321,7 +321,7 @@ export function HorariosDisplay() {
             ? "Teóricos"
             : grupo.tipo === "Teórico-Práctico"
               ? "Teórico-Prácticos"
-              : grupo.tipo === "Prácticos"
+              : grupo.tipo === "Práctico"
                 ? "Prácticos"
                 : grupo.tipo
         tiposFaltantes.push(nombreCompleto)
@@ -557,11 +557,6 @@ export function HorariosDisplay() {
 
   const seleccionFormateada = getSeleccionFormateada()
 
-    // Placeholder function, replace with actual logic
-    const claseEsViable = (clase: Clase): boolean => {
-        return true;
-    };
-
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -738,7 +733,7 @@ export function HorariosDisplay() {
         ) : null
       })()}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-min">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-min" style={{ gridAutoFlow: 'row' }}>
         {asignaturasFiltradas.length === 0 ? (
           <div className="text-center py-12 col-span-full">
             <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
@@ -779,3 +774,475 @@ export function HorariosDisplay() {
                             : "border-white data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-uba-secondary"
                         }`}
                       />
+                    </div>
+                  </div>
+                </CardHeader>
+              <CardContent className="space-y-3 pt-3">
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {/* Badge de modalidad de cursada */}
+                  {(() => {
+                    const modalidadCursada = asignatura.modalidadCursada || "Presencial"
+
+                    if (modalidadCursada.toLowerCase() === "virtual" || 
+                        (modalidadCursada.toLowerCase().includes("virtual") && 
+                        !modalidadCursada.includes("30%"))) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-700 border-teal-300 px-1.5 py-0.5">
+                          Virtual
+                        </Badge>
+                      )
+                    } else if (modalidadCursada.includes("30%") && modalidadCursada.toLowerCase().includes("virtual")) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-300 px-1.5 py-0.5">
+                          Presencial, con 30% virtualidad asincrónica
+                        </Badge>
+                      )
+                    } else {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-300 px-1.5 py-0.5">
+                          Presencial
+                        </Badge>
+                      )
+                    }
+                  })()}
+
+                  {/* Badge de modalidad de aprobación */}
+                  {(() => {
+                    const modalidad = asignatura.modalidadAprobacion || "Trabajo final"
+
+                    if (modalidad === "Promoción directa" || modalidad.toLowerCase().includes("promoción")) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 border-green-300 px-1.5 py-0.5">
+                          Promoción directa
+                        </Badge>
+                      )
+                    } else if (modalidad === "Examen final" || modalidad.toLowerCase().includes("examen")) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700 border-orange-300 px-1.5 py-0.5">
+                          Examen final
+                        </Badge>
+                      )
+                    } else {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-300 px-1.5 py-0.5">
+                          Trabajo final
+                        </Badge>
+                      )
+                    }
+                  })()}
+                </div>
+
+
+
+                {asignatura.aclaraciones && (
+                  <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
+                    <em>{asignatura.aclaraciones}</em>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
+                    const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
+
+                    const getClassColors = (tipo: string, isSelected: boolean) => {
+                      switch (tipo) {
+                        case "Teórico":
+                          return isSelected 
+                            ? "bg-gray-200 border-gray-400 text-gray-800"
+                            : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                        case "Teórico-Práctico":
+                          return isSelected
+                            ? "bg-gray-100 border-gray-300 text-gray-700"
+                            : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
+                        case "Práctico":
+                          return isSelected
+                            ? "bg-blue-100 border-blue-300 text-blue-800"
+                            : "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                        default:
+                          return isSelected
+                            ? "bg-gray-100 border-gray-300 text-gray-800"
+                            : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+                      }
+                    }
+
+                    return (
+                      <div key={grupo.tipo} className="sm:col-span-1">
+                        {requiereElegir ? (
+                          <RadioGroup
+                            value={seleccion.clases[asignatura.id]?.[grupo.tipo] || ""}
+                            onValueChange={(value) => seleccionarClase(asignatura.id, grupo.tipo, value)}
+                          >
+                            <div className="space-y-1">
+                              {grupo.clases.map((clase) => {
+                                const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
+                                return (
+                                  <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
+                                    getClassColors(clase.tipo, isClassSelected)
+                                  }`}>
+                                    <div className="flex justify-between items-start mb-1">
+                                      <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
+                                        {grupo.clases.length === 1 
+                                          ? clase.tipo
+                                          : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
+                                      </Badge>
+                                      <div className="flex items-center">
+                                        <RadioGroupItem
+                                          value={clase.id}
+                                          id={clase.id}
+                                          className="data-[state=checked]:bg-current data-[state=checked]:border-current"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="text-xs space-y-0.5">
+                                      <div className="flex items-center gap-1">
+                                        <span className="font-medium">{clase.dia}</span>
+                                        <span className="opacity-75">{clase.horario} hs</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </RadioGroup>
+                        ) : (
+                          <div className="space-y-1">
+                            {grupo.clases.map((clase, index) => (
+                              <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
+                                getClassColors(clase.tipo, isSelected)
+                              }`}>
+                                <div className="flex justify-between items-start mb-1">
+                                  <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
+                                    {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
+                                      ? `${clase.tipo} ${String.fromCharCode(65 + index)}` // A, B, C, etc.
+                                      : grupo.clases.length === 1 
+                                        ? clase.tipo
+                                        : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
+                                  </Badge>
+                                  {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
+                                    <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-600 border-yellow-200 px-2 py-0.5">
+                                      Complementario
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="text-xs space-y-0.5">
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-medium">{clase.dia}</span>
+                                    <span className="opacity-75">{clase.horario} hs</span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+                {seleccion.asignaturas.includes(asignatura.id) &&
+                  (() => {
+                    const tiposFaltantes = getClasesFaltantes(asignatura, seleccion.clases[asignatura.id] || {})
+                    return tiposFaltantes.length > 0 ? (
+                      <div className="text-red-600 text-xs italic p-2 bg-red-50 rounded border border-red-200">
+                        Falta seleccionar horario de{" "}
+                        {tiposFaltantes.map((tipo, index) => (
+                          <span key={tipo}>
+                            <span className="font-bold italic">{tipo}</span>
+                            {index < tiposFaltantes.length - 1 && ", "}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null
+                  })()}
+              </CardContent>
+            </Card>
+            )
+          })
+        )}
+      </div>
+
+      {seleccionFormateada.length > 0 && <div className="border-t border-gray-300 my-8"></div>}
+
+      {seleccionFormateada.length > 0 && (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-uba-primary">Tu Selección</h2>
+            <Button
+              onClick={limpiarSeleccion}
+              variant="destructive"
+              size="sm"
+              className="text-white"
+            >
+              <X className="h-4 w-4 mr-1" />
+              Limpiar Selección
+            </Button>
+          </div>
+
+          {(() => {
+            const superposiciones = detectarSuperposiciones()
+            return superposiciones.length > 0 ? (
+              <Alert className="border-red-300 bg-red-50 mb-4">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl mt-0.5">⚠️</div>
+                  <AlertDescription className="text-red-800">
+                    <div className="font-semibold mb-2">Hay superposiciones horarias en tu selección:</div>
+                    <ul className="space-y-1">
+                      {superposiciones.map((superposicion, index) => (
+                        <li key={index} className="text-sm">
+                          • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
+                        </li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </div>
+              </Alert>
+            ) : null
+          })()}
+
+          <Card className="bg-uba-secondary/10 border-uba-secondary/30">
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                {seleccionFormateada.map((item, index) => (
+                  <div key={index} className="border-l-4 border-uba-secondary pl-4">
+                    <h4 className="font-semibold text-uba-primary">{item.asignatura}</h4>
+                    <p className="text-sm text-gray-600 mb-2">Cátedra: {item.catedra}</p>
+                    <div className="space-y-1">
+                      {item.clases.map((clase, claseIndex) => (
+                        <div key={claseIndex} className="text-sm bg-white p-2 rounded border">
+                          <span className="font-medium text-uba-primary">{clase.nombre}</span>
+                          <span className="text-gray-600 ml-2">
+                            {clase.dia} {clase.horario} hs
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    {item.tiposFaltantes && (
+                      <div className="text-red-600 text-sm italic mt-2 p-2 bg-red-50 rounded border border-red-200">
+                        Falta seleccionar horario de{" "}
+                        {item.tiposFaltantes.map((tipo, index) => (
+                          <span key={tipo}>
+                            <span className="font-bold italic">{tipo}</span>
+                            {index < item.tiposFaltantes.length - 1 && ", "}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {seleccionFormateada.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-2xl font-bold text-uba-primary">Tu Cronograma Semanal</h2>
+          </div>
+
+          {(() => {
+            const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+            const horariosCompletos: Array<{
+              asignatura: string
+              catedra: string
+              clase: string
+              dia: string
+              inicio: number
+              fin: number
+              color: string
+            }> = []
+
+            const colores = [
+              "bg-blue-200 text-blue-800 border-blue-300",
+              "bg-green-200 text-green-800 border-green-300", 
+              "bg-purple-200 text-purple-800 border-purple-300",
+              "bg-yellow-200 text-yellow-800 border-yellow-300",
+              "bg-pink-200 text-pink-800 border-pink-300",
+              "bg-indigo-200 text-indigo-800 border-indigo-300",
+              "bg-red-200 text-red-800 border-red-300",
+              "bg-teal-200 text-teal-800 border-teal-300"
+            ]
+
+            seleccion.asignaturas.forEach((asignaturaId, asignaturaIndex) => {
+              const asignatura = asignaturasEnriquecidas.find((a) => a.id === asignaturaId)
+              if (!asignatura) return
+
+              const clasesAsignatura = seleccion.clases[asignaturaId] || {}
+              const gruposClases = agruparClasesPorTipo(asignatura.clases)
+              const colorAsignatura = colores[asignaturaIndex % colores.length]
+
+              gruposClases.forEach((grupo) => {
+                const agrupacion = asignatura.agrupacionClases?.[grupo.tipo]
+
+                if (agrupacion === "conjunto") {
+                  grupo.clases.forEach((clase) => {
+                    const horarioParts = clase.horario.split(" - ")
+                    const inicio = parseInt(horarioParts[0].split(":")[0])
+                    const fin = parseInt(horarioParts[1].split(":")[0])
+
+                    horariosCompletos.push({
+                      asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
+                      catedra: asignatura.catedra,
+                      clase: `${clase.tipo} ${grupo.clases.length > 1 ? grupo.clases.indexOf(clase) + 1 : ""}`.trim(),
+                      dia: clase.dia,
+                      inicio,
+                      fin,
+                      color: colorAsignatura
+                    })
+                  })
+                } else {
+                  if (grupo.clases.length === 1) {
+                    const clase = grupo.clases[0]
+                    const horarioParts = clase.horario.split(" - ")
+                    const inicio = parseInt(horarioParts[0].split(":")[0])
+                    const fin = parseInt(horarioParts[1].split(":")[0])
+
+                    horariosCompletos.push({
+                      asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
+                      catedra: asignatura.catedra,
+                      clase: clase.tipo,
+                      dia: clase.dia,
+                      inicio,
+                      fin,
+                      color: colorAsignatura
+                    })
+                  } else {
+                    const claseSeleccionadaId = clasesAsignatura[grupo.tipo]
+                    if (claseSeleccionadaId) {
+                      const clase = grupo.clases.find((c) => c.id === claseSeleccionadaId)
+                      if (clase) {
+                        const horarioParts = clase.horario.split(" - ")
+                        const inicio = parseInt(horarioParts[0].split(":")[0])
+                        const fin = parseInt(horarioParts[1].split(":")[0])
+
+                        horariosCompletos.push({
+                          asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
+                          catedra: asignatura.catedra,
+                          clase: `${clase.tipo} ${clase.numero || ""}`.trim(),
+                          dia: clase.dia,
+                          inicio,
+                          fin,
+                          color: colorAsignatura
+                        })
+                      }
+                    }
+                  }
+                }
+              })
+            })
+
+            const horaInicio = 8
+            const horaFin = 22
+            const intervalos = []
+            for (let hora = horaInicio; hora < horaFin; hora += 2) {
+              intervalos.push({
+                inicio: hora,
+                fin: hora + 2,
+                label: `${hora}:00-${hora + 2}:00`
+              })
+            }
+
+            return (
+              <Card className="bg-white border-gray-200">
+                <CardContent className="p-0">
+                  <div className="relative">
+                    <div className="overflow-x-auto">
+                      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 md:hidden"></div>
+                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-20 md:hidden">
+                        →
+                      </div>
+                      <table className="w-full min-w-[900px]">
+                      <thead>
+                        <tr className="bg-uba-primary text-white">
+                          <th className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[100px]">
+                            Horario
+                          </th>
+                          {diasSemana.map((dia) => (
+                            <th key={dia} className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[140px]">
+                              {dia}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {intervalos.map((intervalo) => (
+                          <tr key={intervalo.label} className="h-20">
+                            <td className="border border-gray-300 p-2 text-center font-medium text-sm bg-gray-50 text-uba-primary">
+                              {intervalo.label}
+                            </td>
+                            {diasSemana.map((dia) => {
+                              const clasesEnIntervalo = horariosCompletos.filter(
+                                (clase) =>
+                                  clase.dia === dia &&
+                                  clase.inicio < intervalo.fin &&
+                                  clase.fin > intervalo.inicio
+                              )
+
+                              return (
+                                <td key={dia} className="border border-gray-300 p-1 align-top relative">
+                                  {clasesEnIntervalo.map((clase, index) => {
+                                    const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
+                                    const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
+                                    const alturaTotal = intervalo.fin - intervalo.inicio
+
+                                    const topPercent = (inicioRelativo / alturaTotal) * 100
+                                    const heightPercent = ((finRelativo - inicioRelativo) / alturaTotal) * 100
+
+                                    return (
+                                      <div
+                                        key={index}
+                                        className={`absolute left-1 right-1 rounded-md border-2 p-1 text-xs overflow-hidden ${clase.color}`}
+                                        style={{
+                                          top: `${topPercent}%`,
+                                          height: `${heightPercent}%`,
+                                          minHeight: '24px'
+                                        }}
+                                      >
+                                        <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
+                                          {clase.asignatura.length > 25 
+                                            ? `${clase.asignatura.substring(0, 22)}...`
+                                            : clase.asignatura
+                                          }
+                                        </div>
+                                        <div className="text-xs leading-tight truncate">
+                                          {clase.clase}
+                                        </div>
+                                        <div className="text-xs opacity-75 truncate">
+                                          {clase.inicio}:00-{clase.fin}:00 hs
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-50 border-t">
+                    <h4 className="text-sm font-semibold text-uba-primary mb-3">Leyenda de asignaturas:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {seleccionFormateada.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
+                          <span className="text-sm text-gray-700 truncate">
+                            {item.asignatura} ({item.catedra})
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })()}
+        </div>
+      )}
+      </div>
+    </TooltipProvider>
+  )
+}
