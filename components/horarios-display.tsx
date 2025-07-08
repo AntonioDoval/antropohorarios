@@ -785,24 +785,23 @@ export function HorariosDisplay() {
                     const modalidadCursada = asignatura.modalidadCursada || "Presencial"
                     
                     if (modalidadCursada.toLowerCase() === "virtual" || 
-                        modalidadCursada.toLowerCase().includes("virtual") && 
-                        !modalidadCursada.includes("30%")) {
+                        (modalidadCursada.toLowerCase().includes("virtual") && 
+                        !modalidadCursada.includes("30%"))) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-700 border-teal-300 px-1.5 py-0.5">
-                          🌐 Virtual
+                          Virtual
                         </Badge>
                       )
-                    } else if (modalidadCursada.includes("30% virtualidad") || 
-                               modalidadCursada.includes("30% virtual")) {
+                    } else if (modalidadCursada.includes("30%") && modalidadCursada.toLowerCase().includes("virtual")) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-300 px-1.5 py-0.5">
-                          📱 30% Virtual
+                          30% Virtual
                         </Badge>
                       )
                     } else {
                       return (
                         <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-300 px-1.5 py-0.5">
-                          👥 Presencial
+                          Presencial
                         </Badge>
                       )
                     }
@@ -815,19 +814,19 @@ export function HorariosDisplay() {
                     if (modalidad === "Promoción directa" || modalidad.toLowerCase().includes("promoción")) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 border-green-300 px-1.5 py-0.5">
-                          ✓ Promoción directa
+                          Promoción directa
                         </Badge>
                       )
                     } else if (modalidad === "Examen final" || modalidad.toLowerCase().includes("examen")) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700 border-orange-300 px-1.5 py-0.5">
-                          📝 Examen final
+                          Examen final
                         </Badge>
                       )
                     } else {
                       return (
                         <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-300 px-1.5 py-0.5">
-                          📄 Trabajo final
+                          Trabajo final
                         </Badge>
                       )
                     }

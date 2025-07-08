@@ -201,10 +201,11 @@ export function CSVUploader() {
           modalidadAprobacion = "Trabajo final"
         } else {
           // Normalizar texto para evitar inconsistencias
-          if (modalidadAprobacion.toLowerCase().includes("promoción") || modalidadAprobacion.toLowerCase().includes("promocion")) {
-            modalidadAprobacion = "Promoción Directa"
-          } else if (modalidadAprobacion.toLowerCase().includes("examen") || modalidadAprobacion.toLowerCase().includes("exámen")) {
-            modalidadAprobacion = "Exámen Final"
+          const aprobacionLower = modalidadAprobacion.toLowerCase()
+          if (aprobacionLower.includes("promoción") || aprobacionLower.includes("promocion")) {
+            modalidadAprobacion = "Promoción directa"
+          } else if (aprobacionLower.includes("examen") || aprobacionLower.includes("exámen")) {
+            modalidadAprobacion = "Examen final"
           } else {
             modalidadAprobacion = "Trabajo final"
           }
@@ -215,7 +216,7 @@ export function CSVUploader() {
           modalidadCursada = "Presencial"
         } else {
           // Normalizar texto para mantener las diferencias importantes
-          const cursadaLower = modalidadCursada.toLowerCase()
+          const cursadaLower = modalidadCursada.toLowerCase().trim()
           if (cursadaLower.includes("30%") && cursadaLower.includes("virtual")) {
             modalidadCursada = "Presencial, con 30% de virtualidad asincrónica"
           } else if (cursadaLower.includes("virtual") && !cursadaLower.includes("30%")) {
