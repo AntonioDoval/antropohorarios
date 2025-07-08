@@ -289,6 +289,23 @@ export function CSVUploader() {
           continue
         }
 
+        // Determinar agrupaciones de clases
+        const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
+
+        // Lógica para determinar si las clases son complementarias o electivas
+        const gruposClases = agruparClasesPorTipo(clases)
+        gruposClases.forEach((grupo) => {
+          if (grupo.clases.length > 1) {
+            // Para teóricos y teórico-prácticos, si hay exactamente 2 clases, son complementarios
+            if ((grupo.tipo === "Teórico" || grupo.tipo === "Teórico-Práctico") && grupo.clases.length === 2) {
+              agrupacionClases[grupo.tipo] = "conjunto"
+            } else {
+              // En otros casos (múltiples prácticos, más de 2 teóricos, etc.), son electivos
+              agrupacionClases[grupo.tipo] = "elegir"
+            }
+          }
+        })
+
         // Obtener aclaraciones
         const aclaracionesIndex = headers.findIndex(h => h.includes("aclaraciones") || h.includes("Aclaraciones"))
         const aclaraciones = aclaracionesIndex >= 0 ? row[aclaracionesIndex] : ""
@@ -440,4 +457,18 @@ export function CSVUploader() {
       )}
     </div>
   )
+}
+
+// Helper function to group classes by type
+function agruparClasesPorTipo(clases: Clase[]): { tipo: string; clases: Clase[] }[] {
+  const grupos: { [tipo: string]: Clase[] } = {}
+
+  clases.forEach((clase) => {
+    if (!grupos[clase.tipo]) {
+      grupos[clase.tipo] = []
+    }
+    grupos[clase.tipo].push(clase)
+  })
+
+  return Object.entries(grupos).map(([tipo, clases]) => ({ tipo, clases }))
 }

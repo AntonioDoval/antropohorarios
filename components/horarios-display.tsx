@@ -374,7 +374,7 @@ export function HorariosDisplay() {
 
             clasesSeleccionadas.push({
               asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
-              clase: `${clase.tipo} ${grupo.clases.length > 1 ? grupo.clases.indexOf(clase) + 1 : ""}`.trim(),
+              clase: `${clase.tipo} ${grupo.clases.length > 1 ? String.fromCharCode(65 + grupo.clases.indexOf(clase)) : ""}`.trim(),
               dia: clase.dia,
               inicio,
               fin
@@ -480,7 +480,7 @@ export function HorariosDisplay() {
           grupo.clases.forEach((clase, index) => {
             clasesSeleccionadas.push({
               nombre: grupo.clases.length > 1 
-                ? `${clase.tipo} ${index + 1}` 
+                ? `${clase.tipo} ${String.fromCharCode(65 + index)}` 
                 : (clase.numero === 0 ? clase.tipo : `${clase.tipo} ${clase.numero || ""}`),
               dia: clase.dia,
               horario: clase.horario,
@@ -785,8 +785,8 @@ export function HorariosDisplay() {
               <CardContent className="space-y-3 pt-3">
                 <div className="flex flex-wrap gap-1 mb-2">
                   {asignatura.modalidadCursada && (asignatura.modalidadCursada === "Virtual" || asignatura.modalidadCursada.includes("virtualidad")) ? (
-                    <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
-                      {asignatura.modalidadCursada}
+                    <Badge variant="secondary" className="text-xs bg-fuchsia-100 text-fuchsia-700 border-fuchsia-300 font-medium">
+                      🌐 {asignatura.modalidadCursada}
                     </Badge>
                   ) : null}
                   <Badge variant="outline" className="text-xs border-uba-primary text-uba-primary">
@@ -878,7 +878,7 @@ export function HorariosDisplay() {
                                 <div className="flex justify-between items-start mb-1">
                                   <Badge variant="outline" className="text-xs border-current">
                                     {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
-                                      ? `${clase.tipo} ${index + 1}`
+                                      ? `${clase.tipo} ${String.fromCharCode(65 + index)}` // A, B, C, etc.
                                       : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
                                   </Badge>
                                   {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
