@@ -302,6 +302,23 @@ export function CSVUploader() {
         console.log("- Teórico-Prácticos:", agrupacionTeoricoPracticos)
         console.log("- Prácticos:", agrupacionPracticos)
 
+        // Obtener aclaraciones
+        const aclaracionesIndex = headers.findIndex(h => h.includes("aclaraciones") || h.includes("Aclaraciones"))
+        const aclaraciones = aclaracionesIndex >= 0 ? row[aclaracionesIndex] : ""
+
+        const asignatura: Asignatura = {
+          id: `asignatura-${data.length + 1}`,
+          materia: formatearTituloAsignatura(titulo, tipoAsignatura),
+          catedra: catedra || "Sin especificar",
+          tipoAsignatura: tipoAsignatura,
+          modalidadAprobacion: modalidadAprobacion,
+          modalidadCursada: modalidadCursada,
+          orientacion: orientacion || undefined,
+          aclaraciones: aclaraciones || undefined,
+          clases: clases,
+        }
+
+        // Determinar agrupaciones de clases después de crear la asignatura
         const gruposClases = agruparClasesPorTipo(clases)
         gruposClases.forEach((grupo) => {
           if (grupo.clases.length > 1) {
@@ -334,24 +351,8 @@ export function CSVUploader() {
           }
         })
 
-        if (agrupacionClases) {
+        if (Object.keys(agrupacionClases).length > 0) {
           asignatura.agrupacionClases = agrupacionClases
-        }
-
-        // Obtener aclaraciones
-        const aclaracionesIndex = headers.findIndex(h => h.includes("aclaraciones") || h.includes("Aclaraciones"))
-        const aclaraciones = aclaracionesIndex >= 0 ? row[aclaracionesIndex] : ""
-
-        const asignatura: Asignatura = {
-          id: `asignatura-${data.length + 1}`,
-          materia: formatearTituloAsignatura(titulo, tipoAsignatura),
-          catedra: catedra || "Sin especificar",
-          tipoAsignatura: tipoAsignatura,
-          modalidadAprobacion: modalidadAprobacion,
-          modalidadCursada: modalidadCursada,
-          orientacion: orientacion || undefined,
-          aclaraciones: aclaraciones || undefined,
-          clases: clases,
         }
 
         data.push(asignatura)
