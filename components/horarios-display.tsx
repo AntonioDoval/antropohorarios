@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -186,7 +187,7 @@ export function HorariosDisplay() {
     }
   }
 
-
+  
 
   const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
@@ -199,9 +200,9 @@ export function HorariosDisplay() {
 
       const coincideTipo = (() => {
         if (filtros.tiposAsignatura.length === 0) return true
-
+        
         if (!asignatura.tipoAsignatura) return false
-
+        
         // Agrupar materias cuatrimestrales regulares y optativas bajo "Materia cuatrimestral"
         if (filtros.tiposAsignatura.includes("Materia cuatrimestral")) {
           if (asignatura.tipoAsignatura === "Materia cuatrimestral regular" || 
@@ -209,15 +210,15 @@ export function HorariosDisplay() {
             return true
           }
         }
-
+        
         return filtros.tiposAsignatura.includes(asignatura.tipoAsignatura)
       })()
 
       const coincideModalidad = (() => {
         if (filtros.modalidadesAprobacion.length === 0) return true
-
+        
         const modalidadReal = asignatura.modalidadAprobacion || "Trabajo final"
-
+        
         return filtros.modalidadesAprobacion.includes(modalidadReal)
       })()
 
@@ -607,7 +608,7 @@ export function HorariosDisplay() {
                   className="pl-10 bg-white h-9 text-sm"
                 />
               </div>
-
+              
               <div className="flex items-center justify-center p-2 bg-[#1c2554] text-white rounded-lg">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs font-medium">Plan de Estudios:</span>
@@ -764,7 +765,7 @@ export function HorariosDisplay() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-
+                      
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={() => toggleAsignatura(asignatura.id)}
@@ -774,42 +775,43 @@ export function HorariosDisplay() {
                             : "border-white data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-uba-secondary"
                         }`}
                       />
-                                        </div>
+                    </div>
                   </div>
                 </CardHeader>
               <CardContent className="space-y-3 pt-3">
-                <div className="flex flex-wrap gap-1 mb-2"></div>
+                <div className="flex flex-wrap gap-1 mb-2">
                   {/* Badge de modalidad de cursada */}
                   {(() => {
                     const modalidadCursada = asignatura.modalidadCursada || "Presencial"
-
-                    if (modalidadCursada.toLowerCase().includes("virtual") && 
+                    
+                    if (modalidadCursada.toLowerCase() === "virtual" || 
+                        modalidadCursada.toLowerCase().includes("virtual") && 
                         !modalidadCursada.includes("30%")) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-700 border-teal-300 px-1.5 py-0.5">
-                          Virtual
+                          🌐 Virtual
                         </Badge>
                       )
-                    } else if (modalidadCursada.includes("30%") && 
-                               (modalidadCursada.includes("virtual") || modalidadCursada.includes("asincrónica"))) {
+                    } else if (modalidadCursada.includes("30% virtualidad") || 
+                               modalidadCursada.includes("30% virtual")) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-300 px-1.5 py-0.5">
-                          30% Virtual
+                          📱 30% Virtual
                         </Badge>
                       )
                     } else {
                       return (
                         <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-300 px-1.5 py-0.5">
-                          Presencial
+                          👥 Presencial
                         </Badge>
                       )
                     }
                   })()}
-
+                  
                   {/* Badge de modalidad de aprobación */}
                   {(() => {
                     const modalidad = asignatura.modalidadAprobacion || "Trabajo final"
-
+                    
                     if (modalidad === "Promoción directa" || modalidad.toLowerCase().includes("promoción")) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 border-green-300 px-1.5 py-0.5">
@@ -832,6 +834,8 @@ export function HorariosDisplay() {
                   })()}
                 </div>
 
+                
+
                 {asignatura.aclaraciones && (
                   <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
                     <em>{asignatura.aclaraciones}</em>
@@ -841,7 +845,7 @@ export function HorariosDisplay() {
                 <div className="space-y-2">
                   {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
                     const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
-
+                    
                     const getClassColors = (tipo: string, isSelected: boolean) => {
                       switch (tipo) {
                         case "Teórico":
@@ -952,6 +956,7 @@ export function HorariosDisplay() {
                     ) : null
                   })()}
               </CardContent>
+            </Card>
             )
           })
         )}
@@ -1181,7 +1186,7 @@ export function HorariosDisplay() {
                                     const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
                                     const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
                                     const alturaTotal = intervalo.fin - intervalo.inicio
-
+                                    
                                     const topPercent = (inicioRelativo / alturaTotal) * 100
                                     const heightPercent = ((finRelativo - inicioRelativo) / alturaTotal) * 100
 
@@ -1236,9 +1241,9 @@ export function HorariosDisplay() {
                 </CardContent>
               </Card>
             )
-          }))
+          })()}
         </div>
-      }
+      )}
       </div>
     </TooltipProvider>
   )
