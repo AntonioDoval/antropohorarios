@@ -795,7 +795,7 @@ export function HorariosDisplay() {
                     } else if (modalidadCursada.includes("30%") && modalidadCursada.toLowerCase().includes("virtual")) {
                       return (
                         <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-300 px-1.5 py-0.5">
-                          30% Virtual
+                          Presencial, con 30% virtualidad asincrónica
                         </Badge>
                       )
                     } else {
