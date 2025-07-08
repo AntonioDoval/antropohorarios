@@ -167,43 +167,62 @@ export function CSVUploader() {
           titulo = row[headers.indexOf("Título del seminario")] || ""
           catedra = row[headers.indexOf("Cátedra del seminario")] || ""
           orientacion = row[headers.indexOf("Orientación del seminario")] || ""
-          modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || "Presencial"
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || ""
           // Los seminarios regulares no tienen modalidad de aprobación específica en el CSV
           modalidadAprobacion = "Trabajo final"
         } else if (tipoAsignatura === "Seminario PST") {
           titulo = row[headers.indexOf("Título del seminario")] || ""
           catedra = row[headers.indexOf("Cátedra del seminario")] || ""
           orientacion = row[headers.indexOf("Orientación del seminario")] || ""
-          modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || "Presencial"
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada del seminario")] || ""
           // Los seminarios PST no tienen modalidad de aprobación específica en el CSV
           modalidadAprobacion = "Trabajo final"
         } else if (tipoAsignatura === "Materia o seminario anual") {
           titulo = row[headers.indexOf("Título de la asignatura anual")] || ""
           catedra = row[headers.indexOf("Cátedra de asignatura anual")] || ""
-          modalidadCursada = row[headers.indexOf("Modalidad de cursada de la asignatura anual")] || "Presencial"
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada de la asignatura anual")] || ""
           // Las materias anuales no tienen modalidad de aprobación específica en el CSV
           modalidadAprobacion = "Trabajo final"
         } else if (tipoAsignatura === "Materia cuatrimestral regular") {
           titulo = row[headers.indexOf("Título de materia cuatrimestral")] || ""
           catedra = row[headers.indexOf("Cátedra de la materia")] || ""
-          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la materia")] || "Trabajo final"
-          modalidadCursada = row[headers.indexOf("Modalidad de cursada de la materia")] || "Presencial"
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación de la materia")] || ""
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada de la materia")] || ""
         } else if (tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
           titulo = row[headers.indexOf("Título de materia optativa/electiva")] || ""
           catedra = row[headers.indexOf("Cátedra de la materia optativa/electiva")] || ""
           orientacion = row[headers.indexOf("Orientación (materia optativa/electiva)")] || ""
-          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación (materia optativa/electiva)")] || "Trabajo final"
-          modalidadCursada = row[headers.indexOf("Modalidad de cursada (materia optativa/electiva)")] || "Presencial"
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación (materia optativa/electiva)")] || ""
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada (materia optativa/electiva)")] || ""
         }
 
-        // Si no se asignó modalidad de aprobación, usar "Trabajo final" por defecto
+        // Normalizar modalidad de aprobación
         if (!modalidadAprobacion || modalidadAprobacion.trim() === "") {
           modalidadAprobacion = "Trabajo final"
+        } else {
+          // Normalizar texto para evitar inconsistencias
+          if (modalidadAprobacion.toLowerCase().includes("promoción") || modalidadAprobacion.toLowerCase().includes("promocion")) {
+            modalidadAprobacion = "Promoción Directa"
+          } else if (modalidadAprobacion.toLowerCase().includes("examen") || modalidadAprobacion.toLowerCase().includes("exámen")) {
+            modalidadAprobacion = "Exámen Final"
+          } else {
+            modalidadAprobacion = "Trabajo final"
+          }
         }
 
-        // Si no se asignó modalidad de cursada, usar "Presencial" por defecto
+        // Normalizar modalidad de cursada
         if (!modalidadCursada || modalidadCursada.trim() === "") {
           modalidadCursada = "Presencial"
+        } else {
+          // Normalizar texto para mantener las diferencias importantes
+          const cursadaLower = modalidadCursada.toLowerCase()
+          if (cursadaLower.includes("30%") && cursadaLower.includes("virtual")) {
+            modalidadCursada = "Presencial, con 30% de virtualidad asincrónica"
+          } else if (cursadaLower.includes("virtual") && !cursadaLower.includes("30%")) {
+            modalidadCursada = "Virtual"
+          } else {
+            modalidadCursada = "Presencial"
+          }
         }
 
         console.log("Título determinado:", titulo)
