@@ -607,7 +607,7 @@ export function HorariosDisplay() {
           </Alert>
         </div>
 
-      <Card className="bg-[#46bfb0]/8 border-[#46bfb0]/30 rounded-xl">
+      <Card className="bg-[#46bfb0]/15 border-[#46bfb0]/40 rounded-xl">
         <CardContent className="p-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
             {/* Search and Plan Selector */}
