@@ -784,19 +784,47 @@ export function HorariosDisplay() {
                 </CardHeader>
               <CardContent className="space-y-3 pt-3">
                 <div className="flex flex-wrap gap-1 mb-2">
-                  {asignatura.modalidadCursada && (asignatura.modalidadCursada === "Virtual" || asignatura.modalidadCursada.includes("virtualidad")) ? (
-                    <Badge variant="secondary" className="text-xs bg-fuchsia-100 text-fuchsia-700 border-fuchsia-300 font-medium">
-                      🌐 {asignatura.modalidadCursada}
+                  {/* Badge de modalidad de cursada */}
+                  {asignatura.modalidadCursada === "Virtual" && (
+                    <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-600 border-teal-200 font-medium px-2 py-0.5">
+                      🌐 Virtual
                     </Badge>
-                  ) : null}
-                  <Badge variant="outline" className="text-xs border-uba-primary text-uba-primary">
-                    {(!asignatura.modalidadAprobacion || 
+                  )}
+                  {asignatura.modalidadCursada && asignatura.modalidadCursada.includes("30% virtualidad") && (
+                    <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-600 border-sky-200 font-medium px-2 py-0.5">
+                      📱 30% Virtual
+                    </Badge>
+                  )}
+                  
+                  {/* Badge de modalidad de aprobación */}
+                  {(() => {
+                    const modalidad = (!asignatura.modalidadAprobacion || 
                       asignatura.modalidadAprobacion === "NO CORRESPONDE" || 
                       asignatura.modalidadAprobacion === "No corresponde" || 
                       asignatura.modalidadAprobacion.toLowerCase() === "no especificada") 
                       ? "Trabajo final" 
-                      : asignatura.modalidadAprobacion}
-                  </Badge>
+                      : asignatura.modalidadAprobacion
+                    
+                    if (modalidad === "Promoción directa") {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-green-100 text-green-600 border-green-200 font-medium px-2 py-0.5">
+                          ✓ Promoción directa
+                        </Badge>
+                      )
+                    } else if (modalidad === "Examen final") {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-600 border-orange-200 font-medium px-2 py-0.5">
+                          📝 Examen final
+                        </Badge>
+                      )
+                    } else {
+                      return (
+                        <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200 font-medium px-2 py-0.5">
+                          {modalidad}
+                        </Badge>
+                      )
+                    }
+                  })()}
                 </div>
 
                 
@@ -847,8 +875,10 @@ export function HorariosDisplay() {
                                     getClassColors(clase.tipo, isClassSelected)
                                   }`}>
                                     <div className="flex justify-between items-start mb-1">
-                                      <Badge variant="outline" className="text-xs border-current">
-                                        {clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
+                                      <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
+                                        {grupo.clases.length === 1 
+                                          ? clase.tipo
+                                          : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
                                       </Badge>
                                       <div className="flex items-center">
                                         <RadioGroupItem
@@ -876,13 +906,15 @@ export function HorariosDisplay() {
                                 getClassColors(clase.tipo, isSelected)
                               }`}>
                                 <div className="flex justify-between items-start mb-1">
-                                  <Badge variant="outline" className="text-xs border-current">
+                                  <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
                                     {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
                                       ? `${clase.tipo} ${String.fromCharCode(65 + index)}` // A, B, C, etc.
-                                      : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
+                                      : grupo.clases.length === 1 
+                                        ? clase.tipo
+                                        : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
                                   </Badge>
                                   {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
-                                    <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-300">
+                                    <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-600 border-yellow-200 px-2 py-0.5">
                                       Complementario
                                     </Badge>
                                   )}

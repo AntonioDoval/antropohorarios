@@ -289,22 +289,54 @@ export function CSVUploader() {
           continue
         }
 
-        // Determinar agrupaciones de clases
+        // Determinar agrupaciones de clases leyendo desde el CSV
         const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
 
-        // Lógica para determinar si las clases son complementarias o electivas
+        // Leer valores específicos de agrupación desde el CSV
+        const agrupacionTeoricos = row[headers.indexOf("Agrupación de teóricos")] || ""
+        const agrupacionTeoricoPracticos = row[headers.indexOf("Agrupación de teórico-prácticos")] || ""
+        const agrupacionPracticos = row[headers.indexOf("Agrupación de prácticos")] || ""
+
+        console.log("Agrupaciones leídas del CSV:")
+        console.log("- Teóricos:", agrupacionTeoricos)
+        console.log("- Teórico-Prácticos:", agrupacionTeoricoPracticos)
+        console.log("- Prácticos:", agrupacionPracticos)
+
         const gruposClases = agruparClasesPorTipo(clases)
         gruposClases.forEach((grupo) => {
           if (grupo.clases.length > 1) {
-            // Para teóricos y teórico-prácticos, si hay exactamente 2 clases, son complementarios
-            if ((grupo.tipo === "Teórico" || grupo.tipo === "Teórico-Práctico") && grupo.clases.length === 2) {
+            let agrupacionValue = ""
+            
+            if (grupo.tipo === "Teórico") {
+              agrupacionValue = agrupacionTeoricos
+            } else if (grupo.tipo === "Teórico-Práctico") {
+              agrupacionValue = agrupacionTeoricoPracticos
+            } else if (grupo.tipo === "Práctico") {
+              agrupacionValue = agrupacionPracticos
+            }
+
+            // Determinar si es complementario o electivo basado en el valor del CSV
+            if (agrupacionValue.includes("mismo teórico dividido") || 
+                agrupacionValue.includes("complementario") ||
+                agrupacionValue.includes("conjunto")) {
               agrupacionClases[grupo.tipo] = "conjunto"
-            } else {
-              // En otros casos (múltiples prácticos, más de 2 teóricos, etc.), son electivos
+              console.log(`${grupo.tipo} marcado como complementario (conjunto)`)
+            } else if (agrupacionValue.includes("alternativas") || 
+                       agrupacionValue.includes("elegir") ||
+                       agrupacionValue.includes("electivo")) {
               agrupacionClases[grupo.tipo] = "elegir"
+              console.log(`${grupo.tipo} marcado como electivo (elegir)`)
+            } else {
+              // Si no hay información específica, usar lógica por defecto
+              agrupacionClases[grupo.tipo] = "elegir"
+              console.log(`${grupo.tipo} sin información específica, marcado como electivo por defecto`)
             }
           }
         })
+
+        if (agrupacionClases) {
+          asignatura.agrupacionClases = agrupacionClases
+        }
 
         // Obtener aclaraciones
         const aclaracionesIndex = headers.findIndex(h => h.includes("aclaraciones") || h.includes("Aclaraciones"))
