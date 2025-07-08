@@ -733,7 +733,7 @@ export function HorariosDisplay() {
         ) : null
       })()}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-min" style={{ gridAutoFlow: 'row' }}>
         {asignaturasFiltradas.length === 0 ? (
           <div className="text-center py-12 col-span-full">
             <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
