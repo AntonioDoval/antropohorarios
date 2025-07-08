@@ -201,10 +201,11 @@ export function CSVUploader() {
           modalidadAprobacion = "Trabajo final"
         } else {
           // Normalizar texto para evitar inconsistencias
-          if (modalidadAprobacion.toLowerCase().includes("promoción") || modalidadAprobacion.toLowerCase().includes("promocion")) {
-            modalidadAprobacion = "Promoción Directa"
-          } else if (modalidadAprobacion.toLowerCase().includes("examen") || modalidadAprobacion.toLowerCase().includes("exámen")) {
-            modalidadAprobacion = "Exámen Final"
+          const aprobacionLower = modalidadAprobacion.toLowerCase().trim()
+          if (aprobacionLower.includes("promoción") || aprobacionLower.includes("promocion")) {
+            modalidadAprobacion = "Promoción directa"
+          } else if (aprobacionLower.includes("examen") || aprobacionLower.includes("exámen") || aprobacionLower === "examen final" || aprobacionLower === "exámen final") {
+            modalidadAprobacion = "Examen final"
           } else {
             modalidadAprobacion = "Trabajo final"
           }
@@ -215,11 +216,14 @@ export function CSVUploader() {
           modalidadCursada = "Presencial"
         } else {
           // Normalizar texto para mantener las diferencias importantes
-          const cursadaLower = modalidadCursada.toLowerCase()
-          if (cursadaLower.includes("30%") && cursadaLower.includes("virtual")) {
+          const cursadaLower = modalidadCursada.toLowerCase().trim()
+          if (cursadaLower.includes("30%") && (cursadaLower.includes("virtual") || cursadaLower.includes("asincrónica") || cursadaLower.includes("asincronica"))) {
             modalidadCursada = "Presencial, con 30% de virtualidad asincrónica"
           } else if (cursadaLower.includes("virtual") && !cursadaLower.includes("30%")) {
             modalidadCursada = "Virtual"
+          } else if (cursadaLower.includes("presencial")) {
+            // Si contiene "presencial" pero no "30%", es presencial puro
+            modalidadCursada = "Presencial"
           } else {
             modalidadCursada = "Presencial"
           }
