@@ -149,18 +149,7 @@ export function HorariosDisplay() {
                   }
                 })
 
-                // Aplanar todas las clases y ordenarlas para distribución horizontal
-                const todasLasClases: { tipo: string; clases: Clase[]; requiereElegir: boolean }[] = []
-                gruposOrdenados.forEach((grupo) => {
-                  const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
-                  todasLasClases.push({
-                    tipo: grupo.tipo,
-                    clases: grupo.clases,
-                    requiereElegir
-                  })
-                })
-
-    return gruposOrdenados
+                return gruposOrdenados
   }
 
   const requiereSeleccion = (asignatura: Asignatura, tipoClase: string, cantidadClases: number) => {
