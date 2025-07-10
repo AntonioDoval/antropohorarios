@@ -771,10 +771,9 @@ export function HorariosDisplay() {
           <div className="mt-4 pt-4 border-t border-gray-200">
             <h4 className="text-sm font-semibold text-uba-primary mb-3">Filtrar por horarios</h4>
             <div className="bg-white p-3 rounded-lg border border-gray-200">
-              <div className="grid grid-cols-8 gap-1 text-xs">
+              <div className="grid grid-cols-6 gap-1 text-xs">
                 {/* Header row */}
-                <div className="font-medium text-center text-uba-primary py-1">Horario</div>
-                {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map(dia => (
+                {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => (
                   <div key={dia} className="font-medium text-center text-uba-primary py-1 truncate">
                     {dia.substring(0, 3)}
                   </div>
@@ -786,21 +785,20 @@ export function HorariosDisplay() {
                   const horaFin = horaInicio + 2
                   return (
                     <React.Fragment key={i}>
-                      <div className="text-center py-1 text-gray-600 font-mono text-xs">
-                        {horaInicio}:00-{horaFin}:00
-                      </div>
-                      {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map(dia => {
+                      {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => {
                         const isSelected = (filtros.horariosSeleccionados[dia] || []).includes(horaInicio)
                         return (
                           <button
                             key={`${dia}-${horaInicio}`}
                             onClick={() => toggleHorario(dia, horaInicio)}
-                            className={`h-8 w-full rounded border transition-all duration-200 ${
+                            className={`h-10 w-full rounded border transition-all duration-200 text-xs font-medium ${
                               isSelected
                                 ? "bg-uba-secondary text-white border-uba-secondary shadow-sm"
-                                : "bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300"
+                                : "bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300 text-gray-600"
                             }`}
-                          />
+                          >
+                            {horaInicio} a {horaFin}
+                          </button>
                         )
                       })}
                     </React.Fragment>
