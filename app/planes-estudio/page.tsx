@@ -1,12 +1,12 @@
 
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-export default function PlanesEstudioPage() {
+const PlanesEstudioPage = () => {
   const [planSeleccionado, setPlanSeleccionado] = useState<"2023" | "1985">("2023")
 
   const materiasLicSocio2023 = [
@@ -334,3 +334,5 @@ export default function PlanesEstudioPage() {
     </div>
   )
 }
+
+export default PlanesEstudioPage
