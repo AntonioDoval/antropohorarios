@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-const PlanesEstudioPage = () => {
+export default function PlanesEstudioPage() {
   const [planSeleccionado, setPlanSeleccionado] = useState<"2023" | "1985">("2023")
 
   const materiasLicSocio2023 = [
@@ -334,5 +334,3 @@ const PlanesEstudioPage = () => {
     </div>
   )
 }
-
-export default PlanesEstudioPage
