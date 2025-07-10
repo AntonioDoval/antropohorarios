@@ -1,0 +1,37 @@
+Cod85,Cod23,Nom23,Nom23_corto,Nom23_siglas,Ciclo23,Electividad23,Area23,Correlatividad23
+0743,17001,EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES,Epistemo,EPIS,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+0733,17002,HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I,Historia y Teoría 1,HTA1,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+0742,17003,HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA II,Historia y Teoría 2,HTA2,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+0730,17004,PROBLEMAS DE ANTROPOLOGÍA SOCIAL Y POLÍTICA,P. A. Soc. y Pol.,PASYP,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+0736,17005,PROBLEMAS DE ANTROPOLOGÍA ECONÓMICA,P. A. Económica,PAE,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+0739,17006,PROBLEMAS DE ANTROPOLOGÍA SIMBÓLICA,P. Antrop. Simbólica,PASIM,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+0738,17007,ANTROPOLOGÍA BIOLÓGICA,Antrop. Biológica,ABIO,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+0732,17008,INTRODUCCIÓN A LA ARQUEOLOGÍA,Intro. Arqueo.,IARQ,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+,17009,"ARQUEOLOGÍA, LEGISLACIÓN Y COMUNIDAD",Arqueo. Leg. y Com.,ALC,Ciclo de Formación General (CFG) Licenciatura Sociocultural,,,
+SEM85,PST23,1 Seminario de Prácticas Socioeducativas Territorializadas (PST),,,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,Variable,,
+0741,17010,"SOCIEDADES, CULTURAS Y ESTADOS EN AMÉRICA PREHISPÁNICA Y COLONIAL",S. C. y E. en Am. Prehisp.,SCEAP,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,Al menos 5 materias del CFG
+0735,17011,PUEBLOS INDÍGENAS AMERICANOS,P. Ind. Americanos,PIA,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,Al menos 5 materias del CFG
+0740,17012,"PROCESOS CULTURALES, FOLKLORE Y PRÁCTICAS SUBALTERNAS",Proc. Cult. Folkore y P. Sub.,PCFPS,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,Al menos 5 materias del CFG
+0734,17013,ANTROPOLOGÍA LINGÜÍSTICA,Antrop. Lingüística,ALING,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,Al menos 5 materias del CFG
+0745,17014,TEORÍA SOCIAL,Teoría Social,TSOC,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,Al menos 5 materias del CFG
+"0757, 0758",17015,TEORÍAS DE LA SUBJETIVIDAD,T. de la Subjetividad,TSUBJ,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,Al menos 5 materias del CFG
+SEMSOC,SEMSOC,1 Seminario regular de Antropología Sociocultural,,,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,Variable,,
+0744,17016,METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA,Met. e Inv. Antrop.,MIA,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,Al menos 10 materias del CFG
+0737,17017,ENFOQUE CUANTITATIVO DE INVESTIGACIÓN EN ANTROPOLOGÍA SOCIOCULTURAL,Enf. Cuantitativo,CUANT,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección A, 1 materia",,Al menos 10 materias del CFG
+,17018,EJERCICIO PROFESIONAL DE LA ANTROPOLOGÍA SOCIOCULTURAL,Ej. Profesional Socio.,EPAS,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección A, 1 materia",,Al menos 10 materias del CFG
+OPT85,ELE23,"1 materia electiva de cualquier orientación, carrera o facultad de la UBA",,,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,
+,17019,"CONQUISTAS, RESISTENCIAS Y MEMORIAS INDÍGENAS",Conq. Res. y Mem. Ind.,CRMI,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área",Antropología histórica y memoria,Al menos 10 materias del CFG
+,17020,PUEBLOS INDÍGENAS Y ESTADOS,P. Ind. y Estados,PIE,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área",Antropología histórica y memoria,Al menos 10 materias del CFG
+,17021,ANTROPOLOGÍAS LATINOAMERICANAS,A. Latinoamericanas,ALAT,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área",Antropología histórica y memoria,Al menos 10 materias del CFG
+,17022,AMÉRICA EN CONTEXTO,Am. en Contexto,AEC,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área",Antropología histórica y memoria,Al menos 10 materias del CFG
+,17023,"CAPITALISMO ACTUAL, TRABAJO Y TRABAJADORES",Cap. Trab. y Trabajadores,CATT,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos culturales, ideología y poder",Al menos 10 materias del CFG
+,17024,CONFIGURACIONES SOCIOAMBIENTALES Y TERRITORIALES EN EL ESPACIO URBANO Y RURAL,Conf. Soc. y Terr.,SOCTER,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos culturales, ideología y poder",Al menos 10 materias del CFG
+,17025,RELACIONES DE GÉNERO Y ORGANIZACIÓN SOCIAL DE LOS CUIDADOS,Rel. de Género y Cuidados,RGEN,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos culturales, ideología y poder",Al menos 10 materias del CFG
+,17026,ANTROPOLOGÍA DEL ESTADO Y LAS POLÍTICAS PÚBLICAS,A. del Estado y Pol. Pub.,AEST,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos políticos, instituciones y prácticas",Al menos 10 materias del CFG
+,17027,SUJETOS SOCIALES Y POLÍTICOS EN PERSPECTIVA ANTROPOLÓGICA,Suj. Soc. y Pol.,SUJ,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos políticos, instituciones y prácticas",Al menos 10 materias del CFG
+,17028,ABORDAJES ANTROPOLÓGICOS DE LA SALUD Y LAS BIOCIENCIAS,Salud y Biociencias,SALUD,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos políticos, instituciones y prácticas",Al menos 10 materias del CFG
+,17029,ANTROPOLOGÍA Y EDUCACIÓN,Antrop. y Educación,AYE,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos políticos, instituciones y prácticas",Al menos 10 materias del CFG
+,17030,DINÁMICAS CONTEMPORÁNEAS DEL CAMPO DE LA CULTURA,D. Cont. en el C. de la Cult.,CULT,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos socioeconómicos: producción, reproducción y transformación social",Al menos 10 materias del CFG
+,17031,"DISCURSO, IMAGEN Y ALTERIDAD",Disc. Im. y Alteridad,DIA,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos socioeconómicos: producción, reproducción y transformación social",Al menos 10 materias del CFG
+,17032,"RELIGIONES, MITOS Y RITUALES EN LA MODERNIDAD",Relig. Mitos y Rituales,RIT,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,"Elección B, 2 materias de la misma área","Procesos socioeconómicos: producción, reproducción y transformación social",Al menos 10 materias del CFG
+0746,17033,SEMINARIO DE INVESTIGACIÓN EN ANTROPOLOGÍA SOCIOCULTURAL,Sem. Inv. Antrop. Socio.,SIASOC,Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural,,,"Al menos 10 materias del CFG, incluyendo METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA"
