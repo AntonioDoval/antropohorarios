@@ -20,11 +20,61 @@ interface MateriaDelPlan {
 
 export default function PlanesEstudioPage() {
   const [planSeleccionado, setPlanSeleccionado] = useState<"2023" | "1985">("2023")
-  const [orientacionSeleccionada, setOrientacionSeleccionada] = useState<"sociocultural" | "arqueologia">("sociocultural")
+  const [orientacionSeleccionada, setOrientacionSeleccionada] = useState<"profesorado" | "sociocultural" | "arqueologia">("profesorado")
   const [materias, setMaterias] = useState<MateriaDelPlan[]>([])
 
   useEffect(() => {
-    // Datos del CSV parseados
+    // Plan 2023 - Profesorado
+    const materiasProfesorado2023: MateriaDelPlan[] = [
+      // CFG
+      { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES", nombreCorto: "Epistemo", nombreSiglas: "EPIS", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0733", cod23: "17002", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I", nombreCorto: "Historia y Teoría 1", nombreSiglas: "HTA1", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0742", cod23: "17003", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA II", nombreCorto: "Historia y Teoría 2", nombreSiglas: "HTA2", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0730", cod23: "17004", nombre: "PROBLEMAS DE ANTROPOLOGÍA SOCIAL Y POLÍTICA", nombreCorto: "P. A. Soc. y Pol.", nombreSiglas: "PASYP", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0736", cod23: "17005", nombre: "PROBLEMAS DE ANTROPOLOGÍA ECONÓMICA", nombreCorto: "P. A. Económica", nombreSiglas: "PAE", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0739", cod23: "17006", nombre: "PROBLEMAS DE ANTROPOLOGÍA SIMBÓLICA", nombreCorto: "P. Antrop. Simbólica", nombreSiglas: "PASIM", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0738", cod23: "17007", nombre: "ANTROPOLOGÍA BIOLÓGICA", nombreCorto: "Antrop. Biológica", nombreSiglas: "ABIO", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0732", cod23: "17008", nombre: "INTRODUCCIÓN A LA ARQUEOLOGÍA", nombreCorto: "Intro. Arqueo.", nombreSiglas: "IARQ", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "", cod23: "17009", nombre: "ARQUEOLOGÍA, LEGISLACIÓN Y COMUNIDAD", nombreCorto: "Arqueo. Leg. y Com.", nombreSiglas: "ALC", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEM85", cod23: "PST23", nombre: "1 Seminario de Prácticas Socioeducativas Territorializadas (PST)", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación General (CFG)", electividad: "Variable", area: "", correlatividad: "" },
+      
+      // CFG - Con correlatividad básica
+      { cod85: "", cod23: "17022", nombre: "AMÉRICA EN CONTEXTO", nombreCorto: "Am. en Contexto", nombreSiglas: "AEC", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "", cod23: "17049", nombre: "METODOLOGÍA DE LA INVESTIGACIÓN ANTROPOLÓGICA EN EDUCACIÓN", nombreCorto: "Met. Antrop. Educación", nombreSiglas: "METED", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "Al menos 5 materias del CFG" },
+      
+      // CFG - Elección A (5 materias según orientación)
+      { cod85: "0741", cod23: "17010", nombre: "SOCIEDADES, CULTURAS Y ESTADOS EN AMÉRICA PREHISPÁNICA Y COLONIAL", nombreCorto: "S. C. y E. en Am. Prehisp.", nombreSiglas: "SCEAP", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0734", cod23: "17013", nombre: "ANTROPOLOGÍA LINGÜÍSTICA", nombreCorto: "Antrop. Lingüística", nombreSiglas: "ALING", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0740", cod23: "17012", nombre: "PROCESOS CULTURALES, FOLKLORE Y PRÁCTICAS SUBALTERNAS", nombreCorto: "Proc. Cult. Folkore y P. Sub.", nombreSiglas: "PCFPS", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0745", cod23: "17014", nombre: "TEORÍA SOCIAL", nombreCorto: "Teoría Social", nombreSiglas: "TSOC", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0757, 0758", cod23: "17015", nombre: "TEORÍAS DE LA SUBJETIVIDAD", nombreCorto: "T. de la Subjetividad", nombreSiglas: "TSUBJ", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0735", cod23: "17011", nombre: "PUEBLOS INDÍGENAS AMERICANOS", nombreCorto: "P. Ind. Americanos", nombreSiglas: "PIA", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0751", cod23: "17035", nombre: "ARQUEOLOGÍA AMERICANA Y ARGENTINA I", nombreCorto: "Arqueo. Am y Arg. I", nombreSiglas: "ARQAM1", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Arqueología", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0712", cod23: "17036", nombre: "ARQUEOLOGÍA AMERICANA Y ARGENTINA II", nombreCorto: "Arqueo. Am y Arg. II", nombreSiglas: "ARQAM2", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Arqueología", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0754", cod23: "17037", nombre: "ARQUEOLOGÍA ARGENTINA", nombreCorto: "Arqueo. Argentina", nombreSiglas: "ARQARG", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Arqueología", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0750", cod23: "17034", nombre: "ARQUEOLOGÍA DE ÁFRICA, EURASIA Y OCEANÍA", nombreCorto: "Arqueo. de Af. Eura. y Oc.", nombreSiglas: "ARQAEO", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Arqueología", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0721", cod23: "17042", nombre: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN ARQUEOLÓGICA", nombreCorto: "Met. Arqueo.", nombreSiglas: "MTARQ", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Arqueología", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0722", cod23: "17038", nombre: "MATERIALES ARQUEOLÓGICOS Y SUS TECNOLOGÍAS", nombreCorto: "Mat. Arqueo. y sus Tec.", nombreSiglas: "MAT", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Arqueología", correlatividad: "Al menos 5 materias del CFG" },
+      { cod85: "0752", cod23: "17039", nombre: "GEOLOGÍA PARA ARQUEÓLOGOS", nombreCorto: "Geo. para Arqueo.", nombreSiglas: "GPA", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Arqueología", correlatividad: "Al menos 5 materias del CFG" },
+      
+      // CFG - Con correlatividad avanzada
+      { cod85: "", cod23: "17029", nombre: "ANTROPOLOGÍA Y EDUCACIÓN", nombreCorto: "Antrop. y Educación", nombreSiglas: "AYE", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG" },
+      { cod85: "", cod23: "17050", nombre: "ANTROPOLOGÍA Y CONOCIMIENTO", nombreCorto: "Antrop. y Conocimiento", nombreSiglas: "AYC", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG" },
+      
+      // CFE - Formación Específica
+      { cod85: "", cod23: "ESI", nombre: "Seminario de Educación Sexual Integral", nombreCorto: "Sem. ESI", nombreSiglas: "ESI", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG" },
+      { cod85: "DIDG", cod23: "DIDG", nombre: "Didáctica General", nombreCorto: "Did. General", nombreSiglas: "DIGEN", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG" },
+      { cod85: "7127", cod23: "17051", nombre: "DIDÁCTICA ESPECIAL Y PRÁCTICAS DE LA ENSEÑANZA", nombreCorto: "Did. Esp. y Pract. de Ens.", nombreSiglas: "DIDES", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG" },
+      { cod85: "", cod23: "17052", nombre: "EXPERIENCIAS SOCIOEDUCATIVAS SITUADAS", nombreCorto: "Exp. Socioed. Situadas", nombreSiglas: "ESS", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG" },
+      
+      // CFE - Elección B
+      { cod85: "", cod23: "", nombre: "Historia Social General de la Educación", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "Al menos 10 materias del CFG" },
+      { cod85: "", cod23: "", nombre: "Historia de la Educación Argentina", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "Al menos 10 materias del CFG" },
+      { cod85: "", cod23: "", nombre: "Política Educacional", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "Al menos 10 materias del CFG" },
+      { cod85: "SOCED", cod23: "SOCED", nombre: "Sociología de la Educación", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "Al menos 10 materias del CFG" }
+    ]
+
+    // Plan 2023 - Licenciatura Sociocultural
     const materiasLicSocio2023: MateriaDelPlan[] = [
       { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES", nombreCorto: "Epistemo", nombreSiglas: "EPIS", ciclo: "Ciclo de Formación General (CFG) Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "" },
       { cod85: "0733", cod23: "17002", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I", nombreCorto: "Historia y Teoría 1", nombreSiglas: "HTA1", ciclo: "Ciclo de Formación General (CFG) Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "" },
@@ -64,6 +114,7 @@ export default function PlanesEstudioPage() {
       { cod85: "0746", cod23: "17033", nombre: "SEMINARIO DE INVESTIGACIÓN EN ANTROPOLOGÍA SOCIOCULTURAL", nombreCorto: "Sem. Inv. Antrop. Socio.", nombreSiglas: "SIASOC", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG, incluyendo METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA" }
     ]
 
+    // Plan 2023 - Licenciatura Arqueología
     const materiasLicArqueo2023: MateriaDelPlan[] = [
       // CFG
       { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES", nombreCorto: "Epistemo", nombreSiglas: "EPIS", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
@@ -104,12 +155,159 @@ export default function PlanesEstudioPage() {
       { cod85: "0755", cod23: "17048", nombre: "SEMINARIO DE INVESTIGACIÓN EN ARQUEOLOGÍA, TRABAJO DE CAMPO Y LABORATORIO", nombreCorto: "Sem. Inv. Arqueo.", nombreSiglas: "SIARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 10 materias aprobadas en total, incluyendo Metodología y Técnicas de Inv. Arqueológica, Teorías Arqueológicas Contemporáneas y Arqueología Argentina" }
     ]
 
-    if (orientacionSeleccionada === "sociocultural") {
-      setMaterias(materiasLicSocio2023)
+    // Plan 1985 - Profesorado Sociocultural
+    const materiasProfesorado1985Socio: MateriaDelPlan[] = [
+      // Ciclo Común
+      { cod85: "0730", cod23: "17004", nombre: "ANTROPOLOGÍA SISTEMÁTICA I (ORGANIZACIÓN SOCIAL Y POLÍTICA)", nombreCorto: "", nombreSiglas: "SIST1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "", cod23: "", nombre: "Historia Social General", nombreCorto: "", nombreSiglas: "HSG", ciclo: "Ciclo Común", electividad: "", area: "Departamento de Historia", correlatividad: "" },
+      { cod85: "0732", cod23: "17008", nombre: "FUNDAMENTOS DE PREHISTORIA", nombreCorto: "", nombreSiglas: "FUND", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0733", cod23: "17002", nombre: "HISTORIA DE LA TEORÍA ANTROPOLÓGICA", nombreCorto: "", nombreSiglas: "HTA", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0734", cod23: "17013", nombre: "ELEMENTOS DE LINGÜÍSTICA Y SEMIÓTICA", nombreCorto: "", nombreSiglas: "LING", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0735", cod23: "17011", nombre: "SISTEMAS SOCIOCULTURALES DE AMÉRICA I (CAZADORES, RECOLECTORES, AGRICULTORES INCIPIENTES)", nombreCorto: "", nombreSiglas: "SOCIO1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0736", cod23: "17005", nombre: "ANTROPOLOGÍA SISTEMÁTICA II (ANTROPOLOGÍA ECONÓMICA)", nombreCorto: "", nombreSiglas: "SIST2", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0737", cod23: "17017", nombre: "MÉTODOS CUANTITATIVOS EN ANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "CUANTSOC", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0738", cod23: "17007", nombre: "ANTROPOLOGÍA BIOLÓGICA Y PALEOANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "BIO", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0739", cod23: "17006", nombre: "ANTROPOLOGÍA SISTEMÁTICA III (SISTEMAS SIMBÓLICOS)", nombreCorto: "", nombreSiglas: "SIST3", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0740", cod23: "17012", nombre: "FOLKLORE GENERAL", nombreCorto: "", nombreSiglas: "FOLK", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      
+      // Ciclo Orientación Sociocultural
+      { cod85: "0741", cod23: "17010", nombre: "SISTEMAS SOCIOCULTURALES DE AMÉRICA II (AGRICULTORES MEDIOS Y SOCIEDADES ESTATALES)", nombreCorto: "", nombreSiglas: "SOCIO2", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0742", cod23: "17003", nombre: "TEORÍAS ANTROPOLÓGICAS CONTEMPORÁNEAS", nombreCorto: "", nombreSiglas: "TAC", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA Y MÉTODOS DE INVESTIGACIÓN SOCIAL", nombreCorto: "", nombreSiglas: "EPIST", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0744", cod23: "17016", nombre: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN DE CAMPO", nombreCorto: "", nombreSiglas: "METSOC", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0757", cod23: "17015", nombre: "PSICOLOGÍA GENERAL", nombreCorto: "", nombreSiglas: "PSIGEN", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección A", area: "", correlatividad: "" },
+      { cod85: "0758", cod23: "17015", nombre: "PSICOLOGÍA EVOLUTIVA", nombreCorto: "", nombreSiglas: "PSIEV", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección A", area: "Departamento de Ciencias de la Educación", correlatividad: "" },
+      { cod85: "0745", cod23: "17014", nombre: "TEORÍA SOCIOLÓGICA", nombreCorto: "", nombreSiglas: "TSOC", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección B", area: "", correlatividad: "" },
+      { cod85: "SOCED", cod23: "SOCED", nombre: "Sociología de la Educación", nombreCorto: "", nombreSiglas: "SOCED", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "" },
+      { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      
+      // Profesorado
+      { cod85: "DIDGEN", cod23: "DIDGEN", nombre: "Didáctica General", nombreCorto: "Did. General", nombreSiglas: "DIGEN", ciclo: "Profesorado", electividad: "", area: "Departamento de Ciencias de la Educación", correlatividad: "" },
+      { cod85: "7127", cod23: "17051", nombre: "DIDÁCTICA ESPECIAL Y PRÁCTICAS DE LA ENSEÑANZA", nombreCorto: "Did. Esp. y Pract. de Ens.", nombreSiglas: "DIDES", ciclo: "Profesorado", electividad: "", area: "", correlatividad: "" }
+    ]
+
+    // Plan 1985 - Profesorado Arqueología
+    const materiasProfesorado1985Arqueo: MateriaDelPlan[] = [
+      // Ciclo Común
+      { cod85: "0730", cod23: "17004", nombre: "ANTROPOLOGÍA SISTEMÁTICA I (ORGANIZACIÓN SOCIAL Y POLÍTICA)", nombreCorto: "", nombreSiglas: "SIST1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "", cod23: "", nombre: "Historia Social General", nombreCorto: "", nombreSiglas: "HSG", ciclo: "Ciclo Común", electividad: "", area: "Departamento de Historia", correlatividad: "" },
+      { cod85: "0732", cod23: "17008", nombre: "FUNDAMENTOS DE PREHISTORIA", nombreCorto: "", nombreSiglas: "FUND", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0733", cod23: "17002", nombre: "HISTORIA DE LA TEORÍA ANTROPOLÓGICA", nombreCorto: "", nombreSiglas: "HTA", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0734", cod23: "17013", nombre: "ELEMENTOS DE LINGÜÍSTICA Y SEMIÓTICA", nombreCorto: "", nombreSiglas: "LING", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0735", cod23: "17011", nombre: "SISTEMAS SOCIOCULTURALES DE AMÉRICA I (CAZADORES, RECOLECTORES, AGRICULTORES INCIPIENTES)", nombreCorto: "", nombreSiglas: "SOCIO1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0736", cod23: "17005", nombre: "ANTROPOLOGÍA SISTEMÁTICA II (ANTROPOLOGÍA ECONÓMICA)", nombreCorto: "", nombreSiglas: "SIST2", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0737", cod23: "17017", nombre: "MÉTODOS CUANTITATIVOS EN ANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "CUANTSOC", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0738", cod23: "17007", nombre: "ANTROPOLOGÍA BIOLÓGICA Y PALEOANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "BIO", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0739", cod23: "17006", nombre: "ANTROPOLOGÍA SISTEMÁTICA III (SISTEMAS SIMBÓLICOS)", nombreCorto: "", nombreSiglas: "SIST3", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0740", cod23: "17012", nombre: "FOLKLORE GENERAL", nombreCorto: "", nombreSiglas: "FOLK", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      
+      // Ciclo Orientación Arqueología
+      { cod85: "0748", cod23: "17040", nombre: "TEORÍA ARQUEOLÓGICA CONTEMPORÁNEA", nombreCorto: "", nombreSiglas: "TACARQ", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0721", cod23: "17042", nombre: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN ARQUEOLÓGICA", nombreCorto: "", nombreSiglas: "METARQ", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0750", cod23: "17034", nombre: "PREHISTORIA DEL VIEJO MUNDO", nombreCorto: "", nombreSiglas: "PVM", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0751", cod23: "17035", nombre: "PREHISTORIA AMERICANA Y ARGENTINA I (CULTURAS DE CAZADORES - RECOLECTORES)", nombreCorto: "", nombreSiglas: "PAA1", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0752", cod23: "17039", nombre: "GEOLOGÍA GENERAL Y GEOMORFOLOGÍA DEL CUARTARIO", nombreCorto: "", nombreSiglas: "GEO", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0712", cod23: "17036", nombre: "PREHISTORIA AMERICANA Y ARGENTINA II (CULTURAS AGRO-ALFARERAS)", nombreCorto: "", nombreSiglas: "PAA2", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0753", cod23: "17041", nombre: "MODELOS Y MÉTODOS DE ANÁLISIS EN ECONOMÍA PREHISTÓRICA", nombreCorto: "", nombreSiglas: "MODMET", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0722", cod23: "17038", nombre: "ERGOLOGÍA Y TECNOLOGÍA", nombreCorto: "", nombreSiglas: "ERG", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0754", cod23: "17037", nombre: "ARQUEOLOGÍA ARGENTINA", nombreCorto: "", nombreSiglas: "ARQARG", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMARQ", cod23: "SEMARQ", nombre: "1 Seminario Regular de la orientación en Arqueología", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      
+      // Profesorado
+      { cod85: "DIDGEN", cod23: "DIDGEN", nombre: "Didáctica General", nombreCorto: "Did. General", nombreSiglas: "DIGEN", ciclo: "Profesorado", electividad: "", area: "Departamento de Ciencias de la Educación", correlatividad: "" },
+      { cod85: "7127", cod23: "17051", nombre: "DIDÁCTICA ESPECIAL Y PRÁCTICAS DE LA ENSEÑANZA", nombreCorto: "Did. Esp. y Pract. de Ens.", nombreSiglas: "DIDES", ciclo: "Profesorado", electividad: "", area: "", correlatividad: "" }
+    ]
+
+    // Plan 1985 - Licenciatura Sociocultural
+    const materiasLicenciatura1985Socio: MateriaDelPlan[] = [
+      // Ciclo Común
+      { cod85: "0730", cod23: "17004", nombre: "ANTROPOLOGÍA SISTEMÁTICA I (ORGANIZACIÓN SOCIAL Y POLÍTICA)", nombreCorto: "", nombreSiglas: "SIST1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "", cod23: "", nombre: "Historia Social General", nombreCorto: "", nombreSiglas: "HSG", ciclo: "Ciclo Común", electividad: "", area: "Departamento de Historia", correlatividad: "" },
+      { cod85: "0732", cod23: "17008", nombre: "FUNDAMENTOS DE PREHISTORIA", nombreCorto: "", nombreSiglas: "FUND", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0733", cod23: "17002", nombre: "HISTORIA DE LA TEORÍA ANTROPOLÓGICA", nombreCorto: "", nombreSiglas: "HTA", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0734", cod23: "17013", nombre: "ELEMENTOS DE LINGÜÍSTICA Y SEMIÓTICA", nombreCorto: "", nombreSiglas: "LING", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0735", cod23: "17011", nombre: "SISTEMAS SOCIOCULTURALES DE AMÉRICA I (CAZADORES, RECOLECTORES, AGRICULTORES INCIPIENTES)", nombreCorto: "", nombreSiglas: "SOCIO1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0736", cod23: "17005", nombre: "ANTROPOLOGÍA SISTEMÁTICA II (ANTROPOLOGÍA ECONÓMICA)", nombreCorto: "", nombreSiglas: "SIST2", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0737", cod23: "17017", nombre: "MÉTODOS CUANTITATIVOS EN ANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "CUANTSOC", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0738", cod23: "17007", nombre: "ANTROPOLOGÍA BIOLÓGICA Y PALEOANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "BIO", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0739", cod23: "17006", nombre: "ANTROPOLOGÍA SISTEMÁTICA III (SISTEMAS SIMBÓLICOS)", nombreCorto: "", nombreSiglas: "SIST3", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0740", cod23: "17012", nombre: "FOLKLORE GENERAL", nombreCorto: "", nombreSiglas: "FOLK", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      
+      // Ciclo Orientación Sociocultural
+      { cod85: "0741", cod23: "17010", nombre: "SISTEMAS SOCIOCULTURALES DE AMÉRICA II (AGRICULTORES MEDIOS Y SOCIEDADES ESTATALES)", nombreCorto: "", nombreSiglas: "SOCIO2", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0742", cod23: "17003", nombre: "TEORÍAS ANTROPOLÓGICAS CONTEMPORÁNEAS", nombreCorto: "", nombreSiglas: "TAC", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA Y MÉTODOS DE INVESTIGACIÓN SOCIAL", nombreCorto: "", nombreSiglas: "EPIST", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0744", cod23: "17016", nombre: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN DE CAMPO", nombreCorto: "", nombreSiglas: "METSOC", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0757", cod23: "17015", nombre: "PSICOLOGÍA GENERAL", nombreCorto: "", nombreSiglas: "PSIGEN", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección A", area: "", correlatividad: "" },
+      { cod85: "0758", cod23: "17015", nombre: "PSICOLOGÍA EVOLUTIVA", nombreCorto: "", nombreSiglas: "PSIEV", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección A", area: "Departamento de Ciencias de la Educación", correlatividad: "" },
+      { cod85: "0745", cod23: "17014", nombre: "TEORÍA SOCIOLÓGICA", nombreCorto: "", nombreSiglas: "TSOC", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección B", area: "", correlatividad: "" },
+      { cod85: "SOCED", cod23: "SOCED", nombre: "Sociología de la Educación", nombreCorto: "", nombreSiglas: "SOCED", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "" },
+      { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      
+      // Licenciatura Sociocultural
+      { cod85: "0746", cod23: "17033", nombre: "SEMINARIO DE INVESTIGACIÓN ANUAL (ORIENTACIÓN SOCIOCULTURAL)", nombreCorto: "", nombreSiglas: "SIASOC", ciclo: "Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "" }
+    ]
+
+    // Plan 1985 - Licenciatura Arqueología
+    const materiasLicenciatura1985Arqueo: MateriaDelPlan[] = [
+      // Ciclo Común
+      { cod85: "0730", cod23: "17004", nombre: "ANTROPOLOGÍA SISTEMÁTICA I (ORGANIZACIÓN SOCIAL Y POLÍTICA)", nombreCorto: "", nombreSiglas: "SIST1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "", cod23: "", nombre: "Historia Social General", nombreCorto: "", nombreSiglas: "HSG", ciclo: "Ciclo Común", electividad: "", area: "Departamento de Historia", correlatividad: "" },
+      { cod85: "0732", cod23: "17008", nombre: "FUNDAMENTOS DE PREHISTORIA", nombreCorto: "", nombreSiglas: "FUND", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0733", cod23: "17002", nombre: "HISTORIA DE LA TEORÍA ANTROPOLÓGICA", nombreCorto: "", nombreSiglas: "HTA", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0734", cod23: "17013", nombre: "ELEMENTOS DE LINGÜÍSTICA Y SEMIÓTICA", nombreCorto: "", nombreSiglas: "LING", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0735", cod23: "17011", nombre: "SISTEMAS SOCIOCULTURALES DE AMÉRICA I (CAZADORES, RECOLECTORES, AGRICULTORES INCIPIENTES)", nombreCorto: "", nombreSiglas: "SOCIO1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0736", cod23: "17005", nombre: "ANTROPOLOGÍA SISTEMÁTICA II (ANTROPOLOGÍA ECONÓMICA)", nombreCorto: "", nombreSiglas: "SIST2", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0737", cod23: "17017", nombre: "MÉTODOS CUANTITATIVOS EN ANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "CUANTSOC", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0738", cod23: "17007", nombre: "ANTROPOLOGÍA BIOLÓGICA Y PALEOANTROPOLOGÍA", nombreCorto: "", nombreSiglas: "BIO", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0739", cod23: "17006", nombre: "ANTROPOLOGÍA SISTEMÁTICA III (SISTEMAS SIMBÓLICOS)", nombreCorto: "", nombreSiglas: "SIST3", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0740", cod23: "17012", nombre: "FOLKLORE GENERAL", nombreCorto: "", nombreSiglas: "FOLK", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
+      
+      // Ciclo Orientación Arqueología
+      { cod85: "0748", cod23: "17040", nombre: "TEORÍA ARQUEOLÓGICA CONTEMPORÁNEA", nombreCorto: "", nombreSiglas: "TACARQ", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0721", cod23: "17042", nombre: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN ARQUEOLÓGICA", nombreCorto: "", nombreSiglas: "METARQ", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0750", cod23: "17034", nombre: "PREHISTORIA DEL VIEJO MUNDO", nombreCorto: "", nombreSiglas: "PVM", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0751", cod23: "17035", nombre: "PREHISTORIA AMERICANA Y ARGENTINA I (CULTURAS DE CAZADORES - RECOLECTORES)", nombreCorto: "", nombreSiglas: "PAA1", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0752", cod23: "17039", nombre: "GEOLOGÍA GENERAL Y GEOMORFOLOGÍA DEL CUARTARIO", nombreCorto: "", nombreSiglas: "GEO", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0712", cod23: "17036", nombre: "PREHISTORIA AMERICANA Y ARGENTINA II (CULTURAS AGRO-ALFARERAS)", nombreCorto: "", nombreSiglas: "PAA2", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0753", cod23: "17041", nombre: "MODELOS Y MÉTODOS DE ANÁLISIS EN ECONOMÍA PREHISTÓRICA", nombreCorto: "", nombreSiglas: "MODMET", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0722", cod23: "17038", nombre: "ERGOLOGÍA Y TECNOLOGÍA", nombreCorto: "", nombreSiglas: "ERG", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0754", cod23: "17037", nombre: "ARQUEOLOGÍA ARGENTINA", nombreCorto: "", nombreSiglas: "ARQARG", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMARQ", cod23: "SEMARQ", nombre: "1 Seminario Regular de la orientación en Arqueología", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Arqueología", electividad: "", area: "", correlatividad: "" },
+      
+      // Licenciatura Arqueología
+      { cod85: "0755", cod23: "17048", nombre: "SEMINARIO DE INVESTIGACIÓN EN ARQUEOLOGÍA", nombreCorto: "", nombreSiglas: "SIAARQ", ciclo: "Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" }
+    ]
+
+    if (planSeleccionado === "2023") {
+      if (orientacionSeleccionada === "profesorado") {
+        setMaterias(materiasProfesorado2023)
+      } else if (orientacionSeleccionada === "sociocultural") {
+        setMaterias(materiasLicSocio2023)
+      } else {
+        setMaterias(materiasLicArqueo2023)
+      }
     } else {
-      setMaterias(materiasLicArqueo2023)
+      if (orientacionSeleccionada === "profesorado") {
+        // Para 1985 profesorado, mostrar sociocultural por defecto, se puede cambiar después
+        setMaterias(materiasProfesorado1985Socio)
+      } else if (orientacionSeleccionada === "sociocultural") {
+        setMaterias(materiasLicenciatura1985Socio)
+      } else {
+        setMaterias(materiasLicenciatura1985Arqueo)
+      }
     }
-  }, [])
+  }, [planSeleccionado, orientacionSeleccionada])
 
   // Función para convertir a title case
   const toTitleCase = (str: string) => {
@@ -120,14 +318,23 @@ export default function PlanesEstudioPage() {
 
   // Función para obtener materias por ciclo
   const getMateriasByCiclo = (ciclo: string) => {
-    const orientacionSuffix = orientacionSeleccionada === "arqueologia" ? "Arqueología" : "Sociocultural"
-    return materias.filter(materia => 
-      materia.ciclo.includes(ciclo) && 
-      materia.ciclo.includes(orientacionSuffix)
-    )
+    if (planSeleccionado === "2023") {
+      if (orientacionSeleccionada === "profesorado") {
+        return materias.filter(materia => materia.ciclo.includes(ciclo))
+      } else {
+        const orientacionSuffix = orientacionSeleccionada === "arqueologia" ? "Arqueología" : "Sociocultural"
+        return materias.filter(materia => 
+          materia.ciclo.includes(ciclo) && 
+          materia.ciclo.includes(orientacionSuffix)
+        )
+      }
+    } else {
+      // Plan 1985
+      return materias.filter(materia => materia.ciclo.includes(ciclo))
+    }
   }
 
-  // Función para obtener materias por área temática (solo para sociocultural)
+  // Función para obtener materias por área temática (solo para sociocultural 2023)
   const getMateriasByArea = (area: string) => {
     return materias.filter(materia => 
       materia.ciclo.includes("CFO") && 
@@ -146,7 +353,7 @@ export default function PlanesEstudioPage() {
 
   // Función para renderizar una materia con colores alternados
   const renderMateria = (materia: MateriaDelPlan, index: number) => (
-    <div key={materia.cod23} className={`flex items-start gap-2 py-2 px-3 rounded ${
+    <div key={`${materia.cod23}-${index}`} className={`flex items-start gap-2 py-2 px-3 rounded ${
       index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
     }`}>
       <span className="text-gray-600 mt-0.5">•</span>
@@ -155,6 +362,18 @@ export default function PlanesEstudioPage() {
       </span>
     </div>
   )
+
+  const getTituloOrientacion = () => {
+    if (planSeleccionado === "2023") {
+      if (orientacionSeleccionada === "profesorado") return "Profesorado"
+      if (orientacionSeleccionada === "sociocultural") return "Lic. Sociocultural"
+      return "Lic. Arqueología"
+    } else {
+      if (orientacionSeleccionada === "profesorado") return "Profesorado"
+      if (orientacionSeleccionada === "sociocultural") return "Lic. Sociocultural"
+      return "Lic. Arqueología"
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -235,250 +454,450 @@ export default function PlanesEstudioPage() {
               </span>
             </div>
 
-            {/* Selector de orientación para plan 2023 */}
-            {planSeleccionado === "2023" && (
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <span className={`text-md font-medium ${orientacionSeleccionada === "sociocultural" ? "text-uba-primary" : "text-gray-500"}`}>
-                  Lic. Sociocultural
-                </span>
-                <Switch
-                  checked={orientacionSeleccionada === "arqueologia"}
-                  onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "arqueologia" : "sociocultural")}
-                  className="data-[state=checked]:bg-uba-primary"
-                />
-                <span className={`text-md font-medium ${orientacionSeleccionada === "arqueologia" ? "text-uba-primary" : "text-gray-500"}`}>
-                  Lic. Arqueología
-                </span>
-              </div>
-            )}
+            {/* Selector de orientación */}
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <span className={`text-md font-medium ${orientacionSeleccionada === "profesorado" ? "text-uba-primary" : "text-gray-500"}`}>
+                Profesorado
+              </span>
+              <Switch
+                checked={orientacionSeleccionada === "sociocultural"}
+                onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "sociocultural" : "profesorado")}
+                className="data-[state=checked]:bg-uba-primary"
+              />
+              <span className={`text-md font-medium ${orientacionSeleccionada === "sociocultural" ? "text-uba-primary" : "text-gray-500"}`}>
+                Lic. Sociocultural
+              </span>
+              <Switch
+                checked={orientacionSeleccionada === "arqueologia"}
+                onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "arqueologia" : "sociocultural")}
+                className="data-[state=checked]:bg-uba-primary"
+              />
+              <span className={`text-md font-medium ${orientacionSeleccionada === "arqueologia" ? "text-uba-primary" : "text-gray-500"}`}>
+                Lic. Arqueología
+              </span>
+            </div>
           </div>
 
           {planSeleccionado === "2023" ? (
             <div className="space-y-6">
-              {/* Ciclo de Formación General (CFG) */}
-              <div className="bg-gray-50 border border-gray-300 rounded-lg">
-                <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
-                  <h2 className="text-lg font-bold text-gray-800">
-                    Ciclo de Formación General (CFG)
-                  </h2>
-                </div>
-                <div className="p-6">
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="space-y-1">
-                      {getMateriasByCiclo("CFG").map((materia, index) => renderMateria(materia, index))}
+              {orientacionSeleccionada === "profesorado" ? (
+                <>
+                  {/* Plan 2023 Profesorado */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                    <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Ciclo de Formación General (CFG) - Profesorado 2023
+                      </h2>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Ciclo de Formación Orientada (CFO) */}
-              <div className="bg-gray-50 border border-gray-300 rounded-lg">
-                <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
-                  <h2 className="text-lg font-bold text-gray-800">
-                    Ciclo de Formación Orientada (CFO)
-                  </h2>
-                </div>
-                <div className="p-6 space-y-4">
-                  
-                  {/* Materias básicas del CFO */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="space-y-1">
-                      {getMateriasByCiclo("CFO").filter(materia => 
-                        !materia.electividad || 
-                        materia.electividad === "Variable"
-                      ).map((materia, index) => renderMateria(materia, index))}
+                    <div className="p-6">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFG").filter(m => !m.correlatividad && !m.electividad).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Correlatividad específica según orientación */}
-                  {orientacionSeleccionada === "sociocultural" ? (
-                    <>
-                      {/* Correlatividad: Al menos 5 materias del CFG */}
+                  {/* Materias con correlatividad */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                    <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Materias con Correlatividades
+                      </h2>
+                    </div>
+                    <div className="p-6 space-y-4">
                       <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <div className="text-sm font-medium text-blue-700 italic mb-3">
                           • Correlatividad: Al menos 5 materias del CFG
                         </div>
                         <div className="space-y-1">
-                          {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.correlatividad === "Al menos 5 materias del CFG"
-                          ).map((materia, index) => renderMateria(materia, index))}
+                          {getMateriasByCiclo("CFG").filter(m => m.correlatividad === "Al menos 5 materias del CFG" && !m.electividad).map((materia, index) => renderMateria(materia, index))}
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología */}
-                      <div className="bg-white border border-gray-200 rounded-lg p-4">
-                        <div className="text-sm font-medium text-blue-700 italic mb-3">
-                          • Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología
-                        </div>
-                        <div className="space-y-1">
-                          {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.correlatividad === "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología"
-                          ).map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </div>
-                    </>
-                  )}
 
-                  {orientacionSeleccionada === "sociocultural" ? (
-                    <>
-                      {/* Correlatividad: Al menos 10 materias del CFG */}
                       <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <div className="text-sm font-medium text-blue-700 italic mb-3">
                           • Correlatividad: Al menos 10 materias del CFG
                         </div>
                         <div className="space-y-1">
-                          {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.correlatividad === "Al menos 10 materias del CFG"
-                          ).map((materia, index) => renderMateria(materia, index))}
+                          {getMateriasByCiclo("CFG").filter(m => m.correlatividad === "Al menos 10 materias del CFG").map((materia, index) => renderMateria(materia, index))}
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Correlatividad específica para arqueología */}
-                      <div className="bg-white border border-gray-200 rounded-lg p-4">
-                        <div className="text-sm font-medium text-blue-700 italic mb-3">
-                          • Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología y Metodología y Técnicas de Inv. Arqueológica
-                        </div>
-                        <div className="space-y-1">
-                          {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.correlatividad.includes("Metodología y Técnicas de Inv. Arqueológica")
-                          ).map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </div>
-                    </>
-                  )}
+                    </div>
+                  </div>
 
-                  {orientacionSeleccionada === "sociocultural" ? (
-                    <>
-                      {/* Una materia a elegir entre */}
+                  {/* Elección A - Orientaciones */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                    <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Elección A - 5 materias según orientación
+                      </h2>
+                    </div>
+                    <div className="p-6 space-y-4">
                       <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <div className="text-sm font-medium text-blue-700 italic mb-3">
-                          • Una materia a elegir entre:
+                          • Licenciatura Sociocultural
                         </div>
                         <div className="space-y-1">
-                          {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.electividad === "Elección A, 1 materia"
-                          ).map((materia, index) => renderMateria(materia, index))}
+                          {getMateriasByCiclo("CFG").filter(m => m.area === "Licenciatura Sociocultural").map((materia, index) => renderMateria(materia, index))}
                         </div>
                       </div>
 
-                      {/* Materia electiva */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Licenciatura Arqueología
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFG").filter(m => m.area === "Licenciatura Arqueología").map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CFE - Formación Específica */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                    <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Ciclo de Formación Específica (CFE) - Profesorado
+                      </h2>
+                    </div>
+                    <div className="p-6 space-y-4">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFE").filter(m => !m.electividad).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Elección B - Departamento de Ciencias de la Educación
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFE").filter(m => m.electividad === "Elección B").map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Plan 2023 Licenciaturas */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                    <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Ciclo de Formación General (CFG)
+                      </h2>
+                    </div>
+                    <div className="p-6">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFG").map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Ciclo de Formación Orientada (CFO) */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                    <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Ciclo de Formación Orientada (CFO)
+                      </h2>
+                    </div>
+                    <div className="p-6 space-y-4">
+                      
+                      {/* Materias básicas del CFO */}
                       <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <div className="space-y-1">
                           {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.nombre.includes("materia electiva")
+                            !materia.electividad || 
+                            materia.electividad === "Variable"
                           ).map((materia, index) => renderMateria(materia, index))}
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Dos materias a elegir entre (Arqueología) */}
+
+                      {/* Correlatividad específica según orientación */}
+                      {orientacionSeleccionada === "sociocultural" ? (
+                        <>
+                          {/* Correlatividad: Al menos 5 materias del CFG */}
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Correlatividad: Al menos 5 materias del CFG
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.correlatividad === "Al menos 5 materias del CFG"
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología */}
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.correlatividad === "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología"
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {orientacionSeleccionada === "sociocultural" ? (
+                        <>
+                          {/* Correlatividad: Al menos 10 materias del CFG */}
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Correlatividad: Al menos 10 materias del CFG
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.correlatividad === "Al menos 10 materias del CFG"
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Correlatividad específica para arqueología */}
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología y Metodología y Técnicas de Inv. Arqueológica
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.correlatividad.includes("Metodología y Técnicas de Inv. Arqueológica")
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {orientacionSeleccionada === "sociocultural" ? (
+                        <>
+                          {/* Una materia a elegir entre */}
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Una materia a elegir entre:
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.electividad === "Elección A, 1 materia"
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+
+                          {/* Materia electiva */}
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.nombre.includes("materia electiva")
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Dos materias a elegir entre (Arqueología) */}
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Correlatividad: Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías
+                            </div>
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Dos materias a elegir entre:
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasElectivasArqueologia().map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {orientacionSeleccionada === "sociocultural" && (
+                        /* Dos materias a elegir dentro de la misma área temática */
+                        <div className="bg-white border border-gray-200 rounded-lg p-4">
+                          <div className="text-sm font-medium text-blue-700 italic mb-4">
+                            • Dos materias a elegir dentro de la misma área temática:
+                          </div>
+                        
+                        {/* Antropología histórica y memoria */}
+                        <div className="mb-4">
+                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                            Antropología histórica y memoria
+                          </div>
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                            <div className="space-y-1">
+                              {getMateriasByArea("Antropología histórica y memoria").map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Procesos culturales, ideología y poder */}
+                        <div className="mb-4">
+                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                            Procesos culturales, ideología y poder
+                          </div>
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                            <div className="space-y-1">
+                              {getMateriasByArea("Procesos culturales, ideología y poder").map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Procesos políticos, instituciones y prácticas */}
+                        <div className="mb-4">
+                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                            Procesos políticos, instituciones y prácticas
+                          </div>
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                            <div className="space-y-1">
+                              {getMateriasByArea("Procesos políticos, instituciones y prácticas").map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Procesos socioeconómicos */}
+                        <div className="mb-4">
+                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                            Procesos socioeconómicos: producción, reproducción y transformación social
+                          </div>
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                            <div className="space-y-1">
+                              {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                      )}
+
+                      {/* Seminario de investigación */}
                       <div className="bg-white border border-gray-200 rounded-lg p-4">
-                        <div className="text-sm font-medium text-blue-700 italic mb-3">
-                          • Correlatividad: Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías
-                        </div>
-                        <div className="text-sm font-medium text-blue-700 italic mb-3">
-                          • Dos materias a elegir entre:
-                        </div>
+                        {orientacionSeleccionada === "sociocultural" ? (
+                          <>
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Correlatividad: Al menos 10 materias del CFG, incluyendo Metodología e Investigación Antropológica
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.correlatividad.includes("METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA")
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-sm font-medium text-blue-700 italic mb-3">
+                              • Correlatividad: Al menos 10 materias aprobadas en total, incluyendo Metodología y Técnicas de Inv. Arqueológica, Teorías Arqueológicas Contemporáneas y Arqueología Argentina
+                            </div>
+                            <div className="space-y-1">
+                              {getMateriasByCiclo("CFO").filter(materia => 
+                                materia.correlatividad.includes("Teorías Arqueológicas Contemporáneas")
+                              ).map((materia, index) => renderMateria(materia, index))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                    </div>
+                  </div>
+
+                  {/* Idiomas */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                    <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Idiomas
+                      </h2>
+                    </div>
+                    <div className="p-6">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <div className="space-y-1">
-                          {getMateriasElectivasArqueologia().map((materia, index) => renderMateria(materia, index))}
+                          <div className="flex items-start gap-2 py-2 px-3 rounded bg-gray-50">
+                            <span className="text-gray-600 mt-0.5">•</span>
+                            <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Anglosajón</span>
+                          </div>
+                          <div className="flex items-start gap-2 py-2 px-3 rounded bg-blue-50">
+                            <span className="text-gray-600 mt-0.5">•</span>
+                            <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Latino</span>
+                          </div>
                         </div>
                       </div>
-                    </>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Plan 1985 */}
+              <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                  <h2 className="text-lg font-bold text-gray-800">
+                    Plan de Estudios 1985 - {getTituloOrientacion()}
+                  </h2>
+                </div>
+                <div className="p-6 space-y-4">
+                  
+                  {/* Ciclo Común */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm font-medium text-blue-700 italic mb-3">
+                      • Ciclo Común
+                    </div>
+                    <div className="space-y-1">
+                      {getMateriasByCiclo("Ciclo Común").map((materia, index) => renderMateria(materia, index))}
+                    </div>
+                  </div>
+
+                  {/* Ciclo de Orientación */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm font-medium text-blue-700 italic mb-3">
+                      • Ciclo de Orientación {orientacionSeleccionada === "arqueologia" ? "Arqueología" : "Sociocultural"}
+                    </div>
+                    <div className="space-y-1">
+                      {getMateriasByCiclo("Ciclo Orientación").map((materia, index) => renderMateria(materia, index))}
+                    </div>
+                  </div>
+
+                  {/* Específico según carrera */}
+                  {orientacionSeleccionada === "profesorado" && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="text-sm font-medium text-blue-700 italic mb-3">
+                        • Profesorado
+                      </div>
+                      <div className="space-y-1">
+                        {getMateriasByCiclo("Profesorado").map((materia, index) => renderMateria(materia, index))}
+                      </div>
+                    </div>
                   )}
 
                   {orientacionSeleccionada === "sociocultural" && (
-                    /* Dos materias a elegir dentro de la misma área temática */
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <div className="text-sm font-medium text-blue-700 italic mb-4">
-                        • Dos materias a elegir dentro de la misma área temática:
+                      <div className="text-sm font-medium text-blue-700 italic mb-3">
+                        • Licenciatura Sociocultural
                       </div>
-                    
-                    {/* Antropología histórica y memoria */}
-                    <div className="mb-4">
-                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                        Antropología histórica y memoria
+                      <div className="space-y-1">
+                        {getMateriasByCiclo("Licenciatura Sociocultural").map((materia, index) => renderMateria(materia, index))}
                       </div>
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                        <div className="space-y-1">
-                          {getMateriasByArea("Antropología histórica y memoria").map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Procesos culturales, ideología y poder */}
-                    <div className="mb-4">
-                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                        Procesos culturales, ideología y poder
-                      </div>
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                        <div className="space-y-1">
-                          {getMateriasByArea("Procesos culturales, ideología y poder").map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Procesos políticos, instituciones y prácticas */}
-                    <div className="mb-4">
-                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                        Procesos políticos, instituciones y prácticas
-                      </div>
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                        <div className="space-y-1">
-                          {getMateriasByArea("Procesos políticos, instituciones y prácticas").map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Procesos socioeconómicos */}
-                    <div className="mb-4">
-                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                        Procesos socioeconómicos: producción, reproducción y transformación social
-                      </div>
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                        <div className="space-y-1">
-                          {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </div>
-                    </div>
                     </div>
                   )}
 
-                  {/* Seminario de investigación */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    {orientacionSeleccionada === "sociocultural" ? (
-                      <>
-                        <div className="text-sm font-medium text-blue-700 italic mb-3">
-                          • Correlatividad: Al menos 10 materias del CFG, incluyendo Metodología e Investigación Antropológica
-                        </div>
-                        <div className="space-y-1">
-                          {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.correlatividad.includes("METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA")
-                          ).map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="text-sm font-medium text-blue-700 italic mb-3">
-                          • Correlatividad: Al menos 10 materias aprobadas en total, incluyendo Metodología y Técnicas de Inv. Arqueológica, Teorías Arqueológicas Contemporáneas y Arqueología Argentina
-                        </div>
-                        <div className="space-y-1">
-                          {getMateriasByCiclo("CFO").filter(materia => 
-                            materia.correlatividad.includes("Teorías Arqueológicas Contemporáneas")
-                          ).map((materia, index) => renderMateria(materia, index))}
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  {orientacionSeleccionada === "arqueologia" && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="text-sm font-medium text-blue-700 italic mb-3">
+                        • Licenciatura Arqueología
+                      </div>
+                      <div className="space-y-1">
+                        {getMateriasByCiclo("Licenciatura Arqueología").map((materia, index) => renderMateria(materia, index))}
+                      </div>
+                    </div>
+                  )}
 
                 </div>
               </div>
 
-              {/* Idiomas */}
+              {/* Idiomas para Plan 1985 */}
               <div className="bg-gray-50 border border-gray-300 rounded-lg">
                 <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
                   <h2 className="text-lg font-bold text-gray-800">
@@ -500,11 +919,6 @@ export default function PlanesEstudioPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <h2 className="text-3xl font-bold text-uba-primary mb-4">Plan de Estudios 1985</h2>
-              <p className="text-gray-600">Esta sección está en construcción.</p>
             </div>
           )}
         </main>
