@@ -452,115 +452,97 @@ export default function PlanesEstudioPage() {
       <div className="max-w-4xl mx-auto p-6">
         <main className="py-8">
           {/* Selector de plan de estudios */}
-          <Card className="bg-[#46bfb0]/15 border-[#46bfb0]/40 rounded-xl mb-8">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-uba-primary text-center">
-                Plan de Estudios
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                {/* Plan de Estudios */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                  <h4 className="text-sm font-semibold text-uba-primary mb-3">Plan de Estudios</h4>
-                  <div className="flex items-center justify-center p-4 bg-gradient-to-r from-[#1c2554] to-[#2a3a6b] text-white rounded-lg shadow-md">
-                    <div className="flex items-center space-x-4">
-                      <span className={`text-sm font-medium ${planSeleccionado === "1985" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
-                        1985
-                      </span>
-                      <Switch
-                        checked={planSeleccionado === "2023"}
-                        onCheckedChange={(checked) => setPlanSeleccionado(checked ? "2023" : "1985")}
-                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 scale-110"
-                      />
-                      <span className={`text-sm font-medium ${planSeleccionado === "2023" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
-                        2023
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Carrera */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                  <h4 className="text-sm font-semibold text-uba-primary mb-3">Carrera</h4>
-                  <div className="flex items-center justify-center p-4 bg-gradient-to-r from-[#1c2554] to-[#2a3a6b] text-white rounded-lg shadow-md">
-                    <div className="flex items-center space-x-4">
-                      <span className={`text-sm font-medium ${orientacionSeleccionada === "profesorado" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
-                        Profesorado
-                      </span>
-                      <Switch
-                        checked={orientacionSeleccionada !== "profesorado"}
-                        onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "sociocultural" : "profesorado")}
-                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 scale-110"
-                      />
-                      <span className={`text-sm font-medium ${orientacionSeleccionada !== "profesorado" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
-                        Licenciatura
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Orientación */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                  <h4 className="text-sm font-semibold text-uba-primary mb-3">Orientación</h4>
-                  <div className={`flex items-center justify-center p-3 rounded-lg ${
-                    (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
-                      ? "bg-gray-300 text-gray-500" 
-                      : "bg-[#1c2554] text-white"
-                  }`}>
-                    <div className="flex items-center space-x-3">
-                      <span className={`text-sm font-medium ${
-                        (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
-                          ? "opacity-50" 
-                          : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
-                            ? (orientacionPlan1985 === "arqueologia" ? "font-bold text-base" : "opacity-70")
-                            : orientacionSeleccionada === "arqueologia" ? "font-bold text-base" : "opacity-70"
-                      }`}>
-                        Arqueología
-                      </span>
-                      <Switch
-                        checked={
-                          orientacionSeleccionada === "profesorado" && planSeleccionado === "1985" 
-                            ? orientacionPlan1985 === "sociocultural"
-                            : orientacionSeleccionada === "sociocultural"
-                        }
-                        onCheckedChange={(checked) => {
-                          if (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985") {
-                            setOrientacionPlan1985(checked ? "sociocultural" : "arqueologia")
-                          } else if (!(orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")) {
-                            setOrientacionSeleccionada(checked ? "sociocultural" : "arqueologia")
-                          }
-                        }}
-                        disabled={orientacionSeleccionada === "profesorado" && planSeleccionado === "2023"}
-                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 disabled:opacity-50 scale-110"
-                      />
-                      <span className={`text-sm font-medium ${
-                        (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
-                          ? "opacity-50" 
-                          : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
-                            ? (orientacionPlan1985 === "sociocultural" ? "font-bold text-base" : "opacity-70")
-                            : orientacionSeleccionada === "sociocultural" ? "font-bold text-base" : "opacity-70"
-                      }`}>
-                        Sociocultural
-                      </span>
-                    </div>
-                  </div>
-                  {(orientacionSeleccionada === "profesorado" && planSeleccionado === "2023") && (
-                    <p className="text-xs text-gray-500 mt-2 text-center">
-                      Solo aplica para Licenciatura en plan 2023
-                    </p>
-                  )}
-                  {(orientacionSeleccionada === "profesorado" && planSeleccionado === "1985") && (
-                    <p className="text-xs text-blue-600 mt-2 text-center font-medium">
-                      Selecciona orientación para Profesorado 1985
-                    </p>
-                  )}
-                </div>
-
+          <div className="bg-gray-100 p-6 rounded-lg mb-8">
+            <h2 className="text-xl font-bold text-[#1c2554] mb-6">Plan de Estudios</h2>
+            
+            {/* Plan selector */}
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <span className={`text-lg font-semibold ${planSeleccionado === "2023" ? "text-[#1c2554]" : "text-gray-600"}`}>
+                  2023
+                </span>
+                <Switch
+                  checked={planSeleccionado === "2023"}
+                  onCheckedChange={(checked) => setPlanSeleccionado(checked ? "2023" : "1985")}
+                  className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-gray-400"
+                />
+                <span className={`text-lg font-semibold ${planSeleccionado === "1985" ? "text-[#1c2554]" : "text-gray-600"}`}>
+                  1985
+                </span>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Carrera */}
+              <div>
+                <h3 className="text-base font-semibold text-[#1c2554] mb-3">Carrera</h3>
+                <div className="flex items-center space-x-4">
+                  <span className={`text-sm font-medium ${orientacionSeleccionada === "profesorado" ? "text-[#1c2554] font-semibold" : "text-gray-600"}`}>
+                    Profesorado
+                  </span>
+                  <Switch
+                    checked={orientacionSeleccionada !== "profesorado"}
+                    onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "sociocultural" : "profesorado")}
+                    className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-gray-400"
+                  />
+                  <span className={`text-sm font-medium ${orientacionSeleccionada !== "profesorado" ? "text-[#1c2554] font-semibold" : "text-gray-600"}`}>
+                    Licenciatura
+                  </span>
+                </div>
+              </div>
+
+              {/* Orientación */}
+              <div>
+                <h3 className="text-base font-semibold text-[#1c2554] mb-3">Orientación</h3>
+                <div className="flex items-center space-x-4">
+                  <span className={`text-sm font-medium ${
+                    (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
+                      ? "text-gray-400" 
+                      : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
+                        ? (orientacionPlan1985 === "arqueologia" ? "text-[#1c2554] font-semibold" : "text-gray-600")
+                        : orientacionSeleccionada === "arqueologia" ? "text-[#1c2554] font-semibold" : "text-gray-600"
+                  }`}>
+                    Arqueología
+                  </span>
+                  <Switch
+                    checked={
+                      orientacionSeleccionada === "profesorado" && planSeleccionado === "1985" 
+                        ? orientacionPlan1985 === "sociocultural"
+                        : orientacionSeleccionada === "sociocultural"
+                    }
+                    onCheckedChange={(checked) => {
+                      if (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985") {
+                        setOrientacionPlan1985(checked ? "sociocultural" : "arqueologia")
+                      } else if (!(orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")) {
+                        setOrientacionSeleccionada(checked ? "sociocultural" : "arqueologia")
+                      }
+                    }}
+                    disabled={orientacionSeleccionada === "profesorado" && planSeleccionado === "2023"}
+                    className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-gray-400 disabled:opacity-50"
+                  />
+                  <span className={`text-sm font-medium ${
+                    (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
+                      ? "text-gray-400" 
+                      : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
+                        ? (orientacionPlan1985 === "sociocultural" ? "text-[#1c2554] font-semibold" : "text-gray-600")
+                        : orientacionSeleccionada === "sociocultural" ? "text-[#1c2554] font-semibold" : "text-gray-600"
+                  }`}>
+                    Sociocultural
+                  </span>
+                </div>
+                {(orientacionSeleccionada === "profesorado" && planSeleccionado === "2023") && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    Solo aplica para Licenciatura en plan 2023
+                  </p>
+                )}
+                {(orientacionSeleccionada === "profesorado" && planSeleccionado === "1985") && (
+                  <p className="text-xs text-blue-600 mt-2 font-medium">
+                    Selecciona orientación para Profesorado 1985
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
 
           {planSeleccionado === "2023" ? (
             <div className="space-y-6">
