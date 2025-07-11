@@ -13,7 +13,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center">
             <div className="flex items-start gap-3 sm:gap-4">
               {/* Círculo con ANT */}
-              <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-[#c44928] rounded-full flex items-center justify-center flex-shrink-0 aspect-square">
+              <div className="w-20 h-20 sm:w-18 sm:h-18 md:w-15 md:h-15 lg:w-22 lg:h-22 bg-[#c44928] rounded-full flex items-center justify-center flex-shrink-0 aspect-square">
                 <span className="text-white font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl leading-none">ANT</span>
               </div>
               
@@ -42,7 +42,7 @@ export default function HomePage() {
                   href="/"
                   className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
                 >
-                  🕐 Oferta Horaria
+                  Ver oferta horaria
                 </a>
                 <a
                   href="/planes-estudio"
