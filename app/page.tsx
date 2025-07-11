@@ -1,3 +1,6 @@
+// app/page.tsx with "use client" directive
+"use client";
+
 import { Suspense } from "react"
 import { CsvUploader } from "@/components/csv-uploader"
 import { HorariosDisplay } from "@/components/horarios-display"
@@ -127,3 +130,19 @@ export default function HomePage() {
     </div>
   )
 }
+```
+
+```typescript
+// app/planes-estudio/page.tsx after removing markdown content
+import React from 'react';
+
+const PlanesEstudioPage = () => {
+    return (
+        <div>
+            <h1>Planes de Estudio</h1>
+            <p>Información sobre los planes de estudio.</p>
+        </div>
+    );
+};
+
+export default PlanesEstudioPage;
