@@ -431,8 +431,8 @@ nombreCorto: "P. A. Económica", nombreSiglas: "PAE", ciclo: "Ciclo de Formació
           <div className="flex items-center justify-center">
             <div className="flex items-start gap-3 sm:gap-4">
               {/* Círculo con ANT */}
-              <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-[#c44928] rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl">ANT</span>
+              <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-[#c44928] rounded-full flex items-center justify-center flex-shrink-0 aspect-square">
+                <span className="text-white font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl leading-none">ANT</span>
               </div>
               
               {/* Texto principal */}
