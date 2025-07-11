@@ -1,3 +1,5 @@
+"use client"
+
 import { Suspense } from "react"
 import { CsvUploader } from "@/components/csv-uploader"
 import { HorariosDisplay } from "@/components/horarios-display"
@@ -6,16 +8,15 @@ import { Footer } from "@/components/footer"
 import { MobileNav } from "@/components/mobile-nav"
 
 export default function HomePage() {
+  const sampleData = loadSampleData()
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header principal */}
       <header className="bg-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-12 gap-4">
-            {/* Columna izquierda vacía */}
             <div className="col-span-2"></div>
-
-            {/* Columna central con contenido */}
             <div className="col-span-8 text-center relative">
               <h1 className="text-6xl font-bold text-uba-primary mb-4">Ciencias Antropológicas</h1>
               <div className="flex justify-end">
@@ -26,8 +27,6 @@ export default function HomePage() {
                 />
               </div>
             </div>
-
-            {/* Columna derecha vacía */}
             <div className="col-span-2"></div>
           </div>
         </div>
@@ -37,20 +36,15 @@ export default function HomePage() {
       <nav className="bg-uba-primary border-t-4 border-uba-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-3">
+
             {/* Menú hamburguesa para móviles */}
             <MobileNav>
               <div className="flex flex-col space-y-4">
                 <a
-                  href="/"
-                  className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
-                >
-                  🕐 Oferta Horaria
-                </a>
-                <a
                   href="/planes-estudio"
                   className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
                 >
-                  📋 Planes de estudio
+                  Planes de estudio
                 </a>
                 <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
                   <a
@@ -81,7 +75,7 @@ export default function HomePage() {
                 href="/planes-estudio"
                 className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
               >
-                📋 Planes de estudio
+                Planes de estudio
               </a>
             </div>
             <div className="hidden lg:flex space-x-8">
@@ -110,10 +104,23 @@ export default function HomePage() {
         </div>
       </nav>
 
+      {/* Contenido principal */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Suspense fallback={<div className="text-center py-8">Cargando horarios...</div>}>
-          <HorariosDisplay />
-        </Suspense>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Columna izquierda - Cargador de CSV */}
+          <div className="bg-gray-50 rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-uba-primary mb-4">Cargar horarios</h2>
+            <CsvUploader />
+          </div>
+
+          {/* Columna derecha - Mostrar horarios */}
+          <div className="bg-gray-50 rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-uba-primary mb-4">Horarios disponibles</h2>
+            <Suspense fallback={<div>Cargando horarios...</div>}>
+              <HorariosDisplay initialData={sampleData} />
+            </Suspense>
+          </div>
+        </div>
       </main>
 
       <Footer />
