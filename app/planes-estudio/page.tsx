@@ -438,45 +438,101 @@ export default function PlanesEstudioPage() {
 
       <div className="max-w-4xl mx-auto p-6">
         <main className="py-8">
-          {/* Selector de plan */}
-          <div className="mb-8">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <span className={`text-lg font-medium ${planSeleccionado === "1985" ? "text-uba-primary" : "text-gray-500"}`}>
-                Plan 1985
-              </span>
-              <Switch
-                checked={planSeleccionado === "2023"}
-                onCheckedChange={(checked) => setPlanSeleccionado(checked ? "2023" : "1985")}
-                className="data-[state=checked]:bg-uba-primary"
-              />
-              <span className={`text-lg font-medium ${planSeleccionado === "2023" ? "text-uba-primary" : "text-gray-500"}`}>
-                Plan 2023
-              </span>
-            </div>
+          {/* Selector de plan de estudios */}
+          <Card className="bg-[#46bfb0]/15 border-[#46bfb0]/40 rounded-xl mb-8">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-uba-primary text-center">
+                Plan de Estudios
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Plan de Estudios */}
+                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <h4 className="text-sm font-semibold text-uba-primary mb-3">Plan de Estudios</h4>
+                  <div className="flex items-center justify-center p-3 bg-[#1c2554] text-white rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <span className={`text-sm ${planSeleccionado === "1985" ? "font-bold" : "opacity-70"}`}>
+                        1985
+                      </span>
+                      <Switch
+                        checked={planSeleccionado === "2023"}
+                        onCheckedChange={(checked) => setPlanSeleccionado(checked ? "2023" : "1985")}
+                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
+                      />
+                      <span className={`text-sm ${planSeleccionado === "2023" ? "font-bold" : "opacity-70"}`}>
+                        2023
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Selector de orientación */}
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <span className={`text-md font-medium ${orientacionSeleccionada === "profesorado" ? "text-uba-primary" : "text-gray-500"}`}>
-                Profesorado
-              </span>
-              <Switch
-                checked={orientacionSeleccionada === "sociocultural"}
-                onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "sociocultural" : "profesorado")}
-                className="data-[state=checked]:bg-uba-primary"
-              />
-              <span className={`text-md font-medium ${orientacionSeleccionada === "sociocultural" ? "text-uba-primary" : "text-gray-500"}`}>
-                Lic. Sociocultural
-              </span>
-              <Switch
-                checked={orientacionSeleccionada === "arqueologia"}
-                onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "arqueologia" : "sociocultural")}
-                className="data-[state=checked]:bg-uba-primary"
-              />
-              <span className={`text-md font-medium ${orientacionSeleccionada === "arqueologia" ? "text-uba-primary" : "text-gray-500"}`}>
-                Lic. Arqueología
-              </span>
-            </div>
-          </div>
+                {/* Carrera */}
+                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <h4 className="text-sm font-semibold text-uba-primary mb-3">Carrera</h4>
+                  <div className="flex items-center justify-center p-3 bg-[#1c2554] text-white rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <span className={`text-sm ${orientacionSeleccionada === "profesorado" ? "font-bold" : "opacity-70"}`}>
+                        Profesorado
+                      </span>
+                      <Switch
+                        checked={orientacionSeleccionada !== "profesorado"}
+                        onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "sociocultural" : "profesorado")}
+                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
+                      />
+                      <span className={`text-sm ${orientacionSeleccionada !== "profesorado" ? "font-bold" : "opacity-70"}`}>
+                        Licenciatura
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Orientación (solo para Licenciatura) */}
+                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <h4 className="text-sm font-semibold text-uba-primary mb-3">Orientación</h4>
+                  <div className={`flex items-center justify-center p-3 rounded-lg ${
+                    orientacionSeleccionada === "profesorado" 
+                      ? "bg-gray-300 text-gray-500" 
+                      : "bg-[#1c2554] text-white"
+                  }`}>
+                    <div className="flex items-center space-x-3">
+                      <span className={`text-sm ${
+                        orientacionSeleccionada === "profesorado" 
+                          ? "opacity-50" 
+                          : orientacionSeleccionada === "arqueologia" ? "font-bold" : "opacity-70"
+                      }`}>
+                        Arqueología
+                      </span>
+                      <Switch
+                        checked={orientacionSeleccionada === "sociocultural"}
+                        onCheckedChange={(checked) => {
+                          if (orientacionSeleccionada !== "profesorado") {
+                            setOrientacionSeleccionada(checked ? "sociocultural" : "arqueologia")
+                          }
+                        }}
+                        disabled={orientacionSeleccionada === "profesorado"}
+                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 disabled:opacity-50"
+                      />
+                      <span className={`text-sm ${
+                        orientacionSeleccionada === "profesorado" 
+                          ? "opacity-50" 
+                          : orientacionSeleccionada === "sociocultural" ? "font-bold" : "opacity-70"
+                      }`}>
+                        Sociocultural
+                      </span>
+                    </div>
+                  </div>
+                  {orientacionSeleccionada === "profesorado" && (
+                    <p className="text-xs text-gray-500 mt-2 text-center">
+                      No aplica para Profesorado
+                    </p>
+                  )}
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
 
           {planSeleccionado === "2023" ? (
             <div className="space-y-6">
