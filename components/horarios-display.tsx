@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
-import { AlertTriangle, BookOpen, Calendar, FileText, Info, Notebook, Search, X } from "lucide-react"
+import { AlertTriangle, BookOpen, Calendar, ChevronDown, FileText, Info, Notebook, Search, X } from "lucide-react"
 import { 
   enrichAsignaturasWithPlanInfo, 
   getAsignaturasPorCiclo, 
@@ -771,15 +771,17 @@ export function HorariosDisplay() {
           {/* Filtro de horarios por día */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-uba-primary">Filtrar por horarios</h4>
-              <Button
-                variant="outline"
-                size="sm"
+              <button
                 onClick={() => setMostrarFiltroHorarios(!mostrarFiltroHorarios)}
-                className="text-xs h-7 px-3"
+                className="flex items-center gap-2 text-sm font-semibold text-uba-primary hover:text-uba-secondary transition-colors"
               >
-                {mostrarFiltroHorarios ? "Ocultar" : "Mostrar"}
-              </Button>
+                <span>Filtrar por horarios</span>
+                <ChevronDown 
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    mostrarFiltroHorarios ? 'rotate-180' : ''
+                  }`} 
+                />
+              </button>
             </div>
             
             {mostrarFiltroHorarios && (
