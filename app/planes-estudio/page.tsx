@@ -458,15 +458,15 @@ export default function PlanesEstudioPage() {
             {/* Plan selector */}
             <div className="mb-6">
               <div className="flex items-center space-x-4">
-                <span className={`text-lg font-semibold ${planSeleccionado === "2023" ? "text-[#1c2554]" : "text-gray-600"}`}>
+                <span className={`text-lg ${planSeleccionado === "2023" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600"}`}>
                   2023
                 </span>
                 <Switch
-                  checked={planSeleccionado === "2023"}
-                  onCheckedChange={(checked) => setPlanSeleccionado(checked ? "2023" : "1985")}
-                  className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-gray-400"
+                  checked={planSeleccionado === "1985"}
+                  onCheckedChange={(checked) => setPlanSeleccionado(checked ? "1985" : "2023")}
+                  className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-[#1c2554]"
                 />
-                <span className={`text-lg font-semibold ${planSeleccionado === "1985" ? "text-[#1c2554]" : "text-gray-600"}`}>
+                <span className={`text-lg ${planSeleccionado === "1985" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600"}`}>
                   1985
                 </span>
               </div>
@@ -477,15 +477,15 @@ export default function PlanesEstudioPage() {
               <div>
                 <h3 className="text-base font-semibold text-[#1c2554] mb-3">Carrera</h3>
                 <div className="flex items-center space-x-4">
-                  <span className={`text-sm font-medium ${orientacionSeleccionada === "profesorado" ? "text-[#1c2554] font-semibold" : "text-gray-600"}`}>
+                  <span className={`text-sm ${orientacionSeleccionada === "profesorado" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600"}`}>
                     Profesorado
                   </span>
                   <Switch
                     checked={orientacionSeleccionada !== "profesorado"}
                     onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "sociocultural" : "profesorado")}
-                    className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-gray-400"
+                    className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-[#1c2554]"
                   />
-                  <span className={`text-sm font-medium ${orientacionSeleccionada !== "profesorado" ? "text-[#1c2554] font-semibold" : "text-gray-600"}`}>
+                  <span className={`text-sm ${orientacionSeleccionada !== "profesorado" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600"}`}>
                     Licenciatura
                   </span>
                 </div>
@@ -495,12 +495,12 @@ export default function PlanesEstudioPage() {
               <div>
                 <h3 className="text-base font-semibold text-[#1c2554] mb-3">Orientación</h3>
                 <div className="flex items-center space-x-4">
-                  <span className={`text-sm font-medium ${
+                  <span className={`text-sm ${
                     (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
-                      ? "text-gray-400" 
+                      ? "text-gray-400 font-normal" 
                       : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
-                        ? (orientacionPlan1985 === "arqueologia" ? "text-[#1c2554] font-semibold" : "text-gray-600")
-                        : orientacionSeleccionada === "arqueologia" ? "text-[#1c2554] font-semibold" : "text-gray-600"
+                        ? (orientacionPlan1985 === "arqueologia" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600")
+                        : orientacionSeleccionada === "arqueologia" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600"
                   }`}>
                     Arqueología
                   </span>
@@ -518,14 +518,14 @@ export default function PlanesEstudioPage() {
                       }
                     }}
                     disabled={orientacionSeleccionada === "profesorado" && planSeleccionado === "2023"}
-                    className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-gray-400 disabled:opacity-50"
+                    className="data-[state=checked]:bg-[#1c2554] data-[state=unchecked]:bg-[#1c2554] disabled:opacity-50"
                   />
-                  <span className={`text-sm font-medium ${
+                  <span className={`text-sm ${
                     (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
-                      ? "text-gray-400" 
+                      ? "text-gray-400 font-normal" 
                       : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
-                        ? (orientacionPlan1985 === "sociocultural" ? "text-[#1c2554] font-semibold" : "text-gray-600")
-                        : orientacionSeleccionada === "sociocultural" ? "text-[#1c2554] font-semibold" : "text-gray-600"
+                        ? (orientacionPlan1985 === "sociocultural" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600")
+                        : orientacionSeleccionada === "sociocultural" ? "font-bold text-[#1c2554]" : "font-normal text-gray-600"
                   }`}>
                     Sociocultural
                   </span>
@@ -533,11 +533,6 @@ export default function PlanesEstudioPage() {
                 {(orientacionSeleccionada === "profesorado" && planSeleccionado === "2023") && (
                   <p className="text-xs text-gray-500 mt-2">
                     Solo aplica para Licenciatura en plan 2023
-                  </p>
-                )}
-                {(orientacionSeleccionada === "profesorado" && planSeleccionado === "1985") && (
-                  <p className="text-xs text-blue-600 mt-2 font-medium">
-                    Selecciona orientación para Profesorado 1985
                   </p>
                 )}
               </div>
