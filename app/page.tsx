@@ -1,5 +1,4 @@
 import { Suspense } from "react"
-import { CsvUploader } from "@/components/csv-uploader"
 import { HorariosDisplay } from "@/components/horarios-display"
 import { loadSampleData } from "@/lib/sample-data-loader"
 import { Footer } from "@/components/footer"
