@@ -73,6 +73,7 @@ export function HorariosDisplay() {
     planEstudios: "2023",
     horariosSeleccionados: {},
   })
+  const [mostrarFiltroHorarios, setMostrarFiltroHorarios] = useState(false)
   const [seleccion, setSeleccion] = useState<Seleccion>({
     asignaturas: [],
     clases: {},
@@ -769,46 +770,60 @@ export function HorariosDisplay() {
 
           {/* Filtro de horarios por día */}
           <div className="mt-4 pt-4 border-t border-gray-200">
-            <h4 className="text-sm font-semibold text-uba-primary mb-3">Filtrar por horarios</h4>
-            <div className="bg-white p-3 rounded-lg border border-gray-200">
-              <div className="grid grid-cols-6 gap-1 text-xs">
-                {/* Header row */}
-                {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => (
-                  <div key={dia} className="font-medium text-center text-uba-primary py-1 truncate">
-                    {dia.substring(0, 3)}
-                  </div>
-                ))}
-                
-                {/* Time slot rows */}
-                {Array.from({ length: 7 }, (_, i) => {
-                  const horaInicio = 8 + (i * 2)
-                  const horaFin = horaInicio + 2
-                  return (
-                    <React.Fragment key={i}>
-                      {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => {
-                        const isSelected = (filtros.horariosSeleccionados[dia] || []).includes(horaInicio)
-                        return (
-                          <button
-                            key={`${dia}-${horaInicio}`}
-                            onClick={() => toggleHorario(dia, horaInicio)}
-                            className={`h-10 w-full rounded border transition-all duration-200 text-xs font-medium ${
-                              isSelected
-                                ? "bg-uba-secondary text-white border-uba-secondary shadow-sm"
-                                : "bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300 text-gray-600"
-                            }`}
-                          >
-                            {horaInicio} a {horaFin}
-                          </button>
-                        )
-                      })}
-                    </React.Fragment>
-                  )
-                })}
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Seleccioná los bloques horarios para filtrar las asignaturas que tengan opciones en esos horarios.
-              </p>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-uba-primary">Filtrar por horarios</h4>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMostrarFiltroHorarios(!mostrarFiltroHorarios)}
+                className="text-xs h-7 px-3"
+              >
+                {mostrarFiltroHorarios ? "Ocultar" : "Mostrar"}
+              </Button>
             </div>
+            
+            {mostrarFiltroHorarios && (
+              <div className="bg-white p-3 rounded-lg border border-gray-200">
+                <div className="grid grid-cols-6 gap-1 text-xs">
+                  {/* Header row */}
+                  {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => (
+                    <div key={dia} className="font-medium text-center text-uba-primary py-1 truncate">
+                      <span className="hidden md:inline">{dia}</span>
+                      <span className="md:hidden">{dia.substring(0, 3)}</span>
+                    </div>
+                  ))}
+                  
+                  {/* Time slot rows */}
+                  {Array.from({ length: 7 }, (_, i) => {
+                    const horaInicio = 8 + (i * 2)
+                    const horaFin = horaInicio + 2
+                    return (
+                      <React.Fragment key={i}>
+                        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => {
+                          const isSelected = (filtros.horariosSeleccionados[dia] || []).includes(horaInicio)
+                          return (
+                            <button
+                              key={`${dia}-${horaInicio}`}
+                              onClick={() => toggleHorario(dia, horaInicio)}
+                              className={`h-10 w-full rounded border transition-all duration-200 text-xs font-medium ${
+                                isSelected
+                                  ? "bg-uba-secondary text-white border-uba-secondary shadow-sm"
+                                  : "bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300 text-gray-600"
+                              }`}
+                            >
+                              {horaInicio} a {horaFin}
+                            </button>
+                          )
+                        })}
+                      </React.Fragment>
+                    )
+                  })}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Seleccioná los bloques horarios para filtrar las asignaturas que tengan opciones en esos horarios.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Footer with count and clear button */}
