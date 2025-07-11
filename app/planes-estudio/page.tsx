@@ -20,6 +20,7 @@ interface MateriaDelPlan {
 
 export default function PlanesEstudioPage() {
   const [planSeleccionado, setPlanSeleccionado] = useState<"2023" | "1985">("2023")
+  const [orientacionSeleccionada, setOrientacionSeleccionada] = useState<"sociocultural" | "arqueologia">("sociocultural")
   const [materias, setMaterias] = useState<MateriaDelPlan[]>([])
 
   useEffect(() => {
@@ -63,7 +64,40 @@ export default function PlanesEstudioPage() {
       { cod85: "0746", cod23: "17033", nombre: "SEMINARIO DE INVESTIGACIÓN EN ANTROPOLOGÍA SOCIOCULTURAL", nombreCorto: "Sem. Inv. Antrop. Socio.", nombreSiglas: "SIASOC", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG, incluyendo METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA" }
     ]
 
-    setMaterias(materiasLicSocio2023)
+    const materiasLicArqueo2023: MateriaDelPlan[] = [
+      { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES", nombreCorto: "Epistemo", nombreSiglas: "EPIS", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0733", cod23: "17002", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I", nombreCorto: "Historia y Teoría 1", nombreSiglas: "HTA1", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0742", cod23: "17003", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA II", nombreCorto: "Historia y Teoría 2", nombreSiglas: "HTA2", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0730", cod23: "17004", nombre: "PROBLEMAS DE ANTROPOLOGÍA SOCIAL Y POLÍTICA", nombreCorto: "P. A. Soc. y Pol.", nombreSiglas: "PASYP", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0736", cod23: "17005", nombre: "PROBLEMAS DE ANTROPOLOGÍA ECONÓMICA", nombreCorto: "P. A. Económica", nombreSiglas: "PAE", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0739", cod23: "17006", nombre: "PROBLEMAS DE ANTROPOLOGÍA SIMBÓLICA", nombreCorto: "P. Antrop. Simbólica", nombreSiglas: "PASIM", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0738", cod23: "17007", nombre: "ANTROPOLOGÍA BIOLÓGICA", nombreCorto: "Antrop. Biológica", nombreSiglas: "ABIO", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0732", cod23: "17008", nombre: "INTRODUCCIÓN A LA ARQUEOLOGÍA", nombreCorto: "Intro. Arqueo.", nombreSiglas: "IARQ", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "", cod23: "17009", nombre: "ARQUEOLOGÍA, LEGISLACIÓN Y COMUNIDAD", nombreCorto: "Arqueo. Leg. y Com.", nombreSiglas: "ALC", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEM85", cod23: "PST23", nombre: "1 Seminario de Prácticas Socioeducativas Territorializadas (PST)", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Variable", area: "", correlatividad: "" },
+      { cod85: "0750", cod23: "17034", nombre: "ARQUEOLOGÍA DE ÁFRICA, EURASIA Y OCEANÍA", nombreCorto: "Arqueo. de Af. Eura. y Oc.", nombreSiglas: "ARQAEO", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0751", cod23: "17035", nombre: "ARQUEOLOGÍA AMERICANA Y ARGENTINA I", nombreCorto: "Arqueo. Am y Arg. I", nombreSiglas: "ARQAM1", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0712", cod23: "17036", nombre: "ARQUEOLOGÍA AMERICANA Y ARGENTINA II", nombreCorto: "Arqueo. Am y Arg. II", nombreSiglas: "ARQAM2", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0754", cod23: "17037", nombre: "ARQUEOLOGÍA ARGENTINA", nombreCorto: "Arqueo. Argentina", nombreSiglas: "ARQARG", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0722", cod23: "17038", nombre: "MATERIALES ARQUEOLÓGICOS Y SUS TECNOLOGÍAS", nombreCorto: "Mat. Arqueo. y sus Tec.", nombreSiglas: "MAT", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0752", cod23: "17039", nombre: "GEOLOGÍA PARA ARQUEÓLOGOS", nombreCorto: "Geo. para Arqueo.", nombreSiglas: "GPA", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0748", cod23: "17040", nombre: "TEORÍAS ARQUEOLÓGICAS CONTEMPORÁNEAS", nombreCorto: "T. Arqueo. Contemp.", nombreSiglas: "TARQC", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0753", cod23: "17041", nombre: "MODELOS Y MÉTODOS DE ANÁLISIS EN ARQUEOLOGÍA", nombreCorto: "Mod. y Met. Arqueo.", nombreSiglas: "MYM", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0721", cod23: "17042", nombre: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN ARQUEOLÓGICA", nombreCorto: "Met. Arqueo.", nombreSiglas: "MTARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
+      { cod85: "0737", cod23: "17043", nombre: "MÉTODOS CUANTITATIVOS EN ARQUEOLOGÍA", nombreCorto: "Met. Cuanti. Arqueo.", nombreSiglas: "MCARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología y Metodología y Técnicas de Inv. Arqueológica" },
+      { cod85: "SEMARQ", cod23: "SEMARQ", nombre: "1 Seminario Regular de la orientación en Arqueología", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Variable", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología y Metodología y Técnicas de Inv. Arqueológica" },
+      { cod85: "", cod23: "17044", nombre: "EJERCICIO PROFESIONAL DE LA ARQUEOLOGÍA", nombreCorto: "Ej. Profesional Arqueo.", nombreSiglas: "EPARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Elección A, 2 materias", area: "", correlatividad: "Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías" },
+      { cod85: "", cod23: "17045", nombre: "MATERIALES BIOLÓGICOS EN ARQUEOLOGÍA", nombreCorto: "Mat. Bio. en Arqueo.", nombreSiglas: "MBA", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Elección A, 2 materias", area: "", correlatividad: "Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías" },
+      { cod85: "", cod23: "17046", nombre: "ARQUEOLOGÍA DE TIEMPOS MODERNOS", nombreCorto: "Arq. de T. Modernos", nombreSiglas: "ATM", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Elección A, 2 materias", area: "", correlatividad: "Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías" },
+      { cod85: "", cod23: "17047", nombre: "ESTUDIOS INTERDISCIPLINARIOS EN ARQUEOLOGÍA", nombreCorto: "Est. Interdisciplinarios Arq.", nombreSiglas: "EIARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Elección A, 2 materias", area: "", correlatividad: "Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías" },
+      { cod85: "0755", cod23: "17048", nombre: "SEMINARIO DE INVESTIGACIÓN EN ARQUEOLOGÍA, TRABAJO DE CAMPO Y LABORATORIO", nombreCorto: "Sem. Inv. Arqueo.", nombreSiglas: "SIARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 10 materias aprobadas en total, incluyendo Metodología y Técnicas de Inv. Arqueológica, Teorías Arqueológicas Contemporáneas y Arqueología Argentina" }
+    ]
+
+    if (orientacionSeleccionada === "sociocultural") {
+      setMaterias(materiasLicSocio2023)
+    } else {
+      setMaterias(materiasLicArqueo2023)
+    }
   }, [])
 
   // Función para convertir a title case
@@ -75,15 +109,27 @@ export default function PlanesEstudioPage() {
 
   // Función para obtener materias por ciclo
   const getMateriasByCiclo = (ciclo: string) => {
-    return materias.filter(materia => materia.ciclo.includes(ciclo))
+    const orientacionSuffix = orientacionSeleccionada === "arqueologia" ? "Arqueología" : "Sociocultural"
+    return materias.filter(materia => 
+      materia.ciclo.includes(ciclo) && 
+      materia.ciclo.includes(orientacionSuffix)
+    )
   }
 
-  // Función para obtener materias por área temática
+  // Función para obtener materias por área temática (solo para sociocultural)
   const getMateriasByArea = (area: string) => {
     return materias.filter(materia => 
       materia.ciclo.includes("CFO") && 
       materia.area === area &&
       materia.electividad.includes("Elección B")
+    )
+  }
+
+  // Función para obtener materias electivas de arqueología
+  const getMateriasElectivasArqueologia = () => {
+    return materias.filter(materia => 
+      materia.ciclo.includes("CFO") && 
+      materia.electividad.includes("Elección A")
     )
   }
 
@@ -177,6 +223,23 @@ export default function PlanesEstudioPage() {
                 Plan 2023
               </span>
             </div>
+
+            {/* Selector de orientación para plan 2023 */}
+            {planSeleccionado === "2023" && (
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <span className={`text-md font-medium ${orientacionSeleccionada === "sociocultural" ? "text-uba-primary" : "text-gray-500"}`}>
+                  Lic. Sociocultural
+                </span>
+                <Switch
+                  checked={orientacionSeleccionada === "arqueologia"}
+                  onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "arqueologia" : "sociocultural")}
+                  className="data-[state=checked]:bg-uba-primary"
+                />
+                <span className={`text-md font-medium ${orientacionSeleccionada === "arqueologia" ? "text-uba-primary" : "text-gray-500"}`}>
+                  Lic. Arqueología
+                </span>
+              </div>
+            )}
           </div>
 
           {planSeleccionado === "2023" ? (
@@ -216,56 +279,113 @@ export default function PlanesEstudioPage() {
                     </div>
                   </div>
 
-                  {/* Correlatividad: Al menos 5 materias del CFG */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm font-medium text-blue-700 italic mb-3">
-                      • Correlatividad: Al menos 5 materias del CFG
-                    </div>
-                    <div className="space-y-1">
-                      {getMateriasByCiclo("CFO").filter(materia => 
-                        materia.correlatividad === "Al menos 5 materias del CFG"
-                      ).map((materia, index) => renderMateria(materia, index))}
-                    </div>
-                  </div>
+                  {/* Correlatividad específica según orientación */}
+                  {orientacionSeleccionada === "sociocultural" ? (
+                    <>
+                      {/* Correlatividad: Al menos 5 materias del CFG */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Correlatividad: Al menos 5 materias del CFG
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.correlatividad === "Al menos 5 materias del CFG"
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.correlatividad === "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología"
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-                  {/* Correlatividad: Al menos 10 materias del CFG */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm font-medium text-blue-700 italic mb-3">
-                      • Correlatividad: Al menos 10 materias del CFG
-                    </div>
-                    <div className="space-y-1">
-                      {getMateriasByCiclo("CFO").filter(materia => 
-                        materia.correlatividad === "Al menos 10 materias del CFG"
-                      ).map((materia, index) => renderMateria(materia, index))}
-                    </div>
-                  </div>
+                  {orientacionSeleccionada === "sociocultural" ? (
+                    <>
+                      {/* Correlatividad: Al menos 10 materias del CFG */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Correlatividad: Al menos 10 materias del CFG
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.correlatividad === "Al menos 10 materias del CFG"
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Correlatividad específica para arqueología */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Correlatividad: Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología y Metodología y Técnicas de Inv. Arqueológica
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.correlatividad.includes("Metodología y Técnicas de Inv. Arqueológica")
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-                  {/* Una materia a elegir entre */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm font-medium text-blue-700 italic mb-3">
-                      • Una materia a elegir entre:
-                    </div>
-                    <div className="space-y-1">
-                      {getMateriasByCiclo("CFO").filter(materia => 
-                        materia.electividad === "Elección A, 1 materia"
-                      ).map((materia, index) => renderMateria(materia, index))}
-                    </div>
-                  </div>
+                  {orientacionSeleccionada === "sociocultural" ? (
+                    <>
+                      {/* Una materia a elegir entre */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Una materia a elegir entre:
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.electividad === "Elección A, 1 materia"
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
 
-                  {/* Materia electiva */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="space-y-1">
-                      {getMateriasByCiclo("CFO").filter(materia => 
-                        materia.nombre.includes("materia electiva")
-                      ).map((materia, index) => renderMateria(materia, index))}
-                    </div>
-                  </div>
+                      {/* Materia electiva */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.nombre.includes("materia electiva")
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Dos materias a elegir entre (Arqueología) */}
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Correlatividad: Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías
+                        </div>
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Dos materias a elegir entre:
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasElectivasArqueologia().map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-                  {/* Dos materias a elegir dentro de la misma área temática */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm font-medium text-blue-700 italic mb-4">
-                      • Dos materias a elegir dentro de la misma área temática:
-                    </div>
+                  {orientacionSeleccionada === "sociocultural" && (
+                    /* Dos materias a elegir dentro de la misma área temática */
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="text-sm font-medium text-blue-700 italic mb-4">
+                        • Dos materias a elegir dentro de la misma área temática:
+                      </div>
                     
                     {/* Antropología histórica y memoria */}
                     <div className="mb-4">
@@ -314,18 +434,34 @@ export default function PlanesEstudioPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  )}
 
                   {/* Seminario de investigación */}
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="text-sm font-medium text-blue-700 italic mb-3">
-                      • Correlatividad: Al menos 10 materias del CFG, incluyendo Metodología e Investigación Antropológica
-                    </div>
-                    <div className="space-y-1">
-                      {getMateriasByCiclo("CFO").filter(materia => 
-                        materia.correlatividad.includes("METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA")
-                      ).map((materia, index) => renderMateria(materia, index))}
-                    </div>
+                    {orientacionSeleccionada === "sociocultural" ? (
+                      <>
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Correlatividad: Al menos 10 materias del CFG, incluyendo Metodología e Investigación Antropológica
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.correlatividad.includes("METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA")
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-sm font-medium text-blue-700 italic mb-3">
+                          • Correlatividad: Al menos 10 materias aprobadas en total, incluyendo Metodología y Técnicas de Inv. Arqueológica, Teorías Arqueológicas Contemporáneas y Arqueología Argentina
+                        </div>
+                        <div className="space-y-1">
+                          {getMateriasByCiclo("CFO").filter(materia => 
+                            materia.correlatividad.includes("Teorías Arqueológicas Contemporáneas")
+                          ).map((materia, index) => renderMateria(materia, index))}
+                        </div>
+                      </>
+                    )}
                   </div>
 
                 </div>
