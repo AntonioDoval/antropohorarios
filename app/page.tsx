@@ -1,4 +1,3 @@
-
 import { Suspense } from "react"
 import { CsvUploader } from "@/components/csv-uploader"
 import { HorariosDisplay } from "@/components/horarios-display"
@@ -45,13 +44,13 @@ export default function HomePage() {
                   href="/"
                   className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
                 >
-                  🕐 Oferta Horaria
+                  Oferta Horaria
                 </a>
                 <a
                   href="/planes-estudio"
                   className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
                 >
-                  📋 Planes de estudio
+                  Planes de estudio
                 </a>
                 <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
                   <a
@@ -82,7 +81,7 @@ export default function HomePage() {
                 href="/planes-estudio"
                 className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
               >
-                📋 Planes de estudio
+                Planes de estudio
               </a>
             </div>
             <div className="hidden lg:flex space-x-8">
