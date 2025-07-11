@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MobileNav } from "@/components/mobile-nav"
+import { getContenidoMinimo } from "@/lib/contenidos-minimos"
 
 interface MateriaDelPlan {
   cod85: string
@@ -369,15 +370,45 @@ export default function PlanesEstudioPage() {
   }
 
   // Función para renderizar una materia con colores alternados
-  const renderMateria = (materia: MateriaDelPlan, index: number) => (
-    <div key={`${materia.cod23}-${index}`} className={`py-2 px-3 rounded ${
-      index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
-    }`}>
-      <span className="text-sm text-gray-900 leading-relaxed">
-        {toSentenceCase(materia.nombre)}
-      </span>
-    </div>
-  )
+  const renderMateria = (materia: MateriaDelPlan, index: number) => {
+    const isVariable = materia.electividad === "Variable" || 
+                      materia.nombre.toLowerCase().includes("seminario") ||
+                      materia.nombre.toLowerCase().includes("materia electiva")
+    
+    const contenido = planSeleccionado === "2023" ? getContenidoMinimo(materia.cod23) : null
+    
+    if (!isVariable && contenido && planSeleccionado === "2023") {
+      return (
+        <div key={`${materia.cod23}-${index}`} className={`py-2 px-3 rounded relative group ${
+          index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
+        }`}>
+          <span className="text-sm text-gray-900 leading-relaxed cursor-help">
+            {toSentenceCase(materia.nombre)}
+          </span>
+          
+          {/* Tooltip */}
+          <div className="absolute left-0 top-full mt-2 w-96 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <h4 className="font-bold text-sm text-[#1c2554] mb-2">
+              {materia.nombre}
+            </h4>
+            <div className="text-xs text-gray-700 leading-relaxed max-h-48 overflow-y-auto">
+              {contenido.contenido}
+            </div>
+          </div>
+        </div>
+      )
+    }
+    
+    return (
+      <div key={`${materia.cod23}-${index}`} className={`py-2 px-3 rounded ${
+        index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
+      }`}>
+        <span className="text-sm text-gray-900 leading-relaxed">
+          {toSentenceCase(materia.nombre)}
+        </span>
+      </div>
+    )
+  }
 
   const getTituloOrientacion = () => {
     if (planSeleccionado === "2023") {
