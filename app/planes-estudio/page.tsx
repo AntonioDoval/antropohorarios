@@ -25,9 +25,9 @@ export default function PlanesEstudioPage() {
   const [materias, setMaterias] = useState<MateriaDelPlan[]>([])
 
   useEffect(() => {
-    // Plan 2023 - Profesorado (orden original preservado)
+    // Plan 2023 - Profesorado
     const materiasProfesorado2023: MateriaDelPlan[] = [
-      // CFG - Orden original
+      // CFG
       { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES", nombreCorto: "Epistemo", nombreSiglas: "EPIS", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
       { cod85: "0733", cod23: "17002", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I", nombreCorto: "Historia y Teoría 1", nombreSiglas: "HTA1", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
       { cod85: "0742", cod23: "17003", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA II", nombreCorto: "Historia y Teoría 2", nombreSiglas: "HTA2", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "" },
@@ -43,7 +43,7 @@ export default function PlanesEstudioPage() {
       { cod85: "", cod23: "17022", nombre: "AMÉRICA EN CONTEXTO", nombreCorto: "Am. en Contexto", nombreSiglas: "AEC", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "Al menos 5 materias del CFG" },
       { cod85: "", cod23: "17049", nombre: "METODOLOGÍA DE LA INVESTIGACIÓN ANTROPOLÓGICA EN EDUCACIÓN", nombreCorto: "Met. Antrop. Educación", nombreSiglas: "METED", ciclo: "Ciclo de Formación General (CFG)", electividad: "", area: "", correlatividad: "Al menos 5 materias del CFG" },
 
-      // CFG - Elección A (orden original por áreas)
+      // CFG - Elección A (5 materias según orientación)
       { cod85: "0741", cod23: "17010", nombre: "SOCIEDADES, CULTURAS Y ESTADOS EN AMÉRICA PREHISPÁNICA Y COLONIAL", nombreCorto: "S. C. y E. en Am. Prehisp.", nombreSiglas: "SCEAP", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
       { cod85: "0734", cod23: "17013", nombre: "ANTROPOLOGÍA LINGÜÍSTICA", nombreCorto: "Antrop. Lingüística", nombreSiglas: "ALING", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
       { cod85: "0740", cod23: "17012", nombre: "PROCESOS CULTURALES, FOLKLORE Y PRÁCTICAS SUBALTERNAS", nombreCorto: "Proc. Cult. Folkore y P. Sub.", nombreSiglas: "PCFPS", ciclo: "Ciclo de Formación General (CFG)", electividad: "Elección A, 5 materias", area: "Licenciatura Sociocultural", correlatividad: "Al menos 5 materias del CFG" },
@@ -75,7 +75,7 @@ export default function PlanesEstudioPage() {
       { cod85: "SOCED", cod23: "SOCED", nombre: "Sociología de la Educación", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Específica (CFE)", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "Al menos 10 materias del CFG" }
     ]
 
-    // Plan 2023 - Licenciatura Sociocultural (orden original preservado)
+    // Plan 2023 - Licenciatura Sociocultural
     const materiasLicSocio2023: MateriaDelPlan[] = [
       { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES", nombreCorto: "Epistemo", nombreSiglas: "EPIS", ciclo: "Ciclo de Formación General (CFG) Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "" },
       { cod85: "0733", cod23: "17002", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I", nombreCorto: "Historia y Teoría 1", nombreSiglas: "HTA1", ciclo: "Ciclo de Formación General (CFG) Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "" },
@@ -115,9 +115,9 @@ export default function PlanesEstudioPage() {
       { cod85: "0746", cod23: "17033", nombre: "SEMINARIO DE INVESTIGACIÓN EN ANTROPOLOGÍA SOCIOCULTURAL", nombreCorto: "Sem. Inv. Antrop. Socio.", nombreSiglas: "SIASOC", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural", electividad: "", area: "", correlatividad: "Al menos 10 materias del CFG, incluyendo METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA" }
     ]
 
-    // Plan 2023 - Licenciatura Arqueología (orden original preservado)
+    // Plan 2023 - Licenciatura Arqueología
     const materiasLicArqueo2023: MateriaDelPlan[] = [
-      // CFG - orden original
+      // CFG
       { cod85: "0743", cod23: "17001", nombre: "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES", nombreCorto: "Epistemo", nombreSiglas: "EPIS", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
       { cod85: "0733", cod23: "17002", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I", nombreCorto: "Historia y Teoría 1", nombreSiglas: "HTA1", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
       { cod85: "0742", cod23: "17003", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA II", nombreCorto: "Historia y Teoría 2", nombreSiglas: "HTA2", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
@@ -131,7 +131,7 @@ export default function PlanesEstudioPage() {
       // CFO - Variable
       { cod85: "SEM85", cod23: "PST23", nombre: "1 Seminario de Prácticas Socioeducativas Territorializadas (PST)", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Variable", area: "", correlatividad: "" },
 
-      // CFO - Obligatorias con correlatividad básica (orden original)
+      // CFO - Obligatorias con correlatividad básica
       { cod85: "0750", cod23: "17034", nombre: "ARQUEOLOGÍA DE ÁFRICA, EURASIA Y OCEANÍA", nombreCorto: "Arqueo. de Af. Eura. y Oc.", nombreSiglas: "ARQAEO", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
       { cod85: "0751", cod23: "17035", nombre: "ARQUEOLOGÍA AMERICANA Y ARGENTINA I", nombreCorto: "Arqueo. Am y Arg. I", nombreSiglas: "ARQAM1", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
       { cod85: "0712", cod23: "17036", nombre: "ARQUEOLOGÍA AMERICANA Y ARGENTINA II", nombreCorto: "Arqueo. Am y Arg. II", nombreSiglas: "ARQAM2", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología" },
@@ -146,7 +146,7 @@ export default function PlanesEstudioPage() {
       { cod85: "0737", cod23: "17043", nombre: "MÉTODOS CUANTITATIVOS EN ARQUEOLOGÍA", nombreCorto: "Met. Cuanti. Arqueo.", nombreSiglas: "MCARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología y Metodología y Técnicas de Inv. Arqueológica" },
       { cod85: "SEMARQ", cod23: "SEMARQ", nombre: "1 Seminario Regular de la orientación en Arqueología", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Variable", area: "", correlatividad: "Al menos 5 materias cursadas del CFG incluyendo Introducción a la Arqueología y Metodología y Técnicas de Inv. Arqueológica" },
 
-      // CFO - Elección A (orden original)
+      // CFO - Elección A (2 materias)
       { cod85: "", cod23: "17044", nombre: "EJERCICIO PROFESIONAL DE LA ARQUEOLOGÍA", nombreCorto: "Ej. Profesional Arqueo.", nombreSiglas: "EPARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Elección A, 2 materias", area: "", correlatividad: "Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías" },
       { cod85: "", cod23: "17045", nombre: "MATERIALES BIOLÓGICOS EN ARQUEOLOGÍA", nombreCorto: "Mat. Bio. en Arqueo.", nombreSiglas: "MBA", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Elección A, 2 materias", area: "", correlatividad: "Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías" },
       { cod85: "", cod23: "17046", nombre: "ARQUEOLOGÍA DE TIEMPOS MODERNOS", nombreCorto: "Arq. de T. Modernos", nombreSiglas: "ATM", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "Elección A, 2 materias", area: "", correlatividad: "Al menos 10 materias cursadas en total, incluyendo Métodos cuantitativos en Arqueología y Materiales Arqueológicos y sus Tecnologías" },
@@ -156,7 +156,7 @@ export default function PlanesEstudioPage() {
       { cod85: "0755", cod23: "17048", nombre: "SEMINARIO DE INVESTIGACIÓN EN ARQUEOLOGÍA, TRABAJO DE CAMPO Y LABORATORIO", nombreCorto: "Sem. Inv. Arqueo.", nombreSiglas: "SIARQ", ciclo: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "Al menos 10 materias aprobadas en total, incluyendo Metodología y Técnicas de Inv. Arqueológica, Teorías Arqueológicas Contemporáneas y Arqueología Argentina" }
     ]
 
-    // Plan 1985 - orden original preservado para todas las orientaciones
+    // Plan 1985 - Profesorado Sociocultural
     const materiasProfesorado1985Socio: MateriaDelPlan[] = [
       // Ciclo Común
       { cod85: "0730", cod23: "17004", nombre: "ANTROPOLOGÍA SISTEMÁTICA I (ORGANIZACIÓN SOCIAL Y POLÍTICA)", nombreCorto: "", nombreSiglas: "SIST1", ciclo: "Ciclo Común", electividad: "", area: "", correlatividad: "" },
@@ -330,7 +330,7 @@ export default function PlanesEstudioPage() {
     return result
   }
 
-  // Función para obtener materias por ciclo sin ordenar alfabéticamente
+  // Función para obtener materias por ciclo
   const getMateriasByCiclo = (ciclo: string) => {
     if (planSeleccionado === "2023") {
       if (orientacionSeleccionada === "profesorado") {
@@ -379,18 +379,12 @@ export default function PlanesEstudioPage() {
   const getTituloOrientacion = () => {
     if (planSeleccionado === "2023") {
       if (orientacionSeleccionada === "profesorado") return "Profesorado"
-      if (orientacionSeleccionada === "sociocultural") return "Licenciatura en Antropología Sociocultural"
-      return "Licenciatura en Arqueología"
+      if (orientacionSeleccionada === "sociocultural") return "Lic. Sociocultural"
+      return "Lic. Arqueología"
     } else {
-      if (orientacionSeleccionada === "profesorado") {
-        if (orientacionPlan1985 === "arqueologia") {
-          return "Profesorado - Orientación en Arqueología"
-        } else {
-          return "Profesorado - Orientación en Antropología Sociocultural"
-        }
-      }
-      if (orientacionSeleccionada === "sociocultural") return "Licenciatura en Antropología Sociocultural"
-      return "Licenciatura en Arqueología"
+      if (orientacionSeleccionada === "profesorado") return "Profesorado"
+      if (orientacionSeleccionada === "sociocultural") return "Lic. Sociocultural"
+      return "Lic. Arqueología"
     }
   }
 
@@ -425,7 +419,10 @@ export default function PlanesEstudioPage() {
             <MobileNav>
               <div className="flex flex-col space-y-4">
                 <a href="/" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-                  Oferta Horaria
+                  🕐 Oferta Horaria
+                </a>
+                <a href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
+                  📋 Planes de estudio
                 </a>
                 <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
                   <a href="https://filo.uba.ar" className="text-uba-primary hover:text-uba-secondary font-medium transition-all duration-200">filo.uba.ar</a>
@@ -438,7 +435,10 @@ export default function PlanesEstudioPage() {
             {/* Menú para pantallas grandes */}
             <div className="hidden lg:flex items-center space-x-4">
               <a href="/" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-                Oferta Horaria
+                🕐 Oferta Horaria
+              </a>
+              <a href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
+                📋 Planes de estudio
               </a>
             </div>
             <div className="hidden lg:flex space-x-8">
@@ -456,7 +456,7 @@ export default function PlanesEstudioPage() {
         <main className="py-8">
           {/* Selector de plan de estudios */}
           <div className="bg-gray-100 p-6 rounded-lg mb-8">
-            <h2 className="text-xl font-bold text-[#1c2554] mb-6">Seleccionar plan de estudios</h2>
+            <h2 className="text-xl font-bold text-[#1c2554] mb-6">Plan de Estudios</h2>
 
             {/* Plan selector */}
             <div className="mb-6">
@@ -540,13 +540,6 @@ export default function PlanesEstudioPage() {
                 )}
               </div>
             </div>
-          </div>
-
-          {/* Título del plan seleccionado */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-[#1c2554]">
-              Plan {planSeleccionado} - {getTituloOrientacion()}
-            </h1>
           </div>
 
           {planSeleccionado === "2023" ? (
