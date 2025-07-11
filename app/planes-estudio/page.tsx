@@ -21,6 +21,7 @@ interface MateriaDelPlan {
 export default function PlanesEstudioPage() {
   const [planSeleccionado, setPlanSeleccionado] = useState<"2023" | "1985">("2023")
   const [orientacionSeleccionada, setOrientacionSeleccionada] = useState<"profesorado" | "sociocultural" | "arqueologia">("profesorado")
+  const [orientacionPlan1985, setOrientacionPlan1985] = useState<"sociocultural" | "arqueologia">("sociocultural")
   const [materias, setMaterias] = useState<MateriaDelPlan[]>([])
 
   useEffect(() => {
@@ -299,21 +300,34 @@ export default function PlanesEstudioPage() {
       }
     } else {
       if (orientacionSeleccionada === "profesorado") {
-        // Para 1985 profesorado, mostrar sociocultural por defecto, se puede cambiar después
-        setMaterias(materiasProfesorado1985Socio)
+        // Para 1985 profesorado, usar orientacionPlan1985
+        if (orientacionPlan1985 === "arqueologia") {
+          setMaterias(materiasProfesorado1985Arqueo)
+        } else {
+          setMaterias(materiasProfesorado1985Socio)
+        }
       } else if (orientacionSeleccionada === "sociocultural") {
         setMaterias(materiasLicenciatura1985Socio)
       } else {
         setMaterias(materiasLicenciatura1985Arqueo)
       }
     }
-  }, [planSeleccionado, orientacionSeleccionada])
+  }, [planSeleccionado, orientacionSeleccionada, orientacionPlan1985])
 
-  // Función para convertir a title case
-  const toTitleCase = (str: string) => {
-    return str.toLowerCase().replace(/\w\S*/g, (txt) => {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  // Función para convertir a sentence case respetando números romanos
+  const toSentenceCase = (str: string) => {
+    // Primero convertir todo a minúsculas
+    let result = str.toLowerCase()
+    
+    // Capitalizar la primera letra
+    result = result.charAt(0).toUpperCase() + result.slice(1)
+    
+    // Encontrar y corregir números romanos (I, II, III, IV, V, etc.)
+    result = result.replace(/\b(i{1,3}|iv|v|vi{0,3}|ix|x|xi{0,3}|xiv|xv|xvi{0,3}|xix|xx)\b/g, (match) => {
+      return match.toUpperCase()
     })
+    
+    return result
   }
 
   // Función para obtener materias por ciclo
@@ -353,12 +367,11 @@ export default function PlanesEstudioPage() {
 
   // Función para renderizar una materia con colores alternados
   const renderMateria = (materia: MateriaDelPlan, index: number) => (
-    <div key={`${materia.cod23}-${index}`} className={`flex items-start gap-2 py-2 px-3 rounded ${
+    <div key={`${materia.cod23}-${index}`} className={`py-2 px-3 rounded ${
       index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
     }`}>
-      <span className="text-gray-600 mt-0.5">•</span>
       <span className="text-sm text-gray-900 leading-relaxed">
-        {toTitleCase(materia.nombre)}
+        {toSentenceCase(materia.nombre)}
       </span>
     </div>
   )
@@ -449,19 +462,19 @@ export default function PlanesEstudioPage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 {/* Plan de Estudios */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                   <h4 className="text-sm font-semibold text-uba-primary mb-3">Plan de Estudios</h4>
-                  <div className="flex items-center justify-center p-3 bg-[#1c2554] text-white rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <span className={`text-sm ${planSeleccionado === "1985" ? "font-bold" : "opacity-70"}`}>
+                  <div className="flex items-center justify-center p-4 bg-gradient-to-r from-[#1c2554] to-[#2a3a6b] text-white rounded-lg shadow-md">
+                    <div className="flex items-center space-x-4">
+                      <span className={`text-sm font-medium ${planSeleccionado === "1985" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
                         1985
                       </span>
                       <Switch
                         checked={planSeleccionado === "2023"}
                         onCheckedChange={(checked) => setPlanSeleccionado(checked ? "2023" : "1985")}
-                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
+                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 scale-110"
                       />
-                      <span className={`text-sm ${planSeleccionado === "2023" ? "font-bold" : "opacity-70"}`}>
+                      <span className={`text-sm font-medium ${planSeleccionado === "2023" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
                         2023
                       </span>
                     </div>
@@ -469,63 +482,78 @@ export default function PlanesEstudioPage() {
                 </div>
 
                 {/* Carrera */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                   <h4 className="text-sm font-semibold text-uba-primary mb-3">Carrera</h4>
-                  <div className="flex items-center justify-center p-3 bg-[#1c2554] text-white rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <span className={`text-sm ${orientacionSeleccionada === "profesorado" ? "font-bold" : "opacity-70"}`}>
+                  <div className="flex items-center justify-center p-4 bg-gradient-to-r from-[#1c2554] to-[#2a3a6b] text-white rounded-lg shadow-md">
+                    <div className="flex items-center space-x-4">
+                      <span className={`text-sm font-medium ${orientacionSeleccionada === "profesorado" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
                         Profesorado
                       </span>
                       <Switch
                         checked={orientacionSeleccionada !== "profesorado"}
                         onCheckedChange={(checked) => setOrientacionSeleccionada(checked ? "sociocultural" : "profesorado")}
-                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600"
+                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 scale-110"
                       />
-                      <span className={`text-sm ${orientacionSeleccionada !== "profesorado" ? "font-bold" : "opacity-70"}`}>
+                      <span className={`text-sm font-medium ${orientacionSeleccionada !== "profesorado" ? "font-bold text-base text-[#46bfb0]" : "opacity-70"}`}>
                         Licenciatura
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Orientación (solo para Licenciatura) */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
+                {/* Orientación */}
+                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                   <h4 className="text-sm font-semibold text-uba-primary mb-3">Orientación</h4>
                   <div className={`flex items-center justify-center p-3 rounded-lg ${
-                    orientacionSeleccionada === "profesorado" 
+                    (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
                       ? "bg-gray-300 text-gray-500" 
                       : "bg-[#1c2554] text-white"
                   }`}>
                     <div className="flex items-center space-x-3">
-                      <span className={`text-sm ${
-                        orientacionSeleccionada === "profesorado" 
+                      <span className={`text-sm font-medium ${
+                        (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
                           ? "opacity-50" 
-                          : orientacionSeleccionada === "arqueologia" ? "font-bold" : "opacity-70"
+                          : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
+                            ? (orientacionPlan1985 === "arqueologia" ? "font-bold text-base" : "opacity-70")
+                            : orientacionSeleccionada === "arqueologia" ? "font-bold text-base" : "opacity-70"
                       }`}>
                         Arqueología
                       </span>
                       <Switch
-                        checked={orientacionSeleccionada === "sociocultural"}
+                        checked={
+                          orientacionSeleccionada === "profesorado" && planSeleccionado === "1985" 
+                            ? orientacionPlan1985 === "sociocultural"
+                            : orientacionSeleccionada === "sociocultural"
+                        }
                         onCheckedChange={(checked) => {
-                          if (orientacionSeleccionada !== "profesorado") {
+                          if (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985") {
+                            setOrientacionPlan1985(checked ? "sociocultural" : "arqueologia")
+                          } else if (!(orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")) {
                             setOrientacionSeleccionada(checked ? "sociocultural" : "arqueologia")
                           }
                         }}
-                        disabled={orientacionSeleccionada === "profesorado"}
-                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 disabled:opacity-50"
+                        disabled={orientacionSeleccionada === "profesorado" && planSeleccionado === "2023"}
+                        className="data-[state=checked]:bg-[#46bfb0] data-[state=unchecked]:bg-gray-600 disabled:opacity-50 scale-110"
                       />
-                      <span className={`text-sm ${
-                        orientacionSeleccionada === "profesorado" 
+                      <span className={`text-sm font-medium ${
+                        (orientacionSeleccionada === "profesorado" && planSeleccionado === "2023")
                           ? "opacity-50" 
-                          : orientacionSeleccionada === "sociocultural" ? "font-bold" : "opacity-70"
+                          : (orientacionSeleccionada === "profesorado" && planSeleccionado === "1985")
+                            ? (orientacionPlan1985 === "sociocultural" ? "font-bold text-base" : "opacity-70")
+                            : orientacionSeleccionada === "sociocultural" ? "font-bold text-base" : "opacity-70"
                       }`}>
                         Sociocultural
                       </span>
                     </div>
                   </div>
-                  {orientacionSeleccionada === "profesorado" && (
+                  {(orientacionSeleccionada === "profesorado" && planSeleccionado === "2023") && (
                     <p className="text-xs text-gray-500 mt-2 text-center">
-                      No aplica para Profesorado
+                      Solo aplica para Licenciatura en plan 2023
+                    </p>
+                  )}
+                  {(orientacionSeleccionada === "profesorado" && planSeleccionado === "1985") && (
+                    <p className="text-xs text-blue-600 mt-2 text-center font-medium">
+                      Selecciona orientación para Profesorado 1985
                     </p>
                   )}
                 </div>
@@ -870,13 +898,11 @@ export default function PlanesEstudioPage() {
                     <div className="p-6">
                       <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <div className="space-y-1">
-                          <div className="flex items-start gap-2 py-2 px-3 rounded bg-gray-50">
-                            <span className="text-gray-600 mt-0.5">•</span>
-                            <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Anglosajón</span>
+                          <div className="py-2 px-3 rounded bg-gray-50">
+                            <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma anglosajón</span>
                           </div>
-                          <div className="flex items-start gap-2 py-2 px-3 rounded bg-blue-50">
-                            <span className="text-gray-600 mt-0.5">•</span>
-                            <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Latino</span>
+                          <div className="py-2 px-3 rounded bg-blue-50">
+                            <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma latino</span>
                           </div>
                         </div>
                       </div>
@@ -963,13 +989,11 @@ export default function PlanesEstudioPage() {
                 <div className="p-6">
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     <div className="space-y-1">
-                      <div className="flex items-start gap-2 py-2 px-3 rounded bg-gray-50">
-                        <span className="text-gray-600 mt-0.5">•</span>
-                        <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Anglosajón</span>
+                      <div className="py-2 px-3 rounded bg-gray-50">
+                        <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma anglosajón</span>
                       </div>
-                      <div className="flex items-start gap-2 py-2 px-3 rounded bg-blue-50">
-                        <span className="text-gray-600 mt-0.5">•</span>
-                        <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Latino</span>
+                      <div className="py-2 px-3 rounded bg-blue-50">
+                        <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma latino</span>
                       </div>
                     </div>
                   </div>
