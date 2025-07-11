@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect } from "react"
@@ -414,14 +415,14 @@ export default function PlanesEstudioPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-3">
             
-{/* Menú hamburguesa para móviles */}
+            {/* Menú hamburguesa para móviles */}
             <MobileNav>
               <div className="flex flex-col space-y-4">
                 <a href="/" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
                   🕐 Oferta Horaria
                 </a>
                 <a href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-                  📚 Planes de estudio
+                  📋 Planes de estudio
                 </a>
                 <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
                   <a href="https://filo.uba.ar" className="text-uba-primary hover:text-uba-secondary font-medium transition-all duration-200">filo.uba.ar</a>
@@ -437,7 +438,7 @@ export default function PlanesEstudioPage() {
                 🕐 Oferta Horaria
               </a>
               <a href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-                📚 Planes de estudio
+                📋 Planes de estudio
               </a>
             </div>
             <div className="hidden lg:flex space-x-8">
@@ -740,7 +741,8 @@ export default function PlanesEstudioPage() {
                         </>
                       )}
 
-                      {orientacionSeleccionada === "sociocultural" ? (>
+                      {orientacionSeleccionada === "sociocultural" ? (
+                        <>
                           {/* Una materia a elegir entre */}
                           <div className="bg-white border border-gray-200 rounded-lg p-4">
                             <div className="text-sm font-medium text-blue-700 italic mb-3">
@@ -786,53 +788,53 @@ export default function PlanesEstudioPage() {
                             • Dos materias a elegir dentro de la misma área temática:
                           </div>
 
-                        {/* Antropología histórica y memoria */}
-                        <div className="mb-4">
-                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                            Antropología histórica y memoria
-                          </div>
-                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                            <div className="space-y-1">
-                              {getMateriasByArea("Antropología histórica y memoria").map((materia, index) => renderMateria(materia, index))}
+                          {/* Antropología histórica y memoria */}
+                          <div className="mb-4">
+                            <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                              Antropología histórica y memoria
+                            </div>
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                              <div className="space-y-1">
+                                {getMateriasByArea("Antropología histórica y memoria").map((materia, index) => renderMateria(materia, index))}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Procesos culturales, ideología y poder */}
-                        <div className="mb-4">
-                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                            Procesos culturales, ideología y poder
-                          </div>
-                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                            <div className="space-y-1">
-                              {getMateriasByArea("Procesos culturales, ideología y poder").map((materia, index) => renderMateria(materia, index))}
+                          {/* Procesos culturales, ideología y poder */}
+                          <div className="mb-4">
+                            <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                              Procesos culturales, ideología y poder
+                            </div>
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                              <div className="space-y-1">
+                                {getMateriasByArea("Procesos culturales, ideología y poder").map((materia, index) => renderMateria(materia, index))}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Procesos políticos, instituciones y prácticas */}
-                        <div className="mb-4">
-                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                            Procesos políticos, instituciones y prácticas
-                          </div>
-                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                            <div className="space-y-1">
-                              {getMateriasByArea("Procesos políticos, instituciones y prácticas").map((materia, index) => renderMateria(materia, index))}
+                          {/* Procesos políticos, instituciones y prácticas */}
+                          <div className="mb-4">
+                            <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                              Procesos políticos, instituciones y prácticas
+                            </div>
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                              <div className="space-y-1">
+                                {getMateriasByArea("Procesos políticos, instituciones y prácticas").map((materia, index) => renderMateria(materia, index))}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Procesos socioeconómicos */}
-                        <div className="mb-4">
-                          <div className="font-medium text-blue-700 mb-2 text-sm underline">
-                            Procesos socioeconómicos: producción, reproducción y transformación social
-                          </div>
-                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                            <div className="space-y-1">
-                              {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map((materia, index) => renderMateria(materia, index))}
+                          {/* Procesos socioeconómicos */}
+                          <div className="mb-4">
+                            <div className="font-medium text-blue-700 mb-2 text-sm underline">
+                              Procesos socioeconómicos: producción, reproducción y transformación social
+                            </div>
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                              <div className="space-y-1">
+                                {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map((materia, index) => renderMateria(materia, index))}
+                              </div>
                             </div>
                           </div>
-                        </div>
                         </div>
                       )}
 
