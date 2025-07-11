@@ -98,13 +98,19 @@ export default function AdminPage() {
 
             {/* Columna central con contenido */}
             <div className="col-span-8 text-center relative">
-              <h1 className="text-6xl font-bold text-uba-primary mb-4">Ciencias Antropológicas</h1>
-              <div className="flex justify-end">
-                <img
-                  src="/images/uba-filo-header.png"
-                  alt="UBA Filo - Facultad de Filosofía y Letras"
-                  className="h-8"
-                />
+              <div className="flex items-center justify-center">
+                <div className="flex items-center gap-4">
+                  {/* Círculo con ANT */}
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-[#c44928] rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-sm sm:text-base md:text-lg">ANT</span>
+                  </div>
+                  
+                  {/* Texto principal */}
+                  <div className="flex flex-col">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#c44928] leading-tight">Ciencias Antropológicas</h1>
+                    <p className="text-sm sm:text-base md:text-lg text-[#1d2554] font-medium">.UBAFILO</p>
+                  </div>
+                </div>
               </div>
             </div>
 

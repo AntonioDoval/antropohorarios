@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from "react"
@@ -124,7 +123,8 @@ export default function PlanesEstudioPage() {
       { cod85: "0733", cod23: "17002", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I", nombreCorto: "Historia y Teoría 1", nombreSiglas: "HTA1", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
       { cod85: "0742", cod23: "17003", nombre: "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA II", nombreCorto: "Historia y Teoría 2", nombreSiglas: "HTA2", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
       { cod85: "0730", cod23: "17004", nombre: "PROBLEMAS DE ANTROPOLOGÍA SOCIAL Y POLÍTICA", nombreCorto: "P. A. Soc. y Pol.", nombreSiglas: "PASYP", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
-      { cod85: "0736", cod23: "17005", nombre: "PROBLEMAS DE ANTROPOLOGÍA ECONÓMICA", nombreCorto: "P. A. Económica", nombreSiglas: "PAE", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
+      { cod85: "0736", cod23: "17005", nombre: "PROBLEMAS DE ANTROPOLOGÍA ECONÓMICA",```
+nombreCorto: "P. A. Económica", nombreSiglas: "PAE", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
       { cod85: "0739", cod23: "17006", nombre: "PROBLEMAS DE ANTROPOLOGÍA SIMBÓLICA", nombreCorto: "P. Antrop. Simbólica", nombreSiglas: "PASIM", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
       { cod85: "0738", cod23: "17007", nombre: "ANTROPOLOGÍA BIOLÓGICA", nombreCorto: "Antrop. Biológica", nombreSiglas: "ABIO", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
       { cod85: "0732", cod23: "17008", nombre: "INTRODUCCIÓN A LA ARQUEOLOGÍA", nombreCorto: "Intro. Arqueo.", nombreSiglas: "IARQ", ciclo: "Ciclo de Formación General (CFG) Licenciatura Arqueología", electividad: "", area: "", correlatividad: "" },
@@ -252,7 +252,7 @@ export default function PlanesEstudioPage() {
       { cod85: "SOCED", cod23: "SOCED", nombre: "Sociología de la Educación", nombreCorto: "", nombreSiglas: "SOCED", ciclo: "Ciclo Orientación Sociocultural", electividad: "Elección B", area: "Departamento de Ciencias de la Educación", correlatividad: "" },
       { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
       { cod85: "OPT85", cod23: "ELE23", nombre: "1 materia electiva de cualquier orientación, carrera o facultad de la UBA", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
-      { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
+      { cod85: "SEMSOC", cod23: "SEMSOC",nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
       { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
       { cod85: "SEMSOC", cod23: "SEMSOC", nombre: "1 Seminario Regular de la orientación Sociocultural", nombreCorto: "", nombreSiglas: "", ciclo: "Ciclo Orientación Sociocultural", electividad: "", area: "", correlatividad: "" },
 
@@ -375,9 +375,9 @@ export default function PlanesEstudioPage() {
     const isVariable = materia.electividad === "Variable" || 
                       materia.nombre.toLowerCase().includes("seminario") ||
                       materia.nombre.toLowerCase().includes("materia electiva")
-    
+
     const contenido = planSeleccionado === "2023" ? getContenidoMinimo(materia.cod23) : null
-    
+
     if (!isVariable && contenido && planSeleccionado === "2023") {
       return (
         <div key={`${materia.cod23}-${index}`} className={`py-2 px-3 rounded relative group ${
@@ -386,7 +386,7 @@ export default function PlanesEstudioPage() {
           <span className="text-sm text-gray-900 leading-relaxed cursor-help">
             {toSentenceCase(materia.nombre)}
           </span>
-          
+
           {/* Tooltip */}
           <div className="absolute left-0 top-full mt-2 w-96 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
             <h4 className="font-bold text-sm text-[#1c2554] mb-2">
@@ -399,7 +399,7 @@ export default function PlanesEstudioPage() {
         </div>
       )
     }
-    
+
     return (
       <div key={`${materia.cod23}-${index}`} className={`py-2 px-3 rounded ${
         index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
@@ -449,7 +449,7 @@ export default function PlanesEstudioPage() {
       <nav className="bg-uba-primary border-t-4 border-uba-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-3">
-            
+
             {/* Menú hamburguesa para móviles */}
             <MobileNav>
               <div className="flex flex-col space-y-4">

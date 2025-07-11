@@ -16,7 +16,7 @@ export default function HomePage() {
 
             {/* Columna central con contenido */}
             <div className="col-span-8 text-center relative">
-              <h1 className="text-6xl font-bold text-uba-primary mb-4">Ciencias Antropológicas</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#c44928] leading-tight">Ciencias Antropológicas</h1>
               <div className="flex justify-end">
                 <img
                   src="/images/uba-filo-header.png"
