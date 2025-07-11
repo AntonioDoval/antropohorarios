@@ -11,10 +11,10 @@ export default function HomePage() {
       <header className="bg-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center">
-            <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-start gap-3 sm:gap-4">
               {/* Círculo con ANT */}
-              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-[#c44928] rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl">ANT</span>
+              <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-[#c44928] rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl">ANT</span>
               </div>
               
               {/* Texto principal */}
@@ -22,8 +22,8 @@ export default function HomePage() {
                 <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-[#c44928] leading-tight">
                   Ciencias Antropológicas
                 </h1>
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#c44928] font-medium">
-                  .UBAFILO
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#c44928]">
+                  <span className="font-bold">.UBA</span><span className="font-normal">FILO</span>
                 </p>
               </div>
             </div>
