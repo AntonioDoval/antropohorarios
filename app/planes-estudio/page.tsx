@@ -66,6 +66,13 @@ export default function PlanesEstudioPage() {
     setMaterias(materiasLicSocio2023)
   }, [])
 
+  // Función para convertir a title case
+  const toTitleCase = (str: string) => {
+    return str.toLowerCase().replace(/\w\S*/g, (txt) => {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    })
+  }
+
   // Función para obtener materias por ciclo
   const getMateriasByCiclo = (ciclo: string) => {
     return materias.filter(materia => materia.ciclo.includes(ciclo))
@@ -80,12 +87,14 @@ export default function PlanesEstudioPage() {
     )
   }
 
-  // Función para renderizar una materia
-  const renderMateria = (materia: MateriaDelPlan) => (
-    <div key={materia.cod23} className="flex items-start gap-2 mb-1">
+  // Función para renderizar una materia con colores alternados
+  const renderMateria = (materia: MateriaDelPlan, index: number) => (
+    <div key={materia.cod23} className={`flex items-start gap-2 py-2 px-3 rounded ${
+      index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
+    }`}>
       <span className="text-gray-600 mt-0.5">•</span>
       <span className="text-sm text-gray-900 leading-relaxed">
-        {materia.nombre}
+        {toTitleCase(materia.nombre)}
       </span>
     </div>
   )
@@ -180,8 +189,10 @@ export default function PlanesEstudioPage() {
                   </h2>
                 </div>
                 <div className="p-6">
-                  <div className="space-y-1">
-                    {getMateriasByCiclo("CFG").map(materia => renderMateria(materia))}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="space-y-1">
+                      {getMateriasByCiclo("CFG").map((materia, index) => renderMateria(materia, index))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -193,115 +204,127 @@ export default function PlanesEstudioPage() {
                     Ciclo de Formación Orientada (CFO)
                   </h2>
                 </div>
-                <div className="p-6 space-y-6">
+                <div className="p-6 space-y-4">
                   
                   {/* Materias básicas del CFO */}
-                  <div className="space-y-1">
-                    {getMateriasByCiclo("CFO").filter(materia => 
-                      !materia.electividad || 
-                      materia.electividad === "Variable"
-                    ).map(materia => renderMateria(materia))}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="space-y-1">
+                      {getMateriasByCiclo("CFO").filter(materia => 
+                        !materia.electividad || 
+                        materia.electividad === "Variable"
+                      ).map((materia, index) => renderMateria(materia, index))}
+                    </div>
                   </div>
 
                   {/* Correlatividad: Al menos 5 materias del CFG */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium text-blue-700 italic">
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm font-medium text-blue-700 italic mb-3">
                       • Correlatividad: Al menos 5 materias del CFG
                     </div>
-                    <div className="ml-4 space-y-1">
+                    <div className="space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.correlatividad === "Al menos 5 materias del CFG"
-                      ).map(materia => renderMateria(materia))}
+                      ).map((materia, index) => renderMateria(materia, index))}
                     </div>
                   </div>
 
                   {/* Correlatividad: Al menos 10 materias del CFG */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium text-blue-700 italic">
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm font-medium text-blue-700 italic mb-3">
                       • Correlatividad: Al menos 10 materias del CFG
                     </div>
-                    <div className="ml-4 space-y-1">
+                    <div className="space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.correlatividad === "Al menos 10 materias del CFG"
-                      ).map(materia => renderMateria(materia))}
+                      ).map((materia, index) => renderMateria(materia, index))}
                     </div>
                   </div>
 
                   {/* Una materia a elegir entre */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium text-blue-700 italic">
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm font-medium text-blue-700 italic mb-3">
                       • Una materia a elegir entre:
                     </div>
-                    <div className="ml-4 space-y-1">
+                    <div className="space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.electividad === "Elección A, 1 materia"
-                      ).map(materia => renderMateria(materia))}
+                      ).map((materia, index) => renderMateria(materia, index))}
                     </div>
                   </div>
 
                   {/* Materia electiva */}
-                  <div className="space-y-1">
-                    {getMateriasByCiclo("CFO").filter(materia => 
-                      materia.nombre.includes("materia electiva")
-                    ).map(materia => renderMateria(materia))}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="space-y-1">
+                      {getMateriasByCiclo("CFO").filter(materia => 
+                        materia.nombre.includes("materia electiva")
+                      ).map((materia, index) => renderMateria(materia, index))}
+                    </div>
                   </div>
 
                   {/* Dos materias a elegir dentro de la misma área temática */}
-                  <div className="space-y-3">
-                    <div className="text-sm font-medium text-blue-700 italic">
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm font-medium text-blue-700 italic mb-4">
                       • Dos materias a elegir dentro de la misma área temática:
                     </div>
                     
                     {/* Antropología histórica y memoria */}
-                    <div className="ml-4">
-                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
+                    <div className="mb-4">
+                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
                         Antropología histórica y memoria
                       </div>
-                      <div className="ml-4 space-y-1">
-                        {getMateriasByArea("Antropología histórica y memoria").map(materia => renderMateria(materia))}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <div className="space-y-1">
+                          {getMateriasByArea("Antropología histórica y memoria").map((materia, index) => renderMateria(materia, index))}
+                        </div>
                       </div>
                     </div>
 
                     {/* Procesos culturales, ideología y poder */}
-                    <div className="ml-4">
-                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
+                    <div className="mb-4">
+                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
                         Procesos culturales, ideología y poder
                       </div>
-                      <div className="ml-4 space-y-1">
-                        {getMateriasByArea("Procesos culturales, ideología y poder").map(materia => renderMateria(materia))}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <div className="space-y-1">
+                          {getMateriasByArea("Procesos culturales, ideología y poder").map((materia, index) => renderMateria(materia, index))}
+                        </div>
                       </div>
                     </div>
 
                     {/* Procesos políticos, instituciones y prácticas */}
-                    <div className="ml-4">
-                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
+                    <div className="mb-4">
+                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
                         Procesos políticos, instituciones y prácticas
                       </div>
-                      <div className="ml-4 space-y-1">
-                        {getMateriasByArea("Procesos políticos, instituciones y prácticas").map(materia => renderMateria(materia))}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <div className="space-y-1">
+                          {getMateriasByArea("Procesos políticos, instituciones y prácticas").map((materia, index) => renderMateria(materia, index))}
+                        </div>
                       </div>
                     </div>
 
                     {/* Procesos socioeconómicos */}
-                    <div className="ml-4">
-                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
+                    <div className="mb-4">
+                      <div className="font-medium text-blue-700 mb-2 text-sm underline">
                         Procesos socioeconómicos: producción, reproducción y transformación social
                       </div>
-                      <div className="ml-4 space-y-1">
-                        {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map(materia => renderMateria(materia))}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <div className="space-y-1">
+                          {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map((materia, index) => renderMateria(materia, index))}
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Seminario de investigación */}
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium text-blue-700 italic">
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm font-medium text-blue-700 italic mb-3">
                       • Correlatividad: Al menos 10 materias del CFG, incluyendo Metodología e Investigación Antropológica
                     </div>
-                    <div className="ml-4 space-y-1">
+                    <div className="space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.correlatividad.includes("METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA")
-                      ).map(materia => renderMateria(materia))}
+                      ).map((materia, index) => renderMateria(materia, index))}
                     </div>
                   </div>
 
@@ -316,14 +339,16 @@ export default function PlanesEstudioPage() {
                   </h2>
                 </div>
                 <div className="p-6">
-                  <div className="space-y-1">
-                    <div className="flex items-start gap-2">
-                      <span className="text-gray-600 mt-0.5">•</span>
-                      <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma anglosajón</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="text-gray-600 mt-0.5">•</span>
-                      <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma latino</span>
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="space-y-1">
+                      <div className="flex items-start gap-2 py-2 px-3 rounded bg-gray-50">
+                        <span className="text-gray-600 mt-0.5">•</span>
+                        <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Anglosajón</span>
+                      </div>
+                      <div className="flex items-start gap-2 py-2 px-3 rounded bg-blue-50">
+                        <span className="text-gray-600 mt-0.5">•</span>
+                        <span className="text-sm text-gray-900 leading-relaxed">Tres Niveles De Un Idioma Latino</span>
+                      </div>
                     </div>
                   </div>
                 </div>
