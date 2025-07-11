@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { MobileNav } from "@/components/mobile-nav"
 
 interface MateriaDelPlan {
@@ -82,29 +81,12 @@ export default function PlanesEstudioPage() {
   }
 
   // Función para renderizar una materia
-  const renderMateria = (materia: MateriaDelPlan, showCode = true) => (
-    <div key={materia.cod23} className="mb-2">
-      <div className="flex items-start gap-2">
-        <span className="text-gray-600">•</span>
-        <div className="flex-1">
-          <span className="text-sm text-gray-900">
-            {materia.nombre}
-            {showCode && materia.cod23 && (
-              <span className="text-xs text-gray-500 ml-2">({materia.cod23})</span>
-            )}
-          </span>
-          {materia.electividad && (
-            <Badge variant="outline" className="ml-2 text-xs">
-              {materia.electividad}
-            </Badge>
-          )}
-          {materia.correlatividad && (
-            <div className="text-xs text-gray-500 mt-1 italic">
-              Correlatividad: {materia.correlatividad}
-            </div>
-          )}
-        </div>
-      </div>
+  const renderMateria = (materia: MateriaDelPlan) => (
+    <div key={materia.cod23} className="flex items-start gap-2 mb-1">
+      <span className="text-gray-600 mt-0.5">•</span>
+      <span className="text-sm text-gray-900 leading-relaxed">
+        {materia.nombre}
+      </span>
     </div>
   )
 
@@ -169,8 +151,8 @@ export default function PlanesEstudioPage() {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto p-6">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto p-6">
+        <main className="py-8">
           {/* Selector de plan */}
           <div className="mb-8">
             <div className="flex items-center justify-center gap-4 mb-6">
@@ -189,55 +171,44 @@ export default function PlanesEstudioPage() {
           </div>
 
           {planSeleccionado === "2023" ? (
-            <div className="space-y-8">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-uba-primary mb-2">
-                  Plan de Estudios 2023
-                </h2>
-                <h3 className="text-xl text-gray-700">
-                  Licenciatura en Antropología Sociocultural
-                </h3>
-              </div>
-
+            <div className="space-y-6">
               {/* Ciclo de Formación General (CFG) */}
-              <Card className="border-2 border-gray-300">
-                <CardHeader className="bg-gray-50">
-                  <CardTitle className="text-xl font-bold text-gray-800">
+              <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                  <h2 className="text-lg font-bold text-gray-800">
                     Ciclo de Formación General (CFG)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-1">
                     {getMateriasByCiclo("CFG").map(materia => renderMateria(materia))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Ciclo de Formación Orientada (CFO) */}
-              <Card className="border-2 border-gray-300">
-                <CardHeader className="bg-gray-50">
-                  <CardTitle className="text-xl font-bold text-gray-800">
+              <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                  <h2 className="text-lg font-bold text-gray-800">
                     Ciclo de Formación Orientada (CFO)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-6">
+                  </h2>
+                </div>
+                <div className="p-6 space-y-6">
                   
-                  {/* Materias obligatorias del CFO */}
-                  <div>
-                    <div className="space-y-2">
-                      {getMateriasByCiclo("CFO").filter(materia => 
-                        !materia.electividad || 
-                        materia.electividad === "Variable"
-                      ).map(materia => renderMateria(materia))}
-                    </div>
+                  {/* Materias básicas del CFO */}
+                  <div className="space-y-1">
+                    {getMateriasByCiclo("CFO").filter(materia => 
+                      !materia.electividad || 
+                      materia.electividad === "Variable"
+                    ).map(materia => renderMateria(materia))}
                   </div>
 
                   {/* Correlatividad: Al menos 5 materias del CFG */}
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <div className="text-sm font-medium text-blue-800 mb-2">
-                      Correlatividad: Al menos 5 materias del CFG
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-blue-700 italic">
+                      • Correlatividad: Al menos 5 materias del CFG
                     </div>
-                    <div className="space-y-2">
+                    <div className="ml-4 space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.correlatividad === "Al menos 5 materias del CFG"
                       ).map(materia => renderMateria(materia))}
@@ -245,11 +216,11 @@ export default function PlanesEstudioPage() {
                   </div>
 
                   {/* Correlatividad: Al menos 10 materias del CFG */}
-                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                    <div className="text-sm font-medium text-yellow-800 mb-2">
-                      Correlatividad: Al menos 10 materias del CFG
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-blue-700 italic">
+                      • Correlatividad: Al menos 10 materias del CFG
                     </div>
-                    <div className="space-y-2">
+                    <div className="ml-4 space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.correlatividad === "Al menos 10 materias del CFG"
                       ).map(materia => renderMateria(materia))}
@@ -257,11 +228,11 @@ export default function PlanesEstudioPage() {
                   </div>
 
                   {/* Una materia a elegir entre */}
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <div className="text-sm font-medium text-green-800 mb-2">
-                      Una materia a elegir entre:
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-blue-700 italic">
+                      • Una materia a elegir entre:
                     </div>
-                    <div className="space-y-2">
+                    <div className="ml-4 space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.electividad === "Elección A, 1 materia"
                       ).map(materia => renderMateria(materia))}
@@ -269,94 +240,94 @@ export default function PlanesEstudioPage() {
                   </div>
 
                   {/* Materia electiva */}
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {getMateriasByCiclo("CFO").filter(materia => 
                       materia.nombre.includes("materia electiva")
                     ).map(materia => renderMateria(materia))}
                   </div>
 
                   {/* Dos materias a elegir dentro de la misma área temática */}
-                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                    <div className="text-sm font-medium text-purple-800 mb-4">
-                      Dos materias a elegir dentro de la misma área temática:
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium text-blue-700 italic">
+                      • Dos materias a elegir dentro de la misma área temática:
                     </div>
                     
                     {/* Antropología histórica y memoria */}
-                    <div className="mb-4">
-                      <div className="font-medium text-purple-700 mb-2 underline">
+                    <div className="ml-4">
+                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
                         Antropología histórica y memoria
                       </div>
-                      <div className="space-y-2 ml-4">
-                        {getMateriasByArea("Antropología histórica y memoria").map(materia => renderMateria(materia, false))}
+                      <div className="ml-4 space-y-1">
+                        {getMateriasByArea("Antropología histórica y memoria").map(materia => renderMateria(materia))}
                       </div>
                     </div>
 
                     {/* Procesos culturales, ideología y poder */}
-                    <div className="mb-4">
-                      <div className="font-medium text-purple-700 mb-2 underline">
+                    <div className="ml-4">
+                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
                         Procesos culturales, ideología y poder
                       </div>
-                      <div className="space-y-2 ml-4">
-                        {getMateriasByArea("Procesos culturales, ideología y poder").map(materia => renderMateria(materia, false))}
+                      <div className="ml-4 space-y-1">
+                        {getMateriasByArea("Procesos culturales, ideología y poder").map(materia => renderMateria(materia))}
                       </div>
                     </div>
 
                     {/* Procesos políticos, instituciones y prácticas */}
-                    <div className="mb-4">
-                      <div className="font-medium text-purple-700 mb-2 underline">
+                    <div className="ml-4">
+                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
                         Procesos políticos, instituciones y prácticas
                       </div>
-                      <div className="space-y-2 ml-4">
-                        {getMateriasByArea("Procesos políticos, instituciones y prácticas").map(materia => renderMateria(materia, false))}
+                      <div className="ml-4 space-y-1">
+                        {getMateriasByArea("Procesos políticos, instituciones y prácticas").map(materia => renderMateria(materia))}
                       </div>
                     </div>
 
-                    {/* Procesos socioeconómicos: producción, reproducción y transformación social */}
-                    <div className="mb-4">
-                      <div className="font-medium text-purple-700 mb-2 underline">
+                    {/* Procesos socioeconómicos */}
+                    <div className="ml-4">
+                      <div className="font-medium text-blue-700 mb-1 text-sm underline">
                         Procesos socioeconómicos: producción, reproducción y transformación social
                       </div>
-                      <div className="space-y-2 ml-4">
-                        {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map(materia => renderMateria(materia, false))}
+                      <div className="ml-4 space-y-1">
+                        {getMateriasByArea("Procesos socioeconómicos: producción, reproducción y transformación social").map(materia => renderMateria(materia))}
                       </div>
                     </div>
                   </div>
 
                   {/* Seminario de investigación */}
-                  <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                    <div className="text-sm font-medium text-red-800 mb-2">
-                      Correlatividad: Al menos 10 materias del CFG, incluyendo Metodología e Investigación Antropológica
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-blue-700 italic">
+                      • Correlatividad: Al menos 10 materias del CFG, incluyendo Metodología e Investigación Antropológica
                     </div>
-                    <div className="space-y-2">
+                    <div className="ml-4 space-y-1">
                       {getMateriasByCiclo("CFO").filter(materia => 
                         materia.correlatividad.includes("METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA")
                       ).map(materia => renderMateria(materia))}
                     </div>
                   </div>
 
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Idiomas */}
-              <Card className="border-2 border-gray-300">
-                <CardHeader className="bg-gray-50">
-                  <CardTitle className="text-xl font-bold text-gray-800">
+              <div className="bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="bg-gray-200 px-6 py-3 border-b border-gray-300">
+                  <h2 className="text-lg font-bold text-gray-800">
                     Idiomas
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="space-y-2">
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-1">
                     <div className="flex items-start gap-2">
-                      <span className="text-gray-600">•</span>
-                      <span className="text-sm text-gray-900">Tres niveles de un idioma anglosajón</span>
+                      <span className="text-gray-600 mt-0.5">•</span>
+                      <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma anglosajón</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-gray-600">•</span>
-                      <span className="text-sm text-gray-900">Tres niveles de un idioma latino</span>
+                      <span className="text-gray-600 mt-0.5">•</span>
+                      <span className="text-sm text-gray-900 leading-relaxed">Tres niveles de un idioma latino</span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="text-center py-16">
