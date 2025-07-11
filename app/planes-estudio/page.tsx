@@ -330,30 +330,25 @@ export default function PlanesEstudioPage() {
     return result
   }
 
-  // Función para obtener materias por ciclo manteniendo orden original
+  // Función para obtener materias por ciclo
   const getMateriasByCiclo = (ciclo: string) => {
-    let filteredMaterias = []
-    
     if (planSeleccionado === "2023") {
       if (orientacionSeleccionada === "profesorado") {
-        filteredMaterias = materias.filter(materia => materia.ciclo.includes(ciclo))
+        return materias.filter(materia => materia.ciclo.includes(ciclo))
       } else {
         const orientacionSuffix = orientacionSeleccionada === "arqueologia" ? "Arqueología" : "Sociocultural"
-        filteredMaterias = materias.filter(materia => 
+        return materias.filter(materia => 
           materia.ciclo.includes(ciclo) && 
           materia.ciclo.includes(orientacionSuffix)
         )
       }
     } else {
       // Plan 1985
-      filteredMaterias = materias.filter(materia => materia.ciclo.includes(ciclo))
+      return materias.filter(materia => materia.ciclo.includes(ciclo))
     }
-    
-    // Mantener el orden original del CSV (no ordenar alfabéticamente)
-    return filteredMaterias
   }
 
-  // Función para obtener materias por área temática manteniendo orden original
+  // Función para obtener materias por área temática (solo para sociocultural 2023)
   const getMateriasByArea = (area: string) => {
     return materias.filter(materia => 
       materia.ciclo.includes("CFO") && 
@@ -362,7 +357,7 @@ export default function PlanesEstudioPage() {
     )
   }
 
-  // Función para obtener materias electivas de arqueología manteniendo orden original
+  // Función para obtener materias electivas de arqueología
   const getMateriasElectivasArqueologia = () => {
     return materias.filter(materia => 
       materia.ciclo.includes("CFO") && 
@@ -424,7 +419,10 @@ export default function PlanesEstudioPage() {
             <MobileNav>
               <div className="flex flex-col space-y-4">
                 <a href="/" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-                  Oferta Horaria
+                  🕐 Oferta Horaria
+                </a>
+                <a href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
+                  📋 Planes de estudio
                 </a>
                 <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
                   <a href="https://filo.uba.ar" className="text-uba-primary hover:text-uba-secondary font-medium transition-all duration-200">filo.uba.ar</a>
@@ -437,8 +435,10 @@ export default function PlanesEstudioPage() {
             {/* Menú para pantallas grandes */}
             <div className="hidden lg:flex items-center space-x-4">
               <a href="/" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-                Oferta Horaria
-              </a> de estudio
+                🕐 Oferta Horaria
+              </a>
+              <a href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
+                📋 Planes de estudio
               </a>
             </div>
             <div className="hidden lg:flex space-x-8">
@@ -456,7 +456,7 @@ export default function PlanesEstudioPage() {
         <main className="py-8">
           {/* Selector de plan de estudios */}
           <div className="bg-gray-100 p-6 rounded-lg mb-8">
-            <h2 className="text-xl font-bold text-[#1c2554] mb-6">Seleccionar plan de estudios</h2>
+            <h2 className="text-xl font-bold text-[#1c2554] mb-6">Plan de Estudios</h2>
 
             {/* Plan selector */}
             <div className="mb-6">
@@ -540,25 +540,6 @@ export default function PlanesEstudioPage() {
                 )}
               </div>
             </div>
-          </div>
-
-          {/* Título del plan seleccionado */}
-          <div className="mb-6">
-            <h3 className="text-2xl font-bold text-[#1c2554]">
-              Plan {planSeleccionado} - {
-                orientacionSeleccionada === "profesorado" 
-                  ? "Profesorado" 
-                  : orientacionSeleccionada === "sociocultural" 
-                    ? "Licenciatura" 
-                    : "Licenciatura"
-              } - Orientación en {
-                planSeleccionado === "1985" && orientacionSeleccionada === "profesorado"
-                  ? (orientacionPlan1985 === "arqueologia" ? "Arqueología" : "Antropología Sociocultural")
-                  : orientacionSeleccionada === "arqueologia" 
-                    ? "Arqueología" 
-                    : "Antropología Sociocultural"
-              }
-            </h3>
           </div>
 
           {planSeleccionado === "2023" ? (
