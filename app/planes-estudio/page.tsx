@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MobileNav } from "@/components/mobile-nav"
+import { Footer } from "@/components/footer"
 import { getContenidoMinimo } from "@/lib/contenidos-minimos"
 
 interface MateriaDelPlan {
@@ -1035,6 +1036,8 @@ export default function PlanesEstudioPage() {
           )}
         </main>
       </div>
+
+      <Footer />
     </div>
   )
 }
