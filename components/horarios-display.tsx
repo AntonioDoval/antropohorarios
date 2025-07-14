@@ -791,8 +791,7 @@ export function HorariosDisplay() {
             {mostrarFiltroHorarios && (
               <div className="bg-white p-3 rounded-lg border border-gray-200">
                 <div className="grid grid-cols-6 gap-1 text-xs">
-                  {/* Header row */}
-                  {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => (
+                  {/* Header row */}{["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => (
                     <div key={dia} className="font-medium text-center text-uba-primary py-1 truncate">
                       <span className="hidden md:inline">{dia}</span>                      <span className="md:hidden">{dia.substring(0, 3)}</span>
                     </div>
