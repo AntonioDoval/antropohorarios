@@ -28,6 +28,7 @@ const config: Config = {
         "uba-secondary": "#46bfb0",
         "uba-beige": "#f4d03f",
         "uba-red": "#e74c3c",
+        "uba-orange": "#f5a50b",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
