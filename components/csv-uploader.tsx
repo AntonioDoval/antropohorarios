@@ -229,7 +229,7 @@ export function CSVUploader() {
 
         // Normalizar modalidad de cursada
         if (!modalidadCursada || modalidadCursada.trim() === "") {
-          modalidadCursada = "Presencial"
+          modalidadCursada = "Sede Puán"
         } else {
           // Normalizar texto para mantener las diferencias importantes
           const cursadaLower = modalidadCursada.toLowerCase().trim()
@@ -237,8 +237,12 @@ export function CSVUploader() {
             modalidadCursada = "Presencial, con 30% de virtualidad asincrónica"
           } else if (cursadaLower.includes("virtual") && !cursadaLower.includes("30%")) {
             modalidadCursada = "Virtual"
+          } else if (cursadaLower.includes("museo")) {
+            modalidadCursada = "Sede Museo"
+          } else if (cursadaLower.includes("tilcara")) {
+            modalidadCursada = "Sede Tilcara"
           } else {
-            modalidadCursada = "Presencial"
+            modalidadCursada = "Sede Puán"
           }
         }
 

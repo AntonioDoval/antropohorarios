@@ -290,7 +290,10 @@ export function HorariosDisplay() {
 
   const filtrarAsignaturasPorPlan = (asignaturas: AsignaturaConPlan[], plan: "2023" | "1985"): AsignaturaConPlan[] => {
     if (plan === "2023") {
-      return asignaturas
+      // Para plan 2023, excluir materias optativas exclusivas del plan 1985
+      return asignaturas.filter(asignatura => 
+        asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
+      )
     }
 
     return asignaturas.filter(asignatura => 
@@ -915,7 +918,7 @@ export function HorariosDisplay() {
                 <div className="flex flex-wrap gap-1 mb-2">
                   {/* Badge de modalidad de cursada */}
                   {(() => {
-                    const modalidadCursada = asignatura.modalidadCursada || "Presencial"
+                    const modalidadCursada = asignatura.modalidadCursada || "Sede Puán"
 
                     if (modalidadCursada.toLowerCase() === "virtual" || 
                         (modalidadCursada.toLowerCase().includes("virtual") && 
@@ -931,10 +934,22 @@ export function HorariosDisplay() {
                           Presencial, con 30% virtualidad asincrónica
                         </Badge>
                       )
+                    } else if (modalidadCursada.toLowerCase().includes("museo")) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 border-amber-300 px-1.5 py-0.5">
+                          Sede Museo
+                        </Badge>
+                      )
+                    } else if (modalidadCursada.toLowerCase().includes("tilcara")) {
+                      return (
+                        <Badge variant="secondary" className="text-xs bg-emerald-100 text-emerald-700 border-emerald-300 px-1.5 py-0.5">
+                          Sede Tilcara
+                        </Badge>
+                      )
                     } else {
                       return (
                         <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-300 px-1.5 py-0.5">
-                          Presencial
+                          Sede Puán
                         </Badge>
                       )
                     }
@@ -964,6 +979,13 @@ export function HorariosDisplay() {
                       )
                     }
                   })()}
+
+                  {/* Badge de Optativa para materias exclusivas del plan 1985 */}
+                  {asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" && (
+                    <Badge variant="secondary" className="text-xs bg-violet-100 text-violet-700 border-violet-300 px-1.5 py-0.5">
+                      Optativa
+                    </Badge>
+                  )}
                 </div>
 
 
