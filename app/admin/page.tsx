@@ -8,10 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-
 import { Switch } from "@/components/ui/switch"
-import { Lock, AlertCircle } from "lucide-react"
+import { Lock } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 
@@ -172,14 +170,7 @@ export default function AdminPage() {
         </Card>
 
         {/* Sección de Actualizar Horarios */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Actualizar Horarios</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CSVUploader />
-          </CardContent>
-        </Card>
+        <CSVUploader />
       </main>
 
       <Footer />
