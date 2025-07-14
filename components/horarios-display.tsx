@@ -1360,8 +1360,8 @@ export function HorariosDisplay() {
                             // Calculate left position and width
                             const leftOffset = 100 // Header width in px
                             const columnWidth = `calc((100% - 100px) / ${diasSemana.length})`
-                            const leftPosition = `calc(${leftOffset}px + ${columnWidth} * ${diaIndex} + 4px)`
-                            const cardWidth = `calc(${columnWidth} - 8px)`
+                            const leftPosition = `calc(${leftOffset}px + ${columnWidth} * ${diaIndex} + 8px)`
+                            const cardWidth = `calc(${columnWidth} - 16px)`
 
                             return (
                               <div
