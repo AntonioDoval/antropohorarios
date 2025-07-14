@@ -201,7 +201,7 @@ export function HorariosDisplay() {
     if (Object.keys(filtros.horariosSeleccionados).length === 0) return true
 
     const gruposClases = agruparClasesPorTipo(asignatura.clases)
-    
+
     // Para cada tipo de clase, verificar si hay al menos una opción en los horarios seleccionados
     for (const grupo of gruposClases) {
       let tieneOpcionValida = false
@@ -209,7 +209,7 @@ export function HorariosDisplay() {
       for (const clase of grupo.clases) {
         const dia = clase.dia
         const horariosDelDia = filtros.horariosSeleccionados[dia] || []
-        
+
         if (horariosDelDia.length > 0) {
           const claseCoincide = horariosDelDia.some(bloque => 
             tieneHorarioEnSlot(clase.horario, bloque)
@@ -633,7 +633,8 @@ export function HorariosDisplay() {
 
   return (
     <TooltipProvider>
-      <div className="space-y-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="space-y-4">
         <div className="mb-4">
           <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
           <h1 className="text-5xl font-bold text-uba-primary mb-2">
@@ -783,18 +784,17 @@ export function HorariosDisplay() {
                 />
               </button>
             </div>
-            
+
             {mostrarFiltroHorarios && (
               <div className="bg-white p-3 rounded-lg border border-gray-200">
                 <div className="grid grid-cols-6 gap-1 text-xs">
                   {/* Header row */}
                   {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map(dia => (
                     <div key={dia} className="font-medium text-center text-uba-primary py-1 truncate">
-                      <span className="hidden md:inline">{dia}</span>
-                      <span className="md:hidden">{dia.substring(0, 3)}</span>
+                      <span className="hidden md:inline">{dia}</span>                      <span className="md:hidden">{dia.substring(0, 3)}</span>
                     </div>
                   ))}
-                  
+
                   {/* Time slot rows */}
                   {Array.from({ length: 7 }, (_, i) => {
                     const horaInicio = 8 + (i * 2)
@@ -1384,6 +1384,7 @@ export function HorariosDisplay() {
           })()}
         </div>
       )}
+        </div>
       </div>
     </TooltipProvider>
   )
