@@ -162,36 +162,16 @@ export default function AdminPage() {
           </TabsContent>
 
           <TabsContent value="configuracion">
-            <Card>
-              <CardHeader>
-                <CardTitle>Configuración del Sitio</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="space-y-1">
-                    <Label className="text-base font-medium">
-                      Planes de Estudios
-                    </Label>
-                    <p className="text-sm text-gray-600">
-                      Habilitar o deshabilitar la sección de planes de estudios en el sitio público
-                    </p>
-                  </div>
-                  <Switch
-                    checked={planesEstudiosHabilitado}
-                    onCheckedChange={handleTogglePlanesEstudios}
-                    className="data-[state=checked]:bg-uba-primary"
-                  />
-                </div>
-                
-                <Alert>
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Al deshabilitar los planes de estudios, el enlace desaparecerá de la página principal. 
-                    Los usuarios no podrán acceder a esta sección hasta que sea habilitada nuevamente.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
+            <div className="flex items-center justify-between p-4 border rounded-lg bg-white">
+              <Label className="text-base font-medium">
+                Habilitar Planes de Estudios
+              </Label>
+              <Switch
+                checked={planesEstudiosHabilitado}
+                onCheckedChange={handleTogglePlanesEstudios}
+                className="data-[state=checked]:bg-uba-primary"
+              />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
