@@ -1359,10 +1359,14 @@ export function HorariosDisplay() {
 
                             // Calculate left position and width for centered alignment
                             const leftOffset = 100 // Header width in px
-                            const columnWidth = `calc((100% - 100px) / ${diasSemana.length})`
+                            const totalWidth = window.innerWidth > 900 ? 100 : 95 // Percentage of remaining width
+                            const columnWidthPercent = totalWidth / diasSemana.length
                             const horizontalPadding = 8 // Padding on each side for centering
-                            const leftPosition = `calc(${leftOffset}px + ${columnWidth} * ${diaIndex} + ${horizontalPadding}px)`
-                            const cardWidth = `calc(${columnWidth} - ${horizontalPadding * 2}px)`
+                            
+                            // Calculate position as percentage to maintain accuracy
+                            const leftPositionPercent = (columnWidthPercent * diaIndex) + (columnWidthPercent / 2) - (columnWidthPercent * 0.4)
+                            const leftPosition = `calc(${leftOffset}px + ${leftPositionPercent}%)`
+                            const cardWidth = `${columnWidthPercent * 0.8}%`
 
                             return (
                               <div
