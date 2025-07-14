@@ -20,7 +20,7 @@ export function MobileNav({ children }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="lg:hidden">
+    <div className="md:hidden">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button

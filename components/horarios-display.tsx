@@ -636,7 +636,7 @@ export function HorariosDisplay() {
 
   return (
     <TooltipProvider>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
         <div className="mb-4">
           <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>

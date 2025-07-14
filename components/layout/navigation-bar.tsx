@@ -34,7 +34,7 @@ export function NavigationBar({
             </div>
           </MobileNav>
 
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4">
             {showPlanesEstudio && (
               <Link href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
                 Planes de estudio
@@ -57,7 +57,7 @@ export function NavigationBar({
               </Button>
             </div>
           ) : (
-            <div className="hidden lg:flex space-x-8">
+            <div className="hidden md:flex space-x-8">
               <a href="https://filo.uba.ar" className="text-white hover:text-uba-secondary hover:font-bold hover:text-base text-sm transition-all duration-200">filo.uba.ar</a>
               <span className="text-white">|</span>
               <a href="https://campus.filo.uba.ar/" className="text-white hover:text-uba-secondary hover:font-bold hover:text-base text-sm transition-all duration-200">Campus Virtual</a>
