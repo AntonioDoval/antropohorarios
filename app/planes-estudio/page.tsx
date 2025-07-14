@@ -1,124 +1,30 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { MobileNav } from "@/components/mobile-nav"
 import { Footer } from "@/components/footer"
 import { PlanSelector } from "@/components/planes/plan-selector"
-import { SectionCard } from "@/components/planes/section-card"
-import { MateriasList } from "@/components/planes/materias-list"
-import { CorrelationSection } from "@/components/planes/correlation-section"
-import { MateriaDelPlan, PlanType, OrientacionType } from "@/lib/types/planes"
-import { 
-  getMateriasByCiclo, 
-  getMateriasByArea, 
-  getMateriasElectivasArqueologia,
-  getTituloOrientacion 
-} from "@/lib/utils/planes-utils"
-import { materiasProfesorado2023 } from "@/lib/data/planes-data"
+import { PlanTitle } from "@/components/planes/plan-title"
+import { PlanContentRenderer } from "@/components/planes/plan-content-renderer"
+import { PlanType, OrientacionType } from "@/lib/types/planes"
+import { usePlanesData } from "@/lib/hooks/use-planes-data"
 
 export default function PlanesEstudioPage() {
   const [planSeleccionado, setPlanSeleccionado] = useState<PlanType>("2023")
   const [orientacionSeleccionada, setOrientacionSeleccionada] = useState<OrientacionType>("profesorado")
   const [orientacionPlan1985, setOrientacionPlan1985] = useState<"sociocultural" | "arqueologia">("sociocultural")
-  const [materias, setMaterias] = useState<MateriaDelPlan[]>([])
 
-  useEffect(() => {
-    // Por ahora solo cargar los datos del profesorado 2023
-    // Aquí se cargarían todos los datos según la selección
-    setMaterias(materiasProfesorado2023)
-  }, [planSeleccionado, orientacionSeleccionada, orientacionPlan1985])
+  const { materias, loading } = usePlanesData(planSeleccionado, orientacionSeleccionada, orientacionPlan1985)
 
-  const renderPlan2023Profesorado = () => (
-    <div className="space-y-6">
-      <SectionCard title="Ciclo de Formación General (CFG) - Profesorado 2023">
-        <MateriasList 
-          materias={getMateriasByCiclo(materias, "CFG", planSeleccionado, orientacionSeleccionada)
-            .filter(m => !m.correlatividad && !m.electividad)} 
-          plan={planSeleccionado}
-        />
-      </SectionCard>
-
-      <SectionCard title="Materias con Correlatividades">
-        <div className="space-y-4">
-          <CorrelationSection
-            materias={materias}
-            plan={planSeleccionado}
-            correlatividad="Al menos 5 materias del CFG"
-            descripcion="Correlatividad: Al menos 5 materias del CFG"
-          />
-          <CorrelationSection
-            materias={materias}
-            plan={planSeleccionado}
-            correlatividad="Al menos 10 materias del CFG"
-            descripcion="Correlatividad: Al menos 10 materias del CFG"
-          />
-        </div>
-      </SectionCard>
-
-      <SectionCard title="Elección A - 5 materias según orientación">
-        <div className="space-y-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="text-sm font-medium text-blue-700 italic mb-3">
-              • Licenciatura Sociocultural
-            </div>
-            <MateriasList 
-              materias={materias.filter(m => m.area === "Licenciatura Sociocultural")} 
-              plan={planSeleccionado}
-            />
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="text-sm font-medium text-blue-700 italic mb-3">
-              • Licenciatura Arqueología
-            </div>
-            <MateriasList 
-              materias={materias.filter(m => m.area === "Licenciatura Arqueología")} 
-              plan={planSeleccionado}
-            />
-          </div>
-        </div>
-      </SectionCard>
-
-      <SectionCard title="Ciclo de Formación Específica (CFE) - Profesorado">
-        <div className="space-y-4">
-          <MateriasList 
-            materias={getMateriasByCiclo(materias, "CFE", planSeleccionado, orientacionSeleccionada)
-              .filter(m => !m.electividad)} 
-            plan={planSeleccionado}
-          />
-
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="text-sm font-medium text-blue-700 italic mb-3">
-              • Elección B - Departamento de Ciencias de la Educación
-            </div>
-            <MateriasList 
-              materias={materias.filter(m => m.electividad === "Elección B")} 
-              plan={planSeleccionado}
-            />
-          </div>
-        </div>
-      </SectionCard>
-    </div>
-  )
-
-  const renderIdiomasSection = () => (
-    <SectionCard title="Idiomas">
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="space-y-1">
-          <div className="py-2 px-3 rounded bg-gray-50">
-            <span className="text-sm text-gray-900 leading-relaxed">
-              Tres niveles de un idioma anglosajón
-            </span>
-          </div>
-          <div className="py-2 px-3 rounded bg-blue-50">
-            <span className="text-sm text-gray-900 leading-relaxed">
-              Tres niveles de un idioma latino
-            </span>
-          </div>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg text-gray-600">Cargando planes de estudio...</div>
         </div>
       </div>
-    </SectionCard>
-  )
+    )
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -193,36 +99,18 @@ export default function PlanesEstudioPage() {
             setOrientacionPlan1985={setOrientacionPlan1985}
           />
 
-          {/* Título del plan seleccionado */}
-          <div className="mb-6">
-            <h3 className="text-2xl font-bold text-[#1c2554]">
-              Plan {planSeleccionado} - {getTituloOrientacion(planSeleccionado, orientacionSeleccionada)} - Orientación en {
-                planSeleccionado === "2023" 
-                  ? (orientacionSeleccionada === "profesorado" ? "General" :
-                     orientacionSeleccionada === "sociocultural" ? "Antropología Sociocultural" : "Arqueología")
-                  : (orientacionSeleccionada === "profesorado" 
-                      ? (orientacionPlan1985 === "sociocultural" ? "Antropología Sociocultural" : "Arqueología")
-                      : orientacionSeleccionada === "sociocultural" ? "Antropología Sociocultural" : "Arqueología")
-              }
-            </h3>
-          </div>
+          <PlanTitle
+            planSeleccionado={planSeleccionado}
+            orientacionSeleccionada={orientacionSeleccionada}
+            orientacionPlan1985={orientacionPlan1985}
+          />
 
-          {planSeleccionado === "2023" && orientacionSeleccionada === "profesorado" ? (
-            <>
-              {renderPlan2023Profesorado()}
-              {renderIdiomasSection()}
-            </>
-          ) : (
-            <div className="space-y-6">
-              <SectionCard 
-                title={`Plan de Estudios ${planSeleccionado} - ${getTituloOrientacion(planSeleccionado, orientacionSeleccionada)}`}
-              >
-                <p className="text-center text-gray-600">
-                  Esta sección está en desarrollo. Por favor selecciona Plan 2023 - Profesorado para ver el contenido completo.
-                </p>
-              </SectionCard>
-            </div>
-          )}
+          <PlanContentRenderer
+            planSeleccionado={planSeleccionado}
+            orientacionSeleccionada={orientacionSeleccionada}
+            orientacionPlan1985={orientacionPlan1985}
+            materias={materias}
+          />
         </main>
       </div>
 
