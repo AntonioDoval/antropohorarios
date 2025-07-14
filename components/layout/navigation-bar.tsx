@@ -21,9 +21,6 @@ export function NavigationBar({
         <div className="flex justify-between items-center py-3">
           <MobileNav>
             <div className="flex flex-col space-y-4">
-              <Link href="/" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-                Ver oferta horaria
-              </Link>
               {showPlanesEstudio && (
                 <Link href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
                   Planes de estudio
@@ -38,9 +35,6 @@ export function NavigationBar({
           </MobileNav>
 
           <div className="hidden lg:flex items-center space-x-4">
-            <Link href="/" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
-              Ver oferta horaria
-            </Link>
             {showPlanesEstudio && (
               <Link href="/planes-estudio" className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2">
                 Planes de estudio
