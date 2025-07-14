@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Switch } from "@/components/ui/switch"
-import { Lock } from "lucide-react"
+import { Lock, AlertCircle } from "lucide-react"
 import Link from "next/link"
-import { Footer } from "@/components/footer"
+import { PageLayout } from "@/components/layout/page-layout"
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -98,52 +99,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header principal */}
-      <header className="bg-white py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center">
-            <div className="flex items-start gap-3 sm:gap-4">
-              {/* Círculo con ANT */}
-              <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-[#c44928] rounded-full flex items-center justify-center flex-shrink-0 aspect-square">
-                <span className="text-white font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl leading-none">ANT</span>
-              </div>
-              
-              {/* Texto principal */}
-              <div className="flex flex-col">
-                <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-[#c44928] leading-tight">
-                  Ciencias Antropológicas
-                </h1>
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#c44928]">
-                  <span className="font-bold">.UBA</span><span className="font-normal">FILO</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Barra de navegación */}
-      <nav className="bg-uba-primary border-t-4 border-uba-secondary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-end items-center py-3">
-            <div className="flex gap-3">
-              <Link href="/">
-                <Button className="bg-uba-secondary text-white font-bold hover:bg-white hover:text-uba-secondary transition-colors duration-200">
-                  Ver Horarios Públicos
-                </Button>
-              </Link>
-              <Button
-                onClick={handleLogout}
-                className="bg-uba-secondary text-white font-bold hover:bg-white hover:text-uba-secondary transition-colors duration-200"
-              >
-                Cerrar Sesión
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <PageLayout showPlanesEstudio={false} showAdminButtons={true} onLogout={handleLogout}>
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Sección de Planes de Estudios */}
         <Card>
@@ -172,8 +128,6 @@ export default function AdminPage() {
         {/* Sección de Actualizar Horarios */}
         <CSVUploader />
       </main>
-
-      <Footer />
-    </div>
+    </PageLayout>
   )
 }
