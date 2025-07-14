@@ -1357,11 +1357,12 @@ export function HorariosDisplay() {
                             const topPosition = (totalMinutesFromStart / totalMinutesInGrid) * gridHeight
                             const height = (durationMinutes / totalMinutesInGrid) * gridHeight
 
-                            // Calculate left position and width
+                            // Calculate left position and width for centered alignment
                             const leftOffset = 100 // Header width in px
                             const columnWidth = `calc((100% - 100px) / ${diasSemana.length})`
-                            const leftPosition = `calc(${leftOffset}px + ${columnWidth} * ${diaIndex} + 8px)`
-                            const cardWidth = `calc(${columnWidth} - 16px)`
+                            const horizontalPadding = 8 // Padding on each side for centering
+                            const leftPosition = `calc(${leftOffset}px + ${columnWidth} * ${diaIndex} + ${horizontalPadding}px)`
+                            const cardWidth = `calc(${columnWidth} - ${horizontalPadding * 2}px)`
 
                             return (
                               <div
