@@ -1315,87 +1315,75 @@ export function HorariosDisplay() {
                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-20 md:hidden">
                         →
                       </div>
-                      <div className="relative" style={{ minWidth: '900px' }}>
-                        {/* Header */}
-                        <div className="bg-uba-primary text-white flex">
-                          <div className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[100px] flex-shrink-0">
+                      <table className="w-full min-w-[900px]">
+                      <thead>
+                        <tr className="bg-uba-primary text-white">
+                          <th className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[100px]">
                             Horario
-                          </div>
+                          </th>
                           {diasSemana.map((dia) => (
-                            <div key={dia} className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[140px] flex-1">
+                            <th key={dia} className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[140px]">
                               {dia}
-                            </div>
+                            </th>
                           ))}
-                        </div>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {intervalos.map((intervalo) => (
+                          <tr key={intervalo.label} className="h-20">
+                            <td className="border border-gray-300 p-2 text-center font-medium text-sm bg-gray-50 text-uba-primary">
+                              {intervalo.label}
+                            </td>
+                            {diasSemana.map((dia) => {
+                              const clasesEnIntervalo = horariosCompletos.filter(
+                                (clase) =>
+                                  clase.dia === dia &&
+                                  clase.inicio < intervalo.fin &&
+                                  clase.fin > intervalo.inicio
+                              )
 
-                        {/* Grid container with relative positioning */}
-                        <div className="relative">
-                          {/* Background grid */}
-                          {intervalos.map((intervalo, rowIndex) => (
-                            <div key={intervalo.label} className="flex h-20 border-b border-gray-300">
-                              <div className="border-r border-gray-300 p-2 text-center font-medium text-sm bg-gray-50 text-uba-primary min-w-[100px] flex-shrink-0 flex items-center justify-center">
-                                {intervalo.label}
-                              </div>
-                              {diasSemana.map((dia) => (
-                                <div key={dia} className="border-r border-gray-300 min-w-[140px] flex-1 relative">
-                                </div>
-                              ))}
-                            </div>
-                          ))}
+                              return (
+                                <td key={dia} className="border border-gray-300 p-1 align-top relative">
+                                  {clasesEnIntervalo.map((clase, index) => {
+                                    const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
+                                    const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
+                                    const alturaTotal = intervalo.fin - intervalo.inicio
 
-                          {/* Floating class cards */}
-                          {horariosCompletos.map((clase, claseIndex) => {
-                            const diaIndex = diasSemana.indexOf(clase.dia)
-                            if (diaIndex === -1) return null
+                                    const topPercent = (inicioRelativo / alturaTotal) * 100
+                                    const heightPercent = ((finRelativo - inicioRelativo) / alturaTotal) * 100
 
-                            // Calculate position
-                            const totalMinutesFromStart = (clase.inicio - horaInicio) * 60
-                            const durationMinutes = (clase.fin - clase.inicio) * 60
-                            const gridHeight = intervalos.length * 80 // 80px per row (h-20)
-                            const totalMinutesInGrid = (horaFin - horaInicio) * 60
-
-                            const topPosition = (totalMinutesFromStart / totalMinutesInGrid) * gridHeight
-                            const height = (durationMinutes / totalMinutesInGrid) * gridHeight
-
-                            // Calculate left position and width for centered alignment
-                            const leftOffset = 100 // Header width in px
-                            const totalWidth = window.innerWidth > 900 ? 100 : 95 // Percentage of remaining width
-                            const columnWidthPercent = totalWidth / diasSemana.length
-                            const horizontalPadding = 8 // Padding on each side for centering
-                            
-                            // Calculate position as percentage to maintain accuracy
-                            const leftPositionPercent = (columnWidthPercent * diaIndex) + (columnWidthPercent / 2) - (columnWidthPercent * 0.4)
-                            const leftPosition = `calc(${leftOffset}px + ${leftPositionPercent}%)`
-                            const cardWidth = `${columnWidthPercent * 0.8}%`
-
-                            return (
-                              <div
-                                key={claseIndex}
-                                className={`absolute rounded-md border-2 p-2 text-xs overflow-hidden z-10 ${clase.color}`}
-                                style={{
-                                  top: `${topPosition}px`,
-                                  height: `${Math.max(height, 40)}px`, // Minimum height 40px
-                                  left: leftPosition,
-                                  width: cardWidth
-                                }}
-                              >
-                                <div className="font-semibold text-xs leading-tight mb-1 truncate">
-                                  {clase.asignatura.length > 25 
-                                    ? `${clase.asignatura.substring(0, 22)}...`
-                                    : clase.asignatura
-                                  }
-                                </div>
-                                <div className="text-xs leading-tight truncate mb-1">
-                                  {clase.clase}
-                                </div>
-                                <div className="text-xs opacity-75 truncate">
-                                  {clase.inicio}:00-{clase.fin}:00 hs
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
+                                    return (
+                                      <div
+                                        key={index}
+                                        className={`absolute left-1 right-1 rounded-md border-2 p-1 text-xs overflow-hidden ${clase.color}`}
+                                        style={{
+                                          top: `${topPercent}%`,
+                                          height: `${heightPercent}%`,
+                                          minHeight: '24px'
+                                        }}
+                                      >
+                                        <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
+                                          {clase.asignatura.length > 25 
+                                            ? `${clase.asignatura.substring(0, 22)}...`
+                                            : clase.asignatura
+                                          }
+                                        </div>
+                                        <div className="text-xs leading-tight truncate">
+                                          {clase.clase}
+                                        </div>
+                                        <div className="text-xs opacity-75 truncate">
+                                          {clase.inicio}:00-{clase.fin}:00 hs
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                      </table>
                     </div>
                   </div>
 
