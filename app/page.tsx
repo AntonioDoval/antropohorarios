@@ -1,10 +1,18 @@
-import { Suspense } from "react"
+"use client"
+
+import { Suspense, useState, useEffect } from "react"
 import { HorariosDisplay } from "@/components/horarios-display"
 import { loadSampleData } from "@/lib/sample-data-loader"
 import { Footer } from "@/components/footer"
 import { MobileNav } from "@/components/mobile-nav"
 
 export default function HomePage() {
+  const [planesEstudiosHabilitado, setPlanesEstudiosHabilitado] = useState(true)
+
+  useEffect(() => {
+    const stored = localStorage.getItem("planes-estudios-habilitado")
+    setPlanesEstudiosHabilitado(stored !== "false")
+  }, [])
   return (
     <div className="min-h-screen bg-white">
       {/* Header principal */}
@@ -44,12 +52,14 @@ export default function HomePage() {
                 >
                   Ver oferta horaria
                 </a>
-                <a
-                  href="/planes-estudio"
-                  className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
-                >
-                  Ver planes de estudio
-                </a>
+                {planesEstudiosHabilitado && (
+                  <a
+                    href="/planes-estudio"
+                    className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
+                  >
+                    Ver planes de estudio
+                  </a>
+                )}
                 <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
                   <a
                     href="https://filo.uba.ar"
@@ -75,12 +85,14 @@ export default function HomePage() {
 
             {/* Menú para pantallas grandes */}
             <div className="hidden lg:flex items-center space-x-4">
-              <a
-                href="/planes-estudio"
-                className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
-              >
-                Ver planes de estudio
-              </a>
+              {planesEstudiosHabilitado && (
+                <a
+                  href="/planes-estudio"
+                  className="bg-uba-secondary text-white px-4 py-2 rounded-lg hover:bg-uba-secondary/90 transition-all duration-200 flex items-center gap-2"
+                >
+                  Ver planes de estudio
+                </a>
+              )}
             </div>
             <div className="hidden lg:flex space-x-8">
               <a

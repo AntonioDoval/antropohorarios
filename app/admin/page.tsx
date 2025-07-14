@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { CSVUploader } from "@/components/csv-uploader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Switch } from "@/components/ui/switch"
 import { Lock, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
@@ -18,6 +19,17 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [planesEstudiosHabilitado, setPlanesEstudiosHabilitado] = useState(true)
+
+  useEffect(() => {
+    const stored = localStorage.getItem("planes-estudios-habilitado")
+    setPlanesEstudiosHabilitado(stored !== "false")
+  }, [])
+
+  const handleTogglePlanesEstudios = (enabled: boolean) => {
+    setPlanesEstudiosHabilitado(enabled)
+    localStorage.setItem("planes-estudios-habilitado", enabled.toString())
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -136,14 +148,50 @@ export default function AdminPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="horarios" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 mb-6">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="horarios" className="text-lg font-medium">
               Actualizar Horarios
+            </TabsTrigger>
+            <TabsTrigger value="configuracion" className="text-lg font-medium">
+              Configuración
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="horarios">
             <CSVUploader />
+          </TabsContent>
+
+          <TabsContent value="configuracion">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configuración del Sitio</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="space-y-1">
+                    <Label className="text-base font-medium">
+                      Planes de Estudios
+                    </Label>
+                    <p className="text-sm text-gray-600">
+                      Habilitar o deshabilitar la sección de planes de estudios en el sitio público
+                    </p>
+                  </div>
+                  <Switch
+                    checked={planesEstudiosHabilitado}
+                    onCheckedChange={handleTogglePlanesEstudios}
+                    className="data-[state=checked]:bg-uba-primary"
+                  />
+                </div>
+                
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Al deshabilitar los planes de estudios, el enlace desaparecerá de la página principal. 
+                    Los usuarios no podrán acceder a esta sección hasta que sea habilitada nuevamente.
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>
