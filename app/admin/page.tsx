@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import { Switch } from "@/components/ui/switch"
 import { Lock, AlertCircle } from "lucide-react"
 import Link from "next/link"
@@ -146,34 +146,40 @@ export default function AdminPage() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs defaultValue="horarios" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="horarios" className="text-lg font-medium">
-              Actualizar Horarios
-            </TabsTrigger>
-            <TabsTrigger value="configuracion" className="text-lg font-medium">
-              Configuración
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="horarios">
-            <CSVUploader />
-          </TabsContent>
-
-          <TabsContent value="configuracion">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Sección de Planes de Estudios */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Habilitar/Deshabilitar sección Planes de Estudios</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="flex items-center justify-between p-4 border rounded-lg bg-white">
-              <Label className="text-base font-medium">
-                Habilitar Planes de Estudios
-              </Label>
-              <Switch
-                checked={planesEstudiosHabilitado}
-                onCheckedChange={handleTogglePlanesEstudios}
-                className="data-[state=checked]:bg-uba-primary"
-              />
+              <div className="flex items-center space-x-3">
+                <span className={`text-sm font-medium ${!planesEstudiosHabilitado ? 'text-red-600' : 'text-gray-500'}`}>
+                  Deshabilitado
+                </span>
+                <Switch
+                  checked={planesEstudiosHabilitado}
+                  onCheckedChange={handleTogglePlanesEstudios}
+                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
+                />
+                <span className={`text-sm font-medium ${planesEstudiosHabilitado ? 'text-green-600' : 'text-gray-500'}`}>
+                  Habilitado
+                </span>
+              </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* Sección de Actualizar Horarios */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Actualizar Horarios</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CSVUploader />
+          </CardContent>
+        </Card>
       </main>
 
       <Footer />
