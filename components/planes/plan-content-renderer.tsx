@@ -112,10 +112,52 @@ export const PlanContentRenderer: React.FC<PlanContentRendererProps> = ({
     </div>
   )
 
+  const renderPlanGeneral = () => (
+    <div className="space-y-6">
+      <SectionCard 
+        title={`Plan de Estudios ${planSeleccionado} - ${getTituloOrientacion(planSeleccionado, orientacionSeleccionada)}`}
+      >
+        <div className="space-y-4">
+          {/* Materias por ciclo */}
+          {Array.from(new Set(materias.map(m => m.ciclo))).map(ciclo => (
+            <div key={ciclo} className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-700 mb-3">{ciclo}</h3>
+              <div className="space-y-1">
+                {materias
+                  .filter(m => m.ciclo === ciclo)
+                  .map((materia, index) => (
+                    <div key={`${materia.cod23}-${index}`} className={`py-2 px-3 rounded ${
+                      index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
+                    }`}>
+                      <span className="text-sm text-gray-900 leading-relaxed">
+                        {materia.nombre.toLowerCase().charAt(0).toUpperCase() + materia.nombre.toLowerCase().slice(1)}
+                      </span>
+                      {materia.correlatividad && (
+                        <div className="text-xs text-blue-600 mt-1">
+                          Correlatividad: {materia.correlatividad}
+                        </div>
+                      )}
+                      {materia.electividad && (
+                        <div className="text-xs text-green-600 mt-1">
+                          {materia.electividad}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </SectionCard>
+
+      <IdiomasSection />
+    </div>
+  )
+
   // Lógica para decidir qué renderizar
   if (planSeleccionado === "2023" && orientacionSeleccionada === "profesorado") {
     return renderPlan2023Profesorado()
   } else {
-    return renderPlanEnDesarrollo()
+    return renderPlanGeneral()
   }
 }

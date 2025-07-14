@@ -1,4 +1,3 @@
-
 import { MateriaDelPlan } from "../types/planes"
 
 export const materiasProfesoradoSociocultural1985: MateriaDelPlan[] = [
