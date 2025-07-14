@@ -30,7 +30,7 @@ export const PlanTitle: React.FC<PlanTitleProps> = ({
   return (
     <div className="mb-6">
       <h3 className="text-2xl font-bold text-[#1c2554]">
-        Plan {planSeleccionado} - {getTituloOrientacion(planSeleccionado, orientacionSeleccionada)} - Orientación en {getOrientacionText()}
+        Plan {planSeleccionado} - {getTituloOrientacion(planSeleccionado, orientacionSeleccionada)} - Orientación {getOrientacionText()}
       </h3>
     </div>
   )

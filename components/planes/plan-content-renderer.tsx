@@ -27,7 +27,7 @@ export const PlanContentRenderer: React.FC<PlanContentRendererProps> = ({
 }) => {
   const renderPlan2023Profesorado = () => (
     <div className="space-y-6">
-      <SectionCard title="Ciclo de Formación General (CFG) - Profesorado 2023">
+      <SectionCard title="Ciclo de Formación General (CFG)">
         <MateriasList 
           materias={getMateriasByCiclo(materias, "CFG", planSeleccionado, orientacionSeleccionada)
             .filter(m => !m.correlatividad && !m.electividad)} 

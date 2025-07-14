@@ -52,12 +52,12 @@ export const getMateriasElectivasArqueologia = (materias: MateriaDelPlan[]) => {
 export const getTituloOrientacion = (plan: PlanType, orientacion: OrientacionType) => {
   if (plan === "2023") {
     if (orientacion === "profesorado") return "Profesorado"
-    if (orientacion === "sociocultural") return "Lic. Sociocultural"
-    return "Lic. Arqueología"
+    if (orientacion === "sociocultural") return "Licenciatura"
+    return "Licenciatura"
   } else {
     if (orientacion === "profesorado") return "Profesorado"
-    if (orientacion === "sociocultural") return "Lic. Sociocultural"
-    return "Lic. Arqueología"
+    if (orientacion === "sociocultural") return "Licenciatura"
+      return "Licenciatura"
   }
 }
 
