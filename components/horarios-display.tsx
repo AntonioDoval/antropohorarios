@@ -81,23 +81,62 @@ export function HorariosDisplay() {
   const [asignaturasEnriquecidas, setAsignaturasEnriquecidas] = useState<AsignaturaConPlan[]>([])
 
   useEffect(() => {
-    const savedData = localStorage.getItem("horarios-antropologia")
-    if (savedData) {
+    const fetchHorarios = async () => {
       try {
-        const parsedData = JSON.parse(savedData)
-        if (Array.isArray(parsedData)) {
-          setData({
-            asignaturas: parsedData,
-            periodo: { año: new Date().getFullYear().toString(), periodo: "1C" },
-          })
+        const response = await fetch('/api/horarios')
+        const horarios = await response.json()
+        
+        if (horarios.asignaturas && horarios.asignaturas.length > 0) {
+          setData(horarios)
         } else {
-          setData(parsedData)
+          // Fallback a localStorage si no hay datos en la API
+          const savedData = localStorage.getItem("horarios-antropologia")
+          if (savedData) {
+            try {
+              const parsedData = JSON.parse(savedData)
+              if (Array.isArray(parsedData)) {
+                setData({
+                  asignaturas: parsedData,
+                  periodo: { año: new Date().getFullYear().toString(), periodo: "1C" },
+                })
+              } else {
+                setData(parsedData)
+              }
+            } catch (error) {
+              console.error("Error parsing saved data:", error)
+            }
+          }
         }
       } catch (error) {
-        console.error("Error parsing saved data:", error)
+        console.error('Error fetching horarios:', error)
+        // Fallback a localStorage si falla la API
+        const savedData = localStorage.getItem("horarios-antropologia")
+        if (savedData) {
+          try {
+            const parsedData = JSON.parse(savedData)
+            if (Array.isArray(parsedData)) {
+              setData({
+                asignaturas: parsedData,
+                periodo: { año: new Date().getFullYear().toString(), periodo: "1C" },
+              })
+            } else {
+              setData(parsedData)
+            }
+          } catch (error) {
+            console.error("Error parsing saved data:", error)
+          }
+        }
+      } finally {
+        setLoading(false)
       }
     }
-    setLoading(false)
+
+    fetchHorarios()
+    
+    // Polling cada 30 segundos para detectar cambios
+    const interval = setInterval(fetchHorarios, 30000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {

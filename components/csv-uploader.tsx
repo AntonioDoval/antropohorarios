@@ -64,7 +64,6 @@ export function CSVUploader() {
     try {
       const sampleData = await loadSampleData()
 
-      // Guardar datos de ejemplo en localStorage
       const horariosData: HorariosData = {
         asignaturas: sampleData,
         periodo: {
@@ -73,17 +72,31 @@ export function CSVUploader() {
         }
       }
 
-      localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
-
-      setMessage({
-        type: "success",
-        content: `Datos de ejemplo cargados exitosamente. ${sampleData.length} asignaturas disponibles.`
+      // Guardar en API
+      const response = await fetch('/api/horarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(horariosData),
       })
 
-      // Recargar la página para mostrar los nuevos datos
-      setTimeout(() => {
-        window.location.reload()
-      }, 2000)
+      if (response.ok) {
+        // También guardar en localStorage como backup
+        localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
+
+        setMessage({
+          type: "success",
+          content: `Datos de ejemplo cargados exitosamente. ${sampleData.length} asignaturas disponibles en todos los dispositivos.`
+        })
+
+        // Recargar la página para mostrar los nuevos datos
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
+      } else {
+        throw new Error('Error saving sample data to server')
+      }
 
     } catch (error) {
       console.error("Error loading sample data:", error)
@@ -454,7 +467,7 @@ export function CSVUploader() {
     return tituloFormateado
   }
 
-  const guardarDatos = () => {
+  const guardarDatos = async () => {
     if (!preview) return
 
     const horariosData: HorariosData = {
@@ -465,17 +478,41 @@ export function CSVUploader() {
       },
     }
 
-    localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
+    try {
+      const response = await fetch('/api/horarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(horariosData),
+      })
 
-    setMessage({
-      type: "success",
-      content: "Datos guardados exitosamente. Recarga la página para ver los horarios.",
-    })
+      if (response.ok) {
+        // También guardar en localStorage como backup
+        localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
 
-    // Recargar la página después de 2 segundos
-    setTimeout(() => {
-      window.location.reload()
-    }, 2000)
+        setMessage({
+          type: "success",
+          content: "Datos guardados exitosamente. Los cambios se verán reflejados en todos los dispositivos.",
+        })
+
+        // Recargar la página después de 2 segundos
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
+      } else {
+        throw new Error('Error saving data to server')
+      }
+    } catch (error) {
+      console.error('Error saving horarios:', error)
+      setMessage({
+        type: "error",
+        content: "Error al guardar en el servidor. Guardado localmente como respaldo.",
+      })
+      
+      // Fallback a localStorage
+      localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
+    }
   }
 
   return (
