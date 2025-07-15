@@ -208,7 +208,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <Label htmlFor="cuatrimestre" className="text-uba-primary">
-                  Cuatrimestre
+                  Período
                 </Label>
                 <Select value={cuatrimestre} onValueChange={setCuatrimestre}>
                   <SelectTrigger className="mt-1 border-uba-primary/30 focus:border-uba-primary">
