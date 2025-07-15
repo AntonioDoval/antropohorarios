@@ -237,12 +237,15 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
+        {/* Sección de Actualizar Horarios */}
+        <CSVUploader />
+
         {/* Sección de Planes de Estudios */}
         <Card>
           <CardHeader>
             <CardTitle>Habilitar/Deshabilitar sección Planes de Estudios</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 border rounded-lg bg-white">
               <div className="flex items-center space-x-3">
                 <span className={`text-sm font-medium ${!planesEstudiosHabilitado ? 'text-red-600' : 'text-gray-500'}`}>
@@ -258,11 +261,39 @@ export default function AdminPage() {
                 </span>
               </div>
             </div>
+            
+            <Button 
+              onClick={() => {
+                setPeriodoMessage({
+                  type: "success",
+                  content: planesEstudiosHabilitado ? "Sección de Planes de Estudio habilitada." : "Sección de Planes de Estudio deshabilitada."
+                });
+              }} 
+              className="w-full bg-uba-primary hover:bg-uba-primary/90"
+            >
+              Aplicar
+            </Button>
+
+            {periodoMessage && (
+              <Alert className={`${
+                periodoMessage.type === "success" 
+                  ? "border-green-200 bg-green-50" 
+                  : "border-red-200 bg-red-50"
+              }`}>
+                {periodoMessage.type === "success" ? (
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                )}
+                <AlertDescription className={
+                  periodoMessage.type === "success" ? "text-green-800" : "text-red-800"
+                }>
+                  {periodoMessage.content}
+                </AlertDescription>
+              </Alert>
+            )}
           </CardContent>
         </Card>
-
-        {/* Sección de Actualizar Horarios */}
-        <CSVUploader />
       </main>
     </PageLayout>
   )
