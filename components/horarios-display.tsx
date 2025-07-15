@@ -322,9 +322,20 @@ export function HorariosDisplay() {
 
   const getNombreAsignaturaPorPlan = (asignatura: AsignaturaConPlan, plan: "2023" | "1985"): string => {
     if (plan === "1985") {
-      return asignatura.planInfo?.equivalencia?.nombrePlan85 || asignatura.materia
+      // Para plan 1985, usar el nombre específico si existe, sino el nombre original
+      const nombrePlan85 = asignatura.planInfo?.equivalencia?.nombrePlan85
+      if (nombrePlan85 && nombrePlan85.trim() !== '') {
+        return nombrePlan85
+      }
+    } else {
+      // Para plan 2023, usar el nombre específico si existe, sino el nombre original
+      const nombrePlan23 = asignatura.planInfo?.equivalencia?.nombrePlan23
+      if (nombrePlan23 && nombrePlan23.trim() !== '') {
+        return nombrePlan23
+      }
     }
-    return asignatura.planInfo?.equivalencia?.nombrePlan23 || asignatura.materia
+    // Fallback al nombre original de la asignatura
+    return asignatura.materia
   }
 
   const filtrarAsignaturasPorPlan = (asignaturas: AsignaturaConPlan[], plan: "2023" | "1985"): AsignaturaConPlan[] => {
@@ -335,10 +346,9 @@ export function HorariosDisplay() {
       )
     }
 
-    return asignaturas.filter(asignatura => 
-      asignatura.planInfo?.equivalencia?.nombrePlan85 || 
-      asignatura.planInfo?.equivalencia?.cod85
-    )
+    // Para plan 1985, incluir todas las asignaturas
+    // Las materias optativas exclusivas del plan 1985 solo son válidas para este plan
+    return asignaturas
   }
 
   const limpiarFiltros = () => {
