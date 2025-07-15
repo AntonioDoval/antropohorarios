@@ -203,7 +203,7 @@ export default function AdminPage() {
                   <SelectContent>
                     <SelectItem value="1C">1C (Primer Cuatrimestre)</SelectItem>
                     <SelectItem value="2C">2C (Segundo Cuatrimestre)</SelectItem>
-                    <SelectItem value="VER">VER (Verano)</SelectItem>
+                    <SelectItem value="BV">BV (Bimestre de verano)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

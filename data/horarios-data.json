@@ -1,0 +1,995 @@
+{
+  "asignaturas": [
+    {
+      "id": "asignatura-1",
+      "materia": "Problemas de Antropología Social y Política",
+      "catedra": "Fernando Balbi",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Miércoles",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Miércoles",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-5",
+          "tipo": "Práctico",
+          "numero": 4,
+          "dia": "Martes",
+          "horario": "18 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-2",
+      "materia": "Historia y Teoría de la Antropología I",
+      "catedra": "Alejandra Roca",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Jueves",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Jueves",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-5",
+          "tipo": "Práctico",
+          "numero": 4,
+          "dia": "Jueves",
+          "horario": "20 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-3",
+      "materia": "Problemas de Antropología Económica",
+      "catedra": "Ivanna Petz",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "aclaraciones": "El teórico-práctico corresponde a un \"taller semi-presencial\".",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Jueves",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-5",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Sábado",
+          "horario": "10 - 12"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-4",
+      "materia": "Antropología Biológica",
+      "catedra": "Sergio Avena",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "13 - 16"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "10 - 13"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Miércoles",
+          "horario": "16 - 19"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Martes",
+          "horario": "18 - 21"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-5",
+      "materia": "Introducción a la Arqueología",
+      "catedra": "Matilde Lanza",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "10 - 12"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Teórico",
+          "numero": 2,
+          "dia": "Jueves",
+          "horario": "10 - 12"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "12 - 14"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Jueves",
+          "horario": "12 - 14"
+        }
+      ],
+      "agrupacionClases": {
+        "Teórico": "conjunto"
+      }
+    },
+    {
+      "id": "asignatura-6",
+      "materia": "Problemas de Antropología Simbólica",
+      "catedra": "Pablo Wright",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Martes",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Miércoles",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-5",
+          "tipo": "Práctico",
+          "numero": 4,
+          "dia": "Miércoles",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-6",
+          "tipo": "Práctico",
+          "numero": 5,
+          "dia": "Jueves",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-7",
+          "tipo": "Práctico",
+          "numero": 6,
+          "dia": "Jueves",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-8",
+          "tipo": "Práctico",
+          "numero": 7,
+          "dia": "Viernes",
+          "horario": "12 - 14"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-7",
+      "materia": "Epistemología de las Ciencias Sociales",
+      "catedra": "Valeria Hernández",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Lunes",
+          "horario": "20 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-8",
+      "materia": "Epistemología de las Ciencias Sociales",
+      "catedra": "Eduardo Glavich",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Viernes",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Miércoles",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Viernes",
+          "horario": "20 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-9",
+      "materia": "Arqueología, Legislación y Comunidad",
+      "catedra": "Virginia Salerno",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Presencial, con 30% de virtualidad asincrónica",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Viernes",
+          "horario": "12 - 14"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Miércoles",
+          "horario": "12 - 14"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Lunes",
+          "horario": "16 - 18"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-10",
+      "materia": "Pueblos Indígenas Americanos",
+      "catedra": "Diana Lenton",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "10 - 14"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Teórico",
+          "numero": 2,
+          "dia": "Jueves",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "8 - 10"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Miércoles",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-5",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Jueves",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-6",
+          "tipo": "Práctico",
+          "numero": 4,
+          "dia": "Jueves",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-7",
+          "tipo": "Práctico",
+          "numero": 5,
+          "dia": "Viernes",
+          "horario": "18 - 20"
+        }
+      ],
+      "agrupacionClases": {
+        "Teórico": "elegir"
+      }
+    },
+    {
+      "id": "asignatura-11",
+      "materia": "Historia y Teoría de la Antropología II",
+      "catedra": "Santiago Garaño",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Viernes",
+          "horario": "18 - 22"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Viernes",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Viernes",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Miércoles",
+          "horario": "18 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-12",
+      "materia": "Antropología Lingüística",
+      "catedra": "Susana Skura / Ana Carolina Hecht",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Sábado",
+          "horario": "12 - 14"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-13",
+      "materia": "Sociedades, Culturas y Estados en América Prehispánica y Colonial",
+      "catedra": "Roxana Boixados",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Teórico",
+          "numero": 2,
+          "dia": "Lunes",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Martes",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-5",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Jueves",
+          "horario": "16 - 18"
+        }
+      ],
+      "agrupacionClases": {
+        "Teórico": "conjunto"
+      }
+    },
+    {
+      "id": "asignatura-14",
+      "materia": "Metodología de la Investigación Antropológica en Educación",
+      "catedra": "Ana Padawer / Florencia Girola",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Presencial, con 30% de virtualidad asincrónica",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Viernes",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "10 - 12"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Miércoles",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Viernes",
+          "horario": "16 - 18"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-15",
+      "materia": "Procesos Culturales, Folklore y Prácticas Subalternas",
+      "catedra": "Fernando Fischman",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "10 - 14"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Lunes",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Martes",
+          "horario": "20 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-16",
+      "materia": "Teorías de la Subjetividad",
+      "catedra": "Miguel Orellano / Cecilia Vareal",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "18 - 22"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Jueves",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Viernes",
+          "horario": "18 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-17",
+      "materia": "Arqueología Americana y Argentina II",
+      "catedra": "Verónica Williams",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "16 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "20 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-18",
+      "materia": "Materiales Arqueológicos y Sus Tecnologías",
+      "catedra": "Mariana Sacchi / Karen Borrazzo",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "14 - 18"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "18 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-19",
+      "materia": "Geología para Arqueólogos",
+      "catedra": "Cristian Favier Dubois",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "18 - 22"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "10 - 14"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Jueves",
+          "horario": "18 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-20",
+      "materia": "Arqueología Argentina",
+      "catedra": "Vivian Scheinsohn",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Museo",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Viernes",
+          "horario": "15 - 19"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "15 - 17"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Martes",
+          "horario": "17 - 19"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-21",
+      "materia": "Modelos y Métodos de Análisis en Arqueología",
+      "catedra": "Nora Franco / Liliana Manzi",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Museo",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "14 - 18"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "14 - 16"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Lunes",
+          "horario": "18 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-22",
+      "materia": "Ejercicio Profesional de la Antropología Sociocultural",
+      "catedra": "Eugenia Morey",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Presencial, con 30% de virtualidad asincrónica",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Viernes",
+          "horario": "18 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-23",
+      "materia": "Enfoque Cuantitativo de Investigación en Antropología Sociocultural",
+      "catedra": "Gisela Cassiodoro",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "20 - 22"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-4",
+          "tipo": "Práctico",
+          "numero": 2,
+          "dia": "Viernes",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-5",
+          "tipo": "Práctico",
+          "numero": 3,
+          "dia": "Viernes",
+          "horario": "16 - 18"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-24",
+      "materia": "Antropología y Educación",
+      "catedra": "María Laura Diez",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-3",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "20 - 22"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-25",
+      "materia": "Antropología del Estado y las Políticas Públicas",
+      "catedra": "Josefina Martínez",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "8 - 12"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "18 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-26",
+      "materia": "Arqueología de Tiempos Modernos",
+      "catedra": "Virginia Pineau",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Miércoles",
+          "horario": "16 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-27",
+      "materia": "Capitalismo Actual, Trabajo y Trabajadores",
+      "catedra": "Sandra Wolanski",
+      "tipoAsignatura": "Materia cuatrimestral regular",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "18 - 20"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "20 - 22"
+        }
+      ]
+    }
+  ],
+  "periodo": {
+    "año": "2025",
+    "periodo": "2C"
+  }
+}
