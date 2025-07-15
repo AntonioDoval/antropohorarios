@@ -929,9 +929,14 @@ export function HorariosDisplay() {
                       )
                     } else if (modalidadCursada.includes("30%") && modalidadCursada.toLowerCase().includes("virtual")) {
                       return (
-                        <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-300 px-1.5 py-0.5">
-                          Presencial, con 30% virtualidad asincrónica
-                        </Badge>
+                        <>
+                          <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-300 px-1.5 py-0.5">
+                            30% virtualidad
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-300 px-1.5 py-0.5">
+                            Sede Puán
+                          </Badge>
+                        </>
                       )
                     } else if (modalidadCursada.toLowerCase().includes("museo")) {
                       return (
