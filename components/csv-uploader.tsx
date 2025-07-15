@@ -207,6 +207,12 @@ export function CSVUploader() {
           orientacion = row[headers.indexOf("Orientación (materia optativa/electiva)")] || ""
           modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación (materia optativa/electiva)")] || ""
           modalidadCursada = row[headers.indexOf("Modalidad de cursada (materia optativa/electiva)")] || ""
+        } else if (tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)") {
+          titulo = row[headers.indexOf("Título de materia optativa/electiva")] || "" // Intenta leer el título de la columna genérica de optativas
+          catedra = row[headers.indexOf("Cátedra de la materia optativa/electiva")] || "" // Intenta leer la cátedra de la columna genérica de optativas
+          orientacion = row[headers.indexOf("Orientación (materia optativa/electiva)")] || ""
+          modalidadAprobacion = row[headers.indexOf("Modalidad de aprobación (materia optativa/electiva)")] || ""
+          modalidadCursada = row[headers.indexOf("Modalidad de cursada (materia optativa/electiva)")] || ""
         }
 
         console.log("Modalidad de aprobación leída del CSV:", modalidadAprobacion)
