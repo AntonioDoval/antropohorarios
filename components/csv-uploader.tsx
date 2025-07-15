@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Upload, FileSpreadsheet, CheckCircle, AlertTriangle, Loader2 } from "lucide-react"
 import { toStartCase } from "@/lib/text-utils"
-import { loadSampleData } from "@/lib/sample-data-loader"
+//import { loadSampleData } from "@/lib/sample-data-loader"
 
 interface Clase {
   id: string
@@ -57,7 +57,7 @@ export function CSVUploader() {
     }
   }
 
-  const handleLoadSampleData = async () => {
+  /*const handleLoadSampleData = async () => {
     setLoading(true)
     setMessage(null)
 
@@ -107,7 +107,7 @@ export function CSVUploader() {
     } finally {
       setLoading(false)
     }
-  }
+  }*/
 
   const procesarCSV = async () => {
     if (!file) {
@@ -225,7 +225,7 @@ export function CSVUploader() {
           // Normalizar texto para evitar inconsistencias
           const aprobacionLower = modalidadAprobacion.toLowerCase().trim()
           console.log("Procesando modalidad:", aprobacionLower)
-          
+
           if (aprobacionLower.includes("promoción") || aprobacionLower.includes("promocion")) {
             modalidadAprobacion = "Promoción directa"
           } else if (aprobacionLower.includes("examen") || aprobacionLower.includes("exámen") || aprobacionLower === "examen final") {
@@ -391,7 +391,7 @@ export function CSVUploader() {
         gruposClases.forEach((grupo) => {
           if (grupo.clases.length > 1) {
             let agrupacionValue = ""
-            
+
             if (grupo.tipo === "Teórico") {
               agrupacionValue = agrupacionTeoricos
             } else if (grupo.tipo === "Teórico-Práctico") {
@@ -400,7 +400,7 @@ export function CSVUploader() {
 
             // Determinar si es complementario o electivo basado en el valor del CSV
             const agrupacionLower = agrupacionValue.toLowerCase()
-            
+
             if (agrupacionLower.includes("mismo teórico dividido") || 
                 agrupacionLower.includes("conjunto") ||
                 agrupacionLower.includes("complementario") ||
@@ -509,7 +509,7 @@ export function CSVUploader() {
         type: "error",
         content: "Error al guardar en el servidor. Guardado localmente como respaldo.",
       })
-      
+
       // Fallback a localStorage
       localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
     }
@@ -608,6 +608,6 @@ function agruparClasesPorTipo(clases: Clase[]): { tipo: string; clases: Clase[] 
 function horariosSuperpuestos(horario1: string, horario2: string): boolean {
   const [inicio1, fin1] = horario1.split(" - ").map(h => parseInt(h))
   const [inicio2, fin2] = horario2.split(" - ").map(h => parseInt(h))
-  
+
   return inicio1 < fin2 && inicio2 < fin1
 }
