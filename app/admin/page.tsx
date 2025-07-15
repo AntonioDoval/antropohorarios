@@ -30,11 +30,11 @@ export default function AdminPage() {
     const stored = localStorage.getItem("planes-estudios-habilitado")
     setPlanesEstudiosHabilitado(stored !== "false")
     
-    // Cargar período actual
-    const horariosData = localStorage.getItem("horarios-antropologia")
-    if (horariosData) {
+    // Cargar período actual desde la API
+    const fetchPeriodo = async () => {
       try {
-        const data = JSON.parse(horariosData)
+        const response = await fetch('/api/horarios')
+        const data = await response.json()
         if (data.periodo) {
           setAño(data.periodo.año || "")
           setCuatrimestre(data.periodo.periodo || "")
@@ -43,6 +43,8 @@ export default function AdminPage() {
         console.error("Error loading period data:", error)
       }
     }
+    
+    fetchPeriodo()
   }, [])
 
   const handleTogglePlanesEstudios = (enabled: boolean) => {
@@ -67,19 +69,14 @@ export default function AdminPage() {
     setCsvMessage(null)
 
     try {
-      // Obtener datos actuales
-      const horariosData = localStorage.getItem("horarios-antropologia")
-      let data = { asignaturas: [], periodo: { año, periodo: cuatrimestre } }
+      // Obtener datos actuales de la API
+      const currentResponse = await fetch('/api/horarios')
+      const currentData = await currentResponse.json()
       
-      if (horariosData) {
-        const existingData = JSON.parse(horariosData)
-        data.asignaturas = existingData.asignaturas || []
+      const data = {
+        asignaturas: currentData.asignaturas || [],
+        periodo: { año, periodo: cuatrimestre }
       }
-      
-      data.periodo = { año, periodo: cuatrimestre }
-
-      // Guardar en localStorage
-      localStorage.setItem("horarios-antropologia", JSON.stringify(data))
 
       // Guardar en API
       const response = await fetch('/api/horarios', {
@@ -93,7 +90,7 @@ export default function AdminPage() {
       if (response.ok) {
         setPeriodoMessage({
           type: "success",
-          content: `Período académico actualizado a ${año} - ${cuatrimestre}`
+          content: `Período académico actualizado a ${año} - ${cuatrimestre} en Supabase`
         })
       } else {
         throw new Error('Error saving period data to server')
@@ -308,18 +305,19 @@ export default function AdminPage() {
                 onClick={async () => {
                   if (confirm("¿Estás seguro de que quieres eliminar todos los datos de horarios? Esta acción no se puede deshacer.")) {
                     try {
-                      // Intentar limpiar del servidor
-                      await fetch('/api/horarios', {
+                      const response = await fetch('/api/horarios', {
                         method: 'DELETE'
                       })
                       
-                      // Limpiar localStorage
-                      localStorage.removeItem("horarios-antropologia")
+                      if (response.ok) {
+                        setCsvMessage({
+                          type: "success",
+                          content: "Todos los datos de horarios han sido eliminados exitosamente de Supabase."
+                        })
+                      } else {
+                        throw new Error('Error deleting data')
+                      }
                       
-                      setCsvMessage({
-                        type: "success",
-                        content: "Todos los datos de horarios han sido eliminados exitosamente."
-                      })
                       setPeriodoMessage(null)
                       setPlanesMessage(null)
                       
@@ -331,7 +329,7 @@ export default function AdminPage() {
                       console.error("Error limpiando datos:", error)
                       setCsvMessage({
                         type: "error", 
-                        content: "Error al limpiar datos del servidor, pero se limpiaron los datos locales."
+                        content: "Error al limpiar datos de Supabase. Por favor, intenta nuevamente."
                       })
                       setPeriodoMessage(null)
                       setPlanesMessage(null)

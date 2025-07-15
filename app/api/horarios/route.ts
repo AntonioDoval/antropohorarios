@@ -1,61 +1,89 @@
 
 import { NextRequest, NextResponse } from 'next/server'
-
-// En producción, esto debería conectarse a una base de datos real
-// Por simplicidad, usaremos un archivo JSON temporal
-import fs from 'fs'
-import path from 'path'
-
-const HORARIOS_FILE = path.join(process.cwd(), 'data', 'horarios-data.json')
-
-// Asegurar que el directorio y archivo existen
-function ensureDataFile() {
-  const dataDir = path.dirname(HORARIOS_FILE)
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true })
-  }
-  if (!fs.existsSync(HORARIOS_FILE)) {
-    fs.writeFileSync(HORARIOS_FILE, JSON.stringify({ asignaturas: [], periodo: { año: new Date().getFullYear().toString(), periodo: "1C" } }))
-  }
-}
+import { supabase } from '@/lib/supabase'
 
 export async function GET() {
   try {
-    ensureDataFile()
-    const data = fs.readFileSync(HORARIOS_FILE, 'utf8')
-    return NextResponse.json(JSON.parse(data))
+    const { data, error } = await supabase
+      .from('horarios')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+
+    if (error) {
+      console.error('Error fetching horarios from Supabase:', error)
+      return NextResponse.json({ 
+        asignaturas: [], 
+        periodo: { 
+          año: new Date().getFullYear().toString(), 
+          periodo: "1C" 
+        } 
+      })
+    }
+
+    if (data && data.length > 0) {
+      return NextResponse.json(data[0].data)
+    }
+
+    return NextResponse.json({ 
+      asignaturas: [], 
+      periodo: { 
+        año: new Date().getFullYear().toString(), 
+        periodo: "1C" 
+      } 
+    })
   } catch (error) {
-    console.error('Error reading horarios:', error)
-    return NextResponse.json({ asignaturas: [], periodo: { año: new Date().getFullYear().toString(), periodo: "1C" } })
+    console.error('Error in GET /api/horarios:', error)
+    return NextResponse.json({ 
+      asignaturas: [], 
+      periodo: { 
+        año: new Date().getFullYear().toString(), 
+        periodo: "1C" 
+      } 
+    })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const horarios = await request.json()
-    ensureDataFile()
-    fs.writeFileSync(HORARIOS_FILE, JSON.stringify(horarios, null, 2))
+    
+    const { error } = await supabase
+      .from('horarios')
+      .insert([
+        { 
+          data: horarios,
+          created_at: new Date().toISOString()
+        }
+      ])
+
+    if (error) {
+      console.error('Error saving horarios to Supabase:', error)
+      return NextResponse.json({ error: 'Error saving horarios' }, { status: 500 })
+    }
+
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error saving horarios:', error)
+    console.error('Error in POST /api/horarios:', error)
     return NextResponse.json({ error: 'Error saving horarios' }, { status: 500 })
   }
 }
 
 export async function DELETE() {
   try {
-    const emptyData = { 
-      asignaturas: [], 
-      periodo: { 
-        año: new Date().getFullYear().toString(), 
-        periodo: "1C" 
-      } 
+    const { error } = await supabase
+      .from('horarios')
+      .delete()
+      .neq('id', 0) // Delete all records
+
+    if (error) {
+      console.error('Error clearing horarios from Supabase:', error)
+      return NextResponse.json({ error: 'Error clearing horarios' }, { status: 500 })
     }
-    ensureDataFile()
-    fs.writeFileSync(HORARIOS_FILE, JSON.stringify(emptyData, null, 2))
+
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error clearing horarios:', error)
+    console.error('Error in DELETE /api/horarios:', error)
     return NextResponse.json({ error: 'Error clearing horarios' }, { status: 500 })
   }
 }
