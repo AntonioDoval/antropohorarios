@@ -498,11 +498,8 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
         body: JSON.stringify(horariosData),
       })
 
-      // Siempre guardar en localStorage como respaldo
-      localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
-
       if (response.ok) {
-        const successMessage = `Datos guardados exitosamente. ${preview.length} asignaturas cargadas correctamente.`
+        const successMessage = `Datos guardados exitosamente en el servidor. ${preview.length} asignaturas disponibles para todos los usuarios.`
         setMessage({
           type: "success",
           content: successMessage,
@@ -516,41 +513,19 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
           window.location.reload()
         }, 2000)
       } else {
-        // En deployments como Vercel, el servidor puede ser read-only
-        // Pero los datos se guardan en localStorage y funcionan correctamente
-        const warningMessage = `Datos cargados localmente (${preview.length} asignaturas). Los cambios son visibles en este dispositivo.`
-        setMessage({
-          type: "success", // Cambiar a success porque los datos SÍ se guardan localmente
-          content: warningMessage,
-        })
-        
-        // Notificar al componente padre
-        onSuccess?.(warningMessage)
-
-        // Recargar la página después de 2 segundos
-        setTimeout(() => {
-          window.location.reload()
-        }, 2000)
+        throw new Error(`Error del servidor: ${response.status}`)
       }
     } catch (error) {
       console.error('Error saving horarios:', error)
       
-      // Fallback a localStorage - esto siempre funciona
-      localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
-      
-      const fallbackMessage = `Datos cargados localmente (${preview.length} asignaturas). Los cambios son visibles en este dispositivo.`
+      const errorMessage = `Error al guardar en el servidor: ${error instanceof Error ? error.message : 'Error desconocido'}. Por favor, intenta nuevamente.`
       setMessage({
-        type: "success", // Cambiar a success porque los datos SÍ se guardan
-        content: fallbackMessage,
+        type: "error",
+        content: errorMessage,
       })
       
       // Notificar al componente padre
-      onSuccess?.(fallbackMessage)
-
-      // Recargar la página después de 2 segundos
-      setTimeout(() => {
-        window.location.reload()
-      }, 2000)
+      onError?.(errorMessage)
     }
   }
 
