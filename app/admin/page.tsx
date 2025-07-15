@@ -99,13 +99,27 @@ export default function AdminPage() {
     }
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === "kulaypotlach") {
-      setIsAuthenticated(true)
-      setError("")
-    } else {
-      setError("Contraseña incorrecta")
+    
+    try {
+      const response = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      })
+
+      if (response.ok) {
+        setIsAuthenticated(true)
+        setError("")
+      } else {
+        setError("Contraseña incorrecta")
+        setPassword("")
+      }
+    } catch (error) {
+      setError("Error al verificar la contraseña")
       setPassword("")
     }
   }
