@@ -879,7 +879,7 @@ export function HorariosDisplay() {
           asignaturasFiltradas.map((asignatura) => {
             const isSelected = seleccion.asignaturas.includes(asignatura.id)
             return (
-              <Card key={asignatura.id} className={`transition-all duration-200 ${
+              <Card key={asignatura.id} className={`@container transition-all duration-200 ${
                 isSelected 
                   ? "border-uba-secondary border-2 shadow-lg bg-uba-secondary/5" 
                   : "border-uba-primary/20 hover:border-uba-primary/40"
@@ -1082,8 +1082,8 @@ export function HorariosDisplay() {
                                   </Badge>
                                   {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
                                     <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-600 border-yellow-200 px-2 py-0.5">
-                                      <span className="hidden md:inline">Complementario</span>
-                                      <span className="md:hidden">Compl.</span>
+                                      <span className="hidden [@container_(min-width:200px)]:inline">Complementario</span>
+                                      <span className="[@container_(min-width:200px)]:hidden">Compl.</span>
                                     </Badge>
                                   )}
                                 </div>
