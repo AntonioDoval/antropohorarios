@@ -653,7 +653,7 @@
     {
       "id": "asignatura-16",
       "materia": "Teorías de la Subjetividad",
-      "catedra": "Miguel Orellano / Cecilia Vareal",
+      "catedra": "Miguel Orellano / Cecilia Varela",
       "tipoAsignatura": "Materia cuatrimestral regular",
       "modalidadAprobacion": "Promoción directa",
       "modalidadCursada": "Sede Puán",
@@ -948,6 +948,67 @@
     },
     {
       "id": "asignatura-26",
+      "materia": "Una Antropología de los Cielos",
+      "catedra": "Alejandro López",
+      "tipoAsignatura": "Materia cuatrimestral optativa (Exclusiva plan 1985)",
+      "modalidadAprobacion": "Examen final",
+      "modalidadCursada": "Sede Puán",
+      "orientacion": "Ambas",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Martes",
+          "horario": "14 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-27",
+      "materia": "Tecnologías Digitales y Antropología. Desafíos Teórico-metodológicos",
+      "catedra": "Verónica Zallocchi",
+      "tipoAsignatura": "Materia cuatrimestral optativa (Exclusiva plan 1985)",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "orientacion": "Ambas",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "16 - 18"
+        },
+        {
+          "id": "clase-2",
+          "tipo": "Práctico",
+          "numero": 1,
+          "dia": "Jueves",
+          "horario": "18 - 20"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-28",
+      "materia": "Migraciones Internacionales Contemporáneas en Perspectiva Antropológica",
+      "catedra": "María Inés Pacecca",
+      "tipoAsignatura": "Materia cuatrimestral optativa (Exclusiva plan 1985)",
+      "modalidadAprobacion": "Promoción directa",
+      "modalidadCursada": "Sede Puán",
+      "orientacion": "Ambas",
+      "clases": [
+        {
+          "id": "clase-1",
+          "tipo": "Teórico-Práctico",
+          "numero": 1,
+          "dia": "Lunes",
+          "horario": "10 - 14"
+        }
+      ]
+    },
+    {
+      "id": "asignatura-29",
       "materia": "Arqueología de Tiempos Modernos",
       "catedra": "Virginia Pineau",
       "tipoAsignatura": "Materia cuatrimestral regular",
@@ -964,7 +1025,7 @@
       ]
     },
     {
-      "id": "asignatura-27",
+      "id": "asignatura-30",
       "materia": "Capitalismo Actual, Trabajo y Trabajadores",
       "catedra": "Sandra Wolanski",
       "tipoAsignatura": "Materia cuatrimestral regular",
@@ -990,6 +1051,6 @@
   ],
   "periodo": {
     "año": "2025",
-    "periodo": "2C"
+    "periodo": "1C"
   }
 }

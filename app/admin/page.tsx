@@ -23,6 +23,8 @@ export default function AdminPage() {
   const [año, setAño] = useState("")
   const [cuatrimestre, setCuatrimestre] = useState("")
   const [periodoMessage, setPeriodoMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
+  const [planesMessage, setPlanesMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
+  const [csvMessage, setCsvMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem("planes-estudios-habilitado")
@@ -46,6 +48,9 @@ export default function AdminPage() {
   const handleTogglePlanesEstudios = (enabled: boolean) => {
     setPlanesEstudiosHabilitado(enabled)
     localStorage.setItem("planes-estudios-habilitado", enabled.toString())
+    // Limpiar mensajes de otros componentes
+    setPeriodoMessage(null)
+    setCsvMessage(null)
   }
 
   const handleUpdatePeriodo = async () => {
@@ -56,6 +61,10 @@ export default function AdminPage() {
       })
       return
     }
+
+    // Limpiar mensajes de otros componentes
+    setPlanesMessage(null)
+    setCsvMessage(null)
 
     try {
       // Obtener datos actuales
@@ -252,7 +261,36 @@ export default function AdminPage() {
         </Card>
 
         {/* Sección de Actualizar Horarios */}
-        <CSVUploader />
+        <div className="space-y-4">
+          <CSVUploader onSuccess={(message) => {
+            setCsvMessage({ type: "success", content: message })
+            setPeriodoMessage(null)
+            setPlanesMessage(null)
+          }} onError={(message) => {
+            setCsvMessage({ type: "error", content: message })
+            setPeriodoMessage(null)
+            setPlanesMessage(null)
+          }} />
+          
+          {csvMessage && (
+            <Alert className={`${
+              csvMessage.type === "success" 
+                ? "border-green-200 bg-green-50" 
+                : "border-red-200 bg-red-50"
+            }`}>
+              {csvMessage.type === "success" ? (
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-red-600" />
+              )}
+              <AlertDescription className={
+                csvMessage.type === "success" ? "text-green-800" : "text-red-800"
+              }>
+                {csvMessage.content}
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
 
         {/* Sección de Planes de Estudios */}
         <Card>
@@ -278,31 +316,34 @@ export default function AdminPage() {
             
             <Button 
               onClick={() => {
-                setPeriodoMessage({
+                setPlanesMessage({
                   type: "success",
                   content: planesEstudiosHabilitado ? "Sección de Planes de Estudio habilitada." : "Sección de Planes de Estudio deshabilitada."
                 });
+                // Limpiar mensajes de otros componentes
+                setPeriodoMessage(null);
+                setCsvMessage(null);
               }} 
               className="w-full bg-uba-primary hover:bg-uba-primary/90"
             >
-              Aplicar
+              Aplicar Configuración
             </Button>
 
-            {periodoMessage && (
+            {planesMessage && (
               <Alert className={`${
-                periodoMessage.type === "success" 
+                planesMessage.type === "success" 
                   ? "border-green-200 bg-green-50" 
                   : "border-red-200 bg-red-50"
               }`}>
-                {periodoMessage.type === "success" ? (
+                {planesMessage.type === "success" ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 ) : (
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <AlertDescription className={
-                  periodoMessage.type === "success" ? "text-green-800" : "text-red-800"
+                  planesMessage.type === "success" ? "text-green-800" : "text-red-800"
                 }>
-                  {periodoMessage.content}
+                  {planesMessage.content}
                 </AlertDescription>
               </Alert>
             )}

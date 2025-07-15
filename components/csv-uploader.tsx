@@ -42,7 +42,12 @@ interface HorariosData {
   periodo: PeriodoInfo
 }
 
-export function CSVUploader() {
+interface CSVUploaderProps {
+  onSuccess?: (message: string) => void
+  onError?: (message: string) => void
+}
+
+export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
@@ -497,10 +502,14 @@ export function CSVUploader() {
         // También guardar en localStorage como backup
         localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
 
+        const successMessage = "Datos guardados exitosamente. Los cambios se verán reflejados en todos los dispositivos."
         setMessage({
           type: "success",
-          content: "Datos guardados exitosamente. Los cambios se verán reflejados en todos los dispositivos.",
+          content: successMessage,
         })
+        
+        // Notificar al componente padre
+        onSuccess?.(successMessage)
 
         // Recargar la página después de 2 segundos
         setTimeout(() => {
@@ -511,10 +520,14 @@ export function CSVUploader() {
       }
     } catch (error) {
       console.error('Error saving horarios:', error)
+      const errorMessage = "Error al guardar en el servidor. Guardado localmente como respaldo."
       setMessage({
         type: "error",
-        content: "Error al guardar en el servidor. Guardado localmente como respaldo.",
+        content: errorMessage,
       })
+      
+      // Notificar al componente padre
+      onError?.(errorMessage)
 
       // Fallback a localStorage
       localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
