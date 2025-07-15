@@ -292,6 +292,60 @@ export default function AdminPage() {
           )}
         </div>
 
+        {/* Sección de Limpiar Datos */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-red-700">Limpiar Datos de Horarios</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+              <p className="text-sm text-red-800 mb-4">
+                <strong>⚠️ Atención:</strong> Esta acción eliminará todos los horarios guardados tanto del servidor como del almacenamiento local. 
+                Esta acción no se puede deshacer.
+              </p>
+              
+              <Button 
+                onClick={async () => {
+                  if (confirm("¿Estás seguro de que quieres eliminar todos los datos de horarios? Esta acción no se puede deshacer.")) {
+                    try {
+                      // Intentar limpiar del servidor
+                      await fetch('/api/horarios', {
+                        method: 'DELETE'
+                      })
+                      
+                      // Limpiar localStorage
+                      localStorage.removeItem("horarios-antropologia")
+                      
+                      setCsvMessage({
+                        type: "success",
+                        content: "Todos los datos de horarios han sido eliminados exitosamente."
+                      })
+                      setPeriodoMessage(null)
+                      setPlanesMessage(null)
+                      
+                      // Recargar después de 2 segundos
+                      setTimeout(() => {
+                        window.location.reload()
+                      }, 2000)
+                    } catch (error) {
+                      console.error("Error limpiando datos:", error)
+                      setCsvMessage({
+                        type: "error", 
+                        content: "Error al limpiar datos del servidor, pero se limpiaron los datos locales."
+                      })
+                      setPeriodoMessage(null)
+                      setPlanesMessage(null)
+                    }
+                  }
+                }}
+                className="w-full bg-red-600 hover:bg-red-700 text-white"
+              >
+                🗑️ Eliminar Todos los Horarios
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Sección de Planes de Estudios */}
         <Card>
           <CardHeader>

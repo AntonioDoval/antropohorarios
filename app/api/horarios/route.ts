@@ -41,3 +41,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Error saving horarios' }, { status: 500 })
   }
 }
+
+export async function DELETE() {
+  try {
+    const emptyData = { 
+      asignaturas: [], 
+      periodo: { 
+        año: new Date().getFullYear().toString(), 
+        periodo: "1C" 
+      } 
+    }
+    ensureDataFile()
+    fs.writeFileSync(HORARIOS_FILE, JSON.stringify(emptyData, null, 2))
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error clearing horarios:', error)
+    return NextResponse.json({ error: 'Error clearing horarios' }, { status: 500 })
+  }
+}
