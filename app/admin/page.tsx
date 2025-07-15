@@ -30,23 +30,19 @@ export default function AdminPage() {
     const stored = localStorage.getItem("planes-estudios-habilitado")
     setPlanesEstudiosHabilitado(stored !== "false")
     
-    // Cargar período actual desde el servidor
-    const loadCurrentPeriod = async () => {
+    // Cargar período actual
+    const horariosData = localStorage.getItem("horarios-antropologia")
+    if (horariosData) {
       try {
-        const response = await fetch('/api/horarios')
-        if (response.ok) {
-          const data = await response.json()
-          if (data.periodo) {
-            setAño(data.periodo.año || "")
-            setCuatrimestre(data.periodo.periodo || "")
-          }
+        const data = JSON.parse(horariosData)
+        if (data.periodo) {
+          setAño(data.periodo.año || "")
+          setCuatrimestre(data.periodo.periodo || "")
         }
       } catch (error) {
-        console.error("Error loading period data from server:", error)
+        console.error("Error loading period data:", error)
       }
     }
-    
-    loadCurrentPeriod()
   }, [])
 
   const handleTogglePlanesEstudios = (enabled: boolean) => {
@@ -71,18 +67,21 @@ export default function AdminPage() {
     setCsvMessage(null)
 
     try {
-      // Obtener datos actuales del servidor
-      const currentResponse = await fetch('/api/horarios')
+      // Obtener datos actuales
+      const horariosData = localStorage.getItem("horarios-antropologia")
       let data = { asignaturas: [], periodo: { año, periodo: cuatrimestre } }
       
-      if (currentResponse.ok) {
-        const existingData = await currentResponse.json()
+      if (horariosData) {
+        const existingData = JSON.parse(horariosData)
         data.asignaturas = existingData.asignaturas || []
       }
       
       data.periodo = { año, periodo: cuatrimestre }
 
-      // Guardar en servidor
+      // Guardar en localStorage
+      localStorage.setItem("horarios-antropologia", JSON.stringify(data))
+
+      // Guardar en API
       const response = await fetch('/api/horarios', {
         method: 'POST',
         headers: {
@@ -94,7 +93,7 @@ export default function AdminPage() {
       if (response.ok) {
         setPeriodoMessage({
           type: "success",
-          content: `Período académico actualizado a ${año} - ${cuatrimestre} para todos los usuarios`
+          content: `Período académico actualizado a ${año} - ${cuatrimestre}`
         })
       } else {
         throw new Error('Error saving period data to server')
@@ -104,7 +103,7 @@ export default function AdminPage() {
       console.error("Error updating period:", error)
       setPeriodoMessage({
         type: "error",
-        content: "Error al actualizar el período en el servidor. Por favor, intenta nuevamente."
+        content: "Error al actualizar el período. Por favor, intenta nuevamente."
       })
     }
   }
@@ -314,7 +313,8 @@ export default function AdminPage() {
                         method: 'DELETE'
                       })
                       
-                      // Los datos ya se limpiaron del servidor arriba
+                      // Limpiar localStorage
+                      localStorage.removeItem("horarios-antropologia")
                       
                       setCsvMessage({
                         type: "success",

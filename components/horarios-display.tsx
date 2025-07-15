@@ -85,7 +85,7 @@ export function HorariosDisplay() {
       try {
         const response = await fetch('/api/horarios')
         const horarios = await response.json()
-
+        
         if (horarios.asignaturas && horarios.asignaturas.length > 0) {
           setData(horarios)
         } else {
@@ -132,10 +132,10 @@ export function HorariosDisplay() {
     }
 
     fetchHorarios()
-
+    
     // Polling cada 30 segundos para detectar cambios
     const interval = setInterval(fetchHorarios, 30000)
-
+    
     return () => clearInterval(interval)
   }, [])
 
@@ -802,7 +802,7 @@ export function HorariosDisplay() {
                     onCheckedChange={() => toggleFiltro("modalidadesAprobacion", "Promoción directa")}
                     className="h-3.5 w-3.5"
                   />
-                  <label htmlFor`modalidad-promocion" className="text-xs text-gray-700 cursor-pointer leading-snug">
+                  <label htmlFor="modalidad-promocion" className="text-xs text-gray-700 cursor-pointer leading-snug">
                     Promoción directa
                   </label>
                 </div>
