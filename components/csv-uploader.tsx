@@ -561,27 +561,73 @@ export function CSVUploader() {
       {preview && (
         <Card>
           <CardHeader>
-            <CardTitle>Vista Previa de Datos</CardTitle>
+            <CardTitle>Vista Previa de Datos - {preview.length} asignaturas procesadas</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {preview.slice(0, 5).map((asignatura, index) => (
-                <div key={index} className="border rounded p-3 bg-gray-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold text-sm">{asignatura.materia}</h4>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {preview.map((asignatura, index) => (
+                <div key={index} className="border rounded p-4 bg-gray-50">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-semibold text-sm text-blue-800">{asignatura.materia}</h4>
                     <Badge variant="outline" className="text-xs">
                       {asignatura.tipoAsignatura}
                     </Badge>
                   </div>
-                  <p className="text-xs text-gray-600 mb-1">Cátedra: {asignatura.catedra}</p>
-                  <p className="text-xs text-gray-600">Clases: {asignatura.clases.length}</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-xs">
+                    <div>
+                      <span className="font-medium text-gray-700">Cátedra:</span> 
+                      <span className="text-gray-600 ml-1">{asignatura.catedra}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-700">Modalidad Aprobación:</span> 
+                      <span className="text-gray-600 ml-1">{asignatura.modalidadAprobacion}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-700">Modalidad Cursada:</span> 
+                      <span className="text-gray-600 ml-1">{asignatura.modalidadCursada}</span>
+                    </div>
+                    {asignatura.orientacion && (
+                      <div>
+                        <span className="font-medium text-gray-700">Orientación:</span> 
+                        <span className="text-gray-600 ml-1">{asignatura.orientacion}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {asignatura.agrupacionClases && Object.keys(asignatura.agrupacionClases).length > 0 && (
+                    <div className="mb-3 text-xs">
+                      <span className="font-medium text-gray-700">Agrupaciones:</span>
+                      <div className="ml-2 mt-1">
+                        {Object.entries(asignatura.agrupacionClases).map(([tipo, agrupacion]) => (
+                          <div key={tipo} className="text-gray-600">
+                            • {tipo}: {agrupacion === "elegir" ? "Elegir una opción" : "Complementarios (ambos)"}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {asignatura.aclaraciones && (
+                    <div className="mb-3 text-xs">
+                      <span className="font-medium text-gray-700">Aclaraciones:</span>
+                      <div className="text-gray-600 ml-1 mt-1 italic">{asignatura.aclaraciones}</div>
+                    </div>
+                  )}
+
+                  <div className="border-t pt-2 mt-2">
+                    <span className="font-medium text-gray-700 text-xs">Clases ({asignatura.clases.length}):</span>
+                    <div className="mt-2 space-y-1">
+                      {asignatura.clases.map((clase, claseIndex) => (
+                        <div key={claseIndex} className="bg-white rounded p-2 text-xs border-l-2 border-blue-200">
+                          <span className="font-medium text-blue-700">{clase.tipo} {clase.numero}</span>
+                          <span className="text-gray-600 ml-2">• {clase.dia} {clase.horario}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               ))}
-              {preview.length > 5 && (
-                <p className="text-sm text-gray-500 text-center">
-                  ... y {preview.length - 5} asignaturas más
-                </p>
-              )}
             </div>
             <div className="mt-4 pt-4 border-t">
               <Button onClick={guardarDatos} className="w-full">
