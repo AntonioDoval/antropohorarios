@@ -1082,8 +1082,8 @@ export function HorariosDisplay() {
                                   </Badge>
                                   {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
                                     <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-600 border-yellow-200 px-2 py-0.5">
-                                      <span className="hidden sm:inline">Complementario</span>
-                                      <span className="sm:hidden">Compl.</span>
+                                      <span className="hidden md:inline">Complementario</span>
+                                      <span className="md:hidden">Compl.</span>
                                     </Badge>
                                   )}
                                 </div>
