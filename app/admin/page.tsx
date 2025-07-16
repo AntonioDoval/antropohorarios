@@ -289,6 +289,51 @@ export default function AdminPage() {
           )}
         </div>
 
+        {/* Sección de Test de Conexión */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Probar Conexión con Supabase</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-gray-600 mb-4">
+              Usa este botón para verificar que la conexión con Supabase está funcionando correctamente.
+            </p>
+            
+            <Button 
+              onClick={async () => {
+                try {
+                  console.log('Testing Supabase connection...')
+                  const response = await fetch('/api/horarios')
+                  const data = await response.json()
+                  
+                  if (response.ok) {
+                    setCsvMessage({
+                      type: "success",
+                      content: `Conexión con Supabase exitosa. Asignaturas encontradas: ${data.asignaturas?.length || 0}`
+                    })
+                  } else {
+                    throw new Error('Error en la respuesta del servidor')
+                  }
+                  
+                  setPeriodoMessage(null)
+                  setPlanesMessage(null)
+                } catch (error) {
+                  console.error("Error testing Supabase connection:", error)
+                  setCsvMessage({
+                    type: "error", 
+                    content: "Error al conectar con Supabase. Revisa la configuración."
+                  })
+                  setPeriodoMessage(null)
+                  setPlanesMessage(null)
+                }
+              }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              🔗 Probar Conexión con Supabase
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Sección de Limpiar Datos */}
         <Card>
           <CardHeader>

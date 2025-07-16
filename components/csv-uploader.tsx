@@ -489,6 +489,11 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
       },
     }
 
+    console.log('Attempting to save horarios data:', {
+      asignaturas: horariosData.asignaturas.length,
+      periodo: horariosData.periodo
+    })
+
     try {
       const response = await fetch('/api/horarios', {
         method: 'POST',
@@ -498,8 +503,12 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
         body: JSON.stringify(horariosData),
       })
 
+      const responseData = await response.json()
+
       if (response.ok) {
         const successMessage = `Datos guardados exitosamente en Supabase. ${preview.length} asignaturas disponibles para todos los usuarios.`
+        console.log('Save successful:', successMessage)
+        
         setMessage({
           type: "success",
           content: successMessage,
@@ -513,12 +522,17 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
           window.location.reload()
         }, 2000)
       } else {
-        throw new Error('Error saving to server')
+        const errorDetail = responseData.error || 'Unknown error'
+        console.error('Server error response:', errorDetail)
+        throw new Error(errorDetail)
       }
     } catch (error) {
       console.error('Error saving horarios:', error)
       
-      const errorMessage = `Error al guardar en Supabase. Por favor, intenta nuevamente.`
+      const errorMessage = error instanceof Error 
+        ? `Error al guardar en Supabase: ${error.message}` 
+        : `Error al guardar en Supabase. Por favor, intenta nuevamente.`
+        
       setMessage({
         type: "error",
         content: errorMessage,
