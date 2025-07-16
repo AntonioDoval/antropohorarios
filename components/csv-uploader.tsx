@@ -42,7 +42,12 @@ interface HorariosData {
   periodo: PeriodoInfo
 }
 
-export function CSVUploader() {
+interface CSVUploaderProps {
+  onSuccess?: (message: string) => void
+  onError?: (message: string) => void
+}
+
+export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
@@ -484,40 +489,60 @@ export function CSVUploader() {
       },
     }
 
+    console.log('Attempting to save horarios data:', {
+      asignaturas: horariosData.asignaturas.length,
+      periodo: horariosData.periodo
+    })
+
     try {
+      // Enviar datos a la API con autenticación de admin
+      const adminPassword = localStorage.getItem('admin-session') || ''
       const response = await fetch('/api/horarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-password': adminPassword,
         },
         body: JSON.stringify(horariosData),
       })
 
+      const responseData = await response.json()
+
       if (response.ok) {
-        // También guardar en localStorage como backup
-        localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
+        const successMessage = `Datos guardados exitosamente en Supabase. ${preview.length} asignaturas disponibles para todos los usuarios.`
+        console.log('Save successful:', successMessage)
 
         setMessage({
           type: "success",
-          content: "Datos guardados exitosamente. Los cambios se verán reflejados en todos los dispositivos.",
+          content: successMessage,
         })
+
+        // Notificar al componente padre
+        onSuccess?.(successMessage)
 
         // Recargar la página después de 2 segundos
         setTimeout(() => {
           window.location.reload()
         }, 2000)
       } else {
-        throw new Error('Error saving data to server')
+        const errorDetail = responseData.error || 'Unknown error'
+        console.error('Server error response:', errorDetail)
+        throw new Error(errorDetail)
       }
     } catch (error) {
       console.error('Error saving horarios:', error)
+
+      const errorMessage = error instanceof Error 
+        ? `Error al guardar en Supabase: ${error.message}` 
+        : `Error al guardar en Supabase. Por favor, intenta nuevamente.`
+
       setMessage({
         type: "error",
-        content: "Error al guardar en el servidor. Guardado localmente como respaldo.",
+        content: errorMessage,
       })
 
-      // Fallback a localStorage
-      localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
+      // Notificar al componente padre
+      onError?.(errorMessage)
     }
   }
 
@@ -573,7 +598,7 @@ export function CSVUploader() {
                       {asignatura.tipoAsignatura}
                     </Badge>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-xs">
                     <div>
                       <span className="font-medium text-gray-700">Cátedra:</span> 

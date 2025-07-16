@@ -23,16 +23,18 @@ export default function AdminPage() {
   const [año, setAño] = useState("")
   const [cuatrimestre, setCuatrimestre] = useState("")
   const [periodoMessage, setPeriodoMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
+  const [planesMessage, setPlanesMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
+  const [csvMessage, setCsvMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem("planes-estudios-habilitado")
     setPlanesEstudiosHabilitado(stored !== "false")
     
-    // Cargar período actual
-    const horariosData = localStorage.getItem("horarios-antropologia")
-    if (horariosData) {
+    // Cargar período actual desde la API
+    const fetchPeriodo = async () => {
       try {
-        const data = JSON.parse(horariosData)
+        const response = await fetch('/api/horarios')
+        const data = await response.json()
         if (data.periodo) {
           setAño(data.periodo.año || "")
           setCuatrimestre(data.periodo.periodo || "")
@@ -41,11 +43,16 @@ export default function AdminPage() {
         console.error("Error loading period data:", error)
       }
     }
+    
+    fetchPeriodo()
   }, [])
 
   const handleTogglePlanesEstudios = (enabled: boolean) => {
     setPlanesEstudiosHabilitado(enabled)
     localStorage.setItem("planes-estudios-habilitado", enabled.toString())
+    // Limpiar mensajes de otros componentes
+    setPeriodoMessage(null)
+    setCsvMessage(null)
   }
 
   const handleUpdatePeriodo = async () => {
@@ -57,26 +64,27 @@ export default function AdminPage() {
       return
     }
 
+    // Limpiar mensajes de otros componentes
+    setPlanesMessage(null)
+    setCsvMessage(null)
+
     try {
-      // Obtener datos actuales
-      const horariosData = localStorage.getItem("horarios-antropologia")
-      let data = { asignaturas: [], periodo: { año, periodo: cuatrimestre } }
+      // Obtener datos actuales de la API
+      const currentResponse = await fetch('/api/horarios')
+      const currentData = await currentResponse.json()
       
-      if (horariosData) {
-        const existingData = JSON.parse(horariosData)
-        data.asignaturas = existingData.asignaturas || []
+      const data = {
+        asignaturas: currentData.asignaturas || [],
+        periodo: { año, periodo: cuatrimestre }
       }
-      
-      data.periodo = { año, periodo: cuatrimestre }
 
-      // Guardar en localStorage
-      localStorage.setItem("horarios-antropologia", JSON.stringify(data))
-
-      // Guardar en API
+      // Guardar en API con autenticación de admin
+      const adminPassword = localStorage.getItem('admin-session') || ''
       const response = await fetch('/api/horarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-password': adminPassword,
         },
         body: JSON.stringify(data),
       })
@@ -84,7 +92,7 @@ export default function AdminPage() {
       if (response.ok) {
         setPeriodoMessage({
           type: "success",
-          content: `Período académico actualizado a ${año} - ${cuatrimestre}`
+          content: `Período académico actualizado a ${año} - ${cuatrimestre} en Supabase`
         })
       } else {
         throw new Error('Error saving period data to server')
@@ -114,6 +122,8 @@ export default function AdminPage() {
       if (response.ok) {
         setIsAuthenticated(true)
         setError("")
+        // Guardar la contraseña en localStorage para futuras solicitudes
+        localStorage.setItem('admin-session', password)
       } else {
         setError("Contraseña incorrecta")
         setPassword("")
@@ -128,6 +138,7 @@ export default function AdminPage() {
     setIsAuthenticated(false)
     setPassword("")
     setError("")
+    localStorage.removeItem('admin-session')
   }
 
   if (!isAuthenticated) {
@@ -252,7 +263,140 @@ export default function AdminPage() {
         </Card>
 
         {/* Sección de Actualizar Horarios */}
-        <CSVUploader />
+        <div className="space-y-4">
+          <CSVUploader onSuccess={(message) => {
+            setCsvMessage({ type: "success", content: message })
+            setPeriodoMessage(null)
+            setPlanesMessage(null)
+          }} onError={(message) => {
+            setCsvMessage({ type: "error", content: message })
+            setPeriodoMessage(null)
+            setPlanesMessage(null)
+          }} />
+          
+          {csvMessage && (
+            <Alert className={`${
+              csvMessage.type === "success" 
+                ? "border-green-200 bg-green-50" 
+                : "border-red-200 bg-red-50"
+            }`}>
+              {csvMessage.type === "success" ? (
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-red-600" />
+              )}
+              <AlertDescription className={
+                csvMessage.type === "success" ? "text-green-800" : "text-red-800"
+              }>
+                {csvMessage.content}
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+
+        {/* Sección de Test de Conexión */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Probar Conexión con Supabase</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-gray-600 mb-4">
+              Usa este botón para verificar que la conexión con Supabase está funcionando correctamente.
+            </p>
+            
+            <Button 
+              onClick={async () => {
+                try {
+                  console.log('Testing Supabase connection...')
+                  const response = await fetch('/api/horarios')
+                  const data = await response.json()
+                  
+                  if (response.ok) {
+                    setCsvMessage({
+                      type: "success",
+                      content: `Conexión con Supabase exitosa. Asignaturas encontradas: ${data.asignaturas?.length || 0}`
+                    })
+                  } else {
+                    throw new Error('Error en la respuesta del servidor')
+                  }
+                  
+                  setPeriodoMessage(null)
+                  setPlanesMessage(null)
+                } catch (error) {
+                  console.error("Error testing Supabase connection:", error)
+                  setCsvMessage({
+                    type: "error", 
+                    content: "Error al conectar con Supabase. Revisa la configuración."
+                  })
+                  setPeriodoMessage(null)
+                  setPlanesMessage(null)
+                }
+              }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              🔗 Probar Conexión con Supabase
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Sección de Limpiar Datos */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-red-700">Limpiar Datos de Horarios</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+              <p className="text-sm text-red-800 mb-4">
+                <strong>⚠️ Atención:</strong> Esta acción eliminará todos los horarios guardados tanto del servidor como del almacenamiento local. 
+                Esta acción no se puede deshacer.
+              </p>
+              
+              <Button 
+                onClick={async () => {
+                  if (confirm("¿Estás seguro de que quieres eliminar todos los datos de horarios? Esta acción no se puede deshacer.")) {
+                    try {
+                      const adminPassword = localStorage.getItem('admin-session') || ''
+                      const response = await fetch('/api/horarios', {
+                        method: 'DELETE',
+                        headers: {
+                          'x-admin-password': adminPassword,
+                        }
+                      })
+                      
+                      if (response.ok) {
+                        setCsvMessage({
+                          type: "success",
+                          content: "Todos los datos de horarios han sido eliminados exitosamente de Supabase."
+                        })
+                      } else {
+                        throw new Error('Error deleting data')
+                      }
+                      
+                      setPeriodoMessage(null)
+                      setPlanesMessage(null)
+                      
+                      // Recargar después de 2 segundos
+                      setTimeout(() => {
+                        window.location.reload()
+                      }, 2000)
+                    } catch (error) {
+                      console.error("Error limpiando datos:", error)
+                      setCsvMessage({
+                        type: "error", 
+                        content: "Error al limpiar datos de Supabase. Por favor, intenta nuevamente."
+                      })
+                      setPeriodoMessage(null)
+                      setPlanesMessage(null)
+                    }
+                  }
+                }}
+                className="w-full bg-red-600 hover:bg-red-700 text-white"
+              >
+                🗑️ Eliminar Todos los Horarios
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Sección de Planes de Estudios */}
         <Card>
@@ -278,31 +422,34 @@ export default function AdminPage() {
             
             <Button 
               onClick={() => {
-                setPeriodoMessage({
+                setPlanesMessage({
                   type: "success",
                   content: planesEstudiosHabilitado ? "Sección de Planes de Estudio habilitada." : "Sección de Planes de Estudio deshabilitada."
                 });
+                // Limpiar mensajes de otros componentes
+                setPeriodoMessage(null);
+                setCsvMessage(null);
               }} 
               className="w-full bg-uba-primary hover:bg-uba-primary/90"
             >
-              Aplicar
+              Aplicar Configuración
             </Button>
 
-            {periodoMessage && (
+            {planesMessage && (
               <Alert className={`${
-                periodoMessage.type === "success" 
+                planesMessage.type === "success" 
                   ? "border-green-200 bg-green-50" 
                   : "border-red-200 bg-red-50"
               }`}>
-                {periodoMessage.type === "success" ? (
+                {planesMessage.type === "success" ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 ) : (
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <AlertDescription className={
-                  periodoMessage.type === "success" ? "text-green-800" : "text-red-800"
+                  planesMessage.type === "success" ? "text-green-800" : "text-red-800"
                 }>
-                  {periodoMessage.content}
+                  {planesMessage.content}
                 </AlertDescription>
               </Alert>
             )}
