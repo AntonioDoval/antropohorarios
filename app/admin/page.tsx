@@ -78,11 +78,13 @@ export default function AdminPage() {
         periodo: { año, periodo: cuatrimestre }
       }
 
-      // Guardar en API
+      // Guardar en API con autenticación de admin
+      const adminPassword = localStorage.getItem('admin-session') || ''
       const response = await fetch('/api/horarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-password': adminPassword,
         },
         body: JSON.stringify(data),
       })
@@ -120,6 +122,8 @@ export default function AdminPage() {
       if (response.ok) {
         setIsAuthenticated(true)
         setError("")
+        // Guardar la contraseña en localStorage para futuras solicitudes
+        localStorage.setItem('admin-session', password)
       } else {
         setError("Contraseña incorrecta")
         setPassword("")
@@ -134,6 +138,7 @@ export default function AdminPage() {
     setIsAuthenticated(false)
     setPassword("")
     setError("")
+    localStorage.removeItem('admin-session')
   }
 
   if (!isAuthenticated) {
@@ -350,8 +355,12 @@ export default function AdminPage() {
                 onClick={async () => {
                   if (confirm("¿Estás seguro de que quieres eliminar todos los datos de horarios? Esta acción no se puede deshacer.")) {
                     try {
+                      const adminPassword = localStorage.getItem('admin-session') || ''
                       const response = await fetch('/api/horarios', {
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        headers: {
+                          'x-admin-password': adminPassword,
+                        }
                       })
                       
                       if (response.ok) {

@@ -495,10 +495,13 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
     })
 
     try {
+      // Enviar datos a la API con autenticación de admin
+      const adminPassword = localStorage.getItem('admin-session') || ''
       const response = await fetch('/api/horarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-password': adminPassword,
         },
         body: JSON.stringify(horariosData),
       })
@@ -508,12 +511,12 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
       if (response.ok) {
         const successMessage = `Datos guardados exitosamente en Supabase. ${preview.length} asignaturas disponibles para todos los usuarios.`
         console.log('Save successful:', successMessage)
-        
+
         setMessage({
           type: "success",
           content: successMessage,
         })
-        
+
         // Notificar al componente padre
         onSuccess?.(successMessage)
 
@@ -528,16 +531,16 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
       }
     } catch (error) {
       console.error('Error saving horarios:', error)
-      
+
       const errorMessage = error instanceof Error 
         ? `Error al guardar en Supabase: ${error.message}` 
         : `Error al guardar en Supabase. Por favor, intenta nuevamente.`
-        
+
       setMessage({
         type: "error",
         content: errorMessage,
       })
-      
+
       // Notificar al componente padre
       onError?.(errorMessage)
     }
@@ -595,7 +598,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
                       {asignatura.tipoAsignatura}
                     </Badge>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-xs">
                     <div>
                       <span className="font-medium text-gray-700">Cátedra:</span> 

@@ -1,4 +1,3 @@
-
 -- Create the horarios table in Supabase
 -- Run this SQL in your Supabase SQL Editor
 
@@ -20,16 +19,15 @@ FOR SELECT
 TO public
 USING (true);
 
--- Create policy to allow insert/update/delete to authenticated users only
--- If you want to allow anonymous uploads, change 'authenticated' to 'public'
-CREATE POLICY "Allow full access to authenticated users" ON horarios
-FOR ALL
+-- Create policy to allow insert/update/delete only to authenticated users
+-- Only admin users can modify data, but anyone can read
+CREATE POLICY "Allow write access to authenticated users only" ON horarios
+FOR INSERT, UPDATE, DELETE
 TO authenticated
 USING (true);
 
--- If you want to allow anonymous users to upload (less secure but simpler)
--- Uncomment the following and comment out the authenticated policy above:
--- CREATE POLICY "Allow full access to all users" ON horarios
--- FOR ALL
--- TO public
--- USING (true);
+-- Create policy to allow read access to everyone (including anonymous users)
+CREATE POLICY "Allow read access to all users" ON horarios
+FOR SELECT
+TO public
+USING (true);

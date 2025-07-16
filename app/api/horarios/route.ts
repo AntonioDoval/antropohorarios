@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabase, supabaseAdmin } from '@/lib/supabase'
 
 export async function GET() {
   try {
@@ -52,9 +52,28 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Verificar autenticación del admin
+    const password = request.headers.get('x-admin-password')
+    const adminPassword = process.env.ADMIN_PASSWORD
+    
+    if (!password || !adminPassword || password !== adminPassword) {
+      console.error('Unauthorized access attempt to POST /api/horarios')
+      return NextResponse.json({ 
+        error: 'No autorizado. Solo los administradores pueden modificar los datos.' 
+      }, { status: 401 })
+    }
+
+    // Verificar que tenemos el cliente administrativo
+    if (!supabaseAdmin) {
+      console.error('Supabase service key not configured')
+      return NextResponse.json({ 
+        error: 'Error de configuración del servidor: clave de servicio de Supabase no configurada' 
+      }, { status: 500 })
+    }
+
     const horarios = await request.json()
     
-    console.log('Saving horarios to Supabase...')
+    console.log('Saving horarios to Supabase with admin credentials...')
     console.log('Data structure:', {
       asignaturas: horarios.asignaturas?.length || 0,
       periodo: horarios.periodo
@@ -73,7 +92,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
     
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('horarios')
       .insert([
         { 
@@ -99,11 +118,30 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   try {
-    console.log('Clearing all horarios from Supabase...')
+    // Verificar autenticación del admin
+    const password = request.headers.get('x-admin-password')
+    const adminPassword = process.env.ADMIN_PASSWORD
     
-    const { error } = await supabase
+    if (!password || !adminPassword || password !== adminPassword) {
+      console.error('Unauthorized access attempt to DELETE /api/horarios')
+      return NextResponse.json({ 
+        error: 'No autorizado. Solo los administradores pueden eliminar los datos.' 
+      }, { status: 401 })
+    }
+
+    // Verificar que tenemos el cliente administrativo
+    if (!supabaseAdmin) {
+      console.error('Supabase service key not configured')
+      return NextResponse.json({ 
+        error: 'Error de configuración del servidor: clave de servicio de Supabase no configurada' 
+      }, { status: 500 })
+    }
+
+    console.log('Clearing all horarios from Supabase with admin credentials...')
+    
+    const { error } = await supabaseAdmin
       .from('horarios')
       .delete()
       .neq('id', 0) // Delete all records
