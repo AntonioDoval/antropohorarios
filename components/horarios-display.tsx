@@ -1401,25 +1401,31 @@ export function HorariosDisplay() {
                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-20 md:hidden">
                         →
                       </div>
-                      <table className="w-full min-w-[900px]">
+                      <table className="w-full min-w-[700px]">
                       <thead>
                         <tr className="bg-uba-primary text-white">
-                          <th className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[100px]">
-                            Horario
+                          <th className="border border-gray-300 p-2 text-center font-semibold text-xs min-w-[60px]">
                           </th>
                           {diasSemana.map((dia) => (
-                            <th key={dia} className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[140px]">
-                              {dia}
+                            <th key={dia} className="border border-gray-300 p-2 text-center font-semibold text-xs min-w-[110px]">
+                              <span className="hidden sm:inline">{dia}</span>
+                              <span className="sm:hidden">{dia.substring(0, 3)}</span>
                             </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {intervalos.map((intervalo) => (
-                          <tr key={intervalo.label} className="h-20">
-                            <td className="border border-gray-300 p-2 text-center font-medium text-sm bg-gray-50 text-uba-primary">
-                              {intervalo.label}
+                        {intervalos.map((intervalo) => {
+                          const horaInicioSimple = intervalo.inicio.toString()
+                          const horaFinSimple = intervalo.fin.toString()
+                          return (
+                          <tr key={intervalo.label} className="h-16">
+                            <td className="border border-gray-300 p-1 text-center font-medium text-xs bg-gray-50 text-uba-primary">
+                              {horaInicioSimple} a {horaFinSimple}
                             </td>
+                        })}
+                          </tr>
+                        ))
                             {diasSemana.map((dia) => {
                               const clasesEnIntervalo = horariosCompletos.filter(
                                 (clase) =>
@@ -1429,7 +1435,7 @@ export function HorariosDisplay() {
                               )
 
                               return (
-                                <td key={dia} className="border border-gray-300 p-1 align-top relative">
+                                <td key={dia} className="border border-gray-300 p-0.5 align-top relative">
                                   {clasesEnIntervalo.map((clase, index) => {
                                     const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
                                     const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
@@ -1441,24 +1447,24 @@ export function HorariosDisplay() {
                                     return (
                                       <div
                                         key={index}
-                                        className={`absolute left-1 right-1 rounded-md border-2 p-1 text-xs overflow-hidden ${clase.color}`}
+                                        className={`absolute left-0.5 right-0.5 rounded border p-0.5 text-xs overflow-hidden ${clase.color}`}
                                         style={{
                                           top: `${topPercent}%`,
                                           height: `${heightPercent}%`,
-                                          minHeight: '24px'
+                                          minHeight: '20px'
                                         }}
                                       >
                                         <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
-                                          {clase.asignatura.length > 25 
-                                            ? `${clase.asignatura.substring(0, 22)}...`
+                                          {clase.asignatura.length > 20 
+                                            ? `${clase.asignatura.substring(0, 17)}...`
                                             : clase.asignatura
                                           }
                                         </div>
                                         <div className="text-xs leading-tight truncate">
                                           {clase.clase}
                                         </div>
-                                        <div className="text-xs opacity-75 truncate">
-                                          {clase.inicio}:00-{clase.fin}:00 hs
+                                        <div className="text-xs opacity-75 truncate hidden sm:block">
+                                          {clase.inicio}-{clase.fin}hs
                                         </div>
                                       </div>
                                     )
@@ -1473,14 +1479,14 @@ export function HorariosDisplay() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-50 border-t">
-                    <h4 className="text-sm font-semibold text-uba-primary mb-3">Leyenda de asignaturas:</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                  <div className="p-2 bg-gray-50 border-t">
+                    <h4 className="text-xs font-semibold text-uba-primary mb-2">Leyenda:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
                       {seleccionFormateada.map((item, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
-                          <span className="text-sm text-gray-700 truncate">
-                            {item.asignatura} ({item.catedra})
+                        <div key={index} className="flex items-center gap-1">
+                          <div className={`w-3 h-3 rounded border ${colores[index % colores.length]}`}></div>
+                          <span className="text-xs text-gray-700 truncate">
+                            {item.asignatura.length > 30 ? `${item.asignatura.substring(0, 27)}...` : item.asignatura}
                           </span>
                         </div>
                       ))}
