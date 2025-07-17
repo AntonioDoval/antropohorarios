@@ -704,22 +704,27 @@ export function HorariosDisplay() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
         <div className="mb-4">
-          <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
-          <h1 className="text-5xl font-bold text-uba-primary mb-2">
-            {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
+          <h1 className="text-2xl font-bold text-uba-primary mb-2">
+            Oferta de Asignaturas - Ciencias Antropológicas (FFyL-UBA)
           </h1>
-        <h2 className="text-2xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
-          <p className="text-gray-700 text-lg mb-3 leading-relaxed">
+          <p className="text-gray-600 text-lg mb-3">
+            Período actual: <span className="font-semibold text-uba-primary">
+              {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
+            </span>
+          </p>
+          
+          <h2 className="text-xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
+          <p className="text-gray-700 text-base mb-3 leading-relaxed">
             Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo la{" "}
             <span className="font-semibold">comisión de prácticos</span> que prefieras. Abajo podés visualizar la lista de{" "}
             <span className="font-semibold">tu selección</span> y ver cómo quedaría tu{" "}
             <span className="font-semibold">cronograma</span> semanal.
           </p>
 
-          <Alert className="border-yellow-300 bg-yellow-100 p-4">
+          <Alert className="border-yellow-300 bg-yellow-100 p-3">
             <div className="flex items-start gap-3">
-              <div className="text-2xl mt-0.5">⚠️</div>
-              <AlertDescription className="text-gray-800 text-base">
+              <div className="text-xl mt-0.5">⚠️</div>
+              <AlertDescription className="text-gray-800 text-sm">
                 <span className="font-semibold">Aclaración:</span> esta herramienta es para visualizar y planificar
                 horarios. Para realizar las inscripciones debés hacerlo por{" "}
                 <a
