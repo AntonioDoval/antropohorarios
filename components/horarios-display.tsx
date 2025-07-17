@@ -704,12 +704,12 @@ export function HorariosDisplay() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
         <div className="mb-4">
-          <p className="text-gray-500 text-lg mb-1">Oferta de Asignaturas</p>
-          <h1 className="text-5xl font-bold text-uba-primary mb-2">
+          <p className="text-gray-500 text-base mb-1">Oferta de Asignaturas</p>
+          <h1 className="text-3xl font-bold text-uba-primary mb-2">
             {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
           </h1>
-        <h2 className="text-2xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
-          <p className="text-gray-700 text-lg mb-3 leading-relaxed">
+        <h2 className="text-xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
+          <p className="text-gray-700 text-base mb-3 leading-relaxed">
             Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo la{" "}
             <span className="font-semibold">comisión de prácticos</span> que prefieras. Abajo podés visualizar la lista de{" "}
             <span className="font-semibold">tu selección</span> y ver cómo quedaría tu{" "}
