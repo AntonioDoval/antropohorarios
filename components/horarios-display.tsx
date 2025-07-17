@@ -918,13 +918,15 @@ export function HorariosDisplay() {
       </Card>
 
       {/* Período actual */}
-      <div className="text-center py-4">
-        <p className="text-gray-600 text-base mb-2">
+      <div className="py-4">
+        <p className="text-gray-600 text-xl mb-3 text-left">
           Período actual:
         </p>
-        <p className="text-xl font-bold text-uba-primary">
-          {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
-        </p>
+        <div className="inline-block bg-uba-secondary text-white px-4 py-2 rounded-lg">
+          <p className="text-2xl font-bold">
+            {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
+          </p>
+        </div>
       </div>
 
       {(() => {
