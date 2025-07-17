@@ -83,6 +83,23 @@ export function HorariosDisplay() {
   useEffect(() => {
     const fetchHorarios = async () => {
       try {
+        // En desarrollo, primero intentar cargar desde localStorage
+        if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('replit'))) {
+          const localData = localStorage.getItem("horarios-antropologia")
+          if (localData) {
+            try {
+              const parsedData = JSON.parse(localData)
+              console.log('Cargando datos desde localStorage para desarrollo:', parsedData)
+              setData(parsedData)
+              setLoading(false)
+              return
+            } catch (parseError) {
+              console.error('Error parsing localStorage data:', parseError)
+            }
+          }
+        }
+
+        // Si no hay datos locales, hacer llamada a la API
         const response = await fetch('/api/horarios')
         const horarios = await response.json()
         setData(horarios)
@@ -99,8 +116,16 @@ export function HorariosDisplay() {
 
     fetchHorarios()
     
-    // Polling cada 30 segundos para detectar cambios
-    const interval = setInterval(fetchHorarios, 30000)
+    // Polling cada 30 segundos para detectar cambios (solo si no estamos usando localStorage)
+    const interval = setInterval(() => {
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('replit'))) {
+        const localData = localStorage.getItem("horarios-antropologia")
+        if (localData) {
+          return // No hacer polling si tenemos datos locales
+        }
+      }
+      fetchHorarios()
+    }, 30000)
     
     return () => clearInterval(interval)
   }, [])
@@ -111,6 +136,31 @@ export function HorariosDisplay() {
       setAsignaturasEnriquecidas(enriched)
     }
   }, [data])
+
+  // Listener para cambios en localStorage en desarrollo
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('replit'))) {
+      const handleStorageChange = () => {
+        const localData = localStorage.getItem("horarios-antropologia")
+        if (localData) {
+          try {
+            const parsedData = JSON.parse(localData)
+            console.log('Datos actualizados en localStorage, recargando:', parsedData)
+            setData(parsedData)
+          } catch (parseError) {
+            console.error('Error parsing updated localStorage data:', parseError)
+          }
+        }
+      }
+
+      // Escuchar cambios en localStorage
+      window.addEventListener('storage', handleStorageChange)
+      
+      return () => {
+        window.removeEventListener('storage', handleStorageChange)
+      }
+    }
+  }, [])
 
   const getAsignaturaIcon = (asignatura: Asignatura, isSelected = false) => {
     const tipoAsignatura = asignatura.tipoAsignatura || ""
