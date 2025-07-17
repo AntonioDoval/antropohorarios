@@ -917,6 +917,16 @@ export function HorariosDisplay() {
         </CardContent>
       </Card>
 
+      {/* Período actual */}
+      <div className="text-center py-4">
+        <p className="text-gray-600 text-base mb-2">
+          Período actual:
+        </p>
+        <p className="text-xl font-bold text-uba-primary">
+          {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
+        </p>
+      </div>
+
       {(() => {
         const superposiciones = detectarSuperposiciones()
         return superposiciones.length > 0 ? (
