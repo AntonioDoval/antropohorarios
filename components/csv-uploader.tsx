@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Upload, FileSpreadsheet, CheckCircle, AlertTriangle, Loader2 } from "lucide-react"
 import { toStartCase } from "@/lib/text-utils"
-import { loadSampleData } from "@/lib/sample-data-loader"
+//import { loadSampleData } from "@/lib/sample-data-loader"
 
 interface Clase {
   id: string
@@ -62,7 +62,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
     }
   }
 
-  const handleLoadSampleData = async () => {
+  /*const handleLoadSampleData = async () => {
     setLoading(true)
     setMessage(null)
 
@@ -77,30 +77,11 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
         }
       }
 
-      // En desarrollo, guardar directamente en localStorage
-      if (process.env.NODE_ENV === 'development') {
-        localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
-        
-        setMessage({
-          type: "success",
-          content: `Datos de ejemplo cargados exitosamente en localStorage. ${sampleData.length} asignaturas disponibles (solo en desarrollo).`
-        })
-
-        // Recargar la página para mostrar los nuevos datos
-        setTimeout(() => {
-          window.location.reload()
-        }, 2000)
-        
-        return
-      }
-
-      // En producción, intentar guardar en API
-      const adminPassword = localStorage.getItem('admin-session') || ''
+      // Guardar en API
       const response = await fetch('/api/horarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-password': adminPassword,
         },
         body: JSON.stringify(horariosData),
       })
@@ -131,7 +112,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
     } finally {
       setLoading(false)
     }
-  }
+  }*/
 
   const procesarCSV = async () => {
     if (!file) {
@@ -514,71 +495,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
     })
 
     try {
-      // En desarrollo, guardar directamente en localStorage si Supabase no está disponible
-      if (process.env.NODE_ENV === 'development') {
-        // Intentar primero con Supabase
-        const adminPassword = localStorage.getItem('admin-session') || ''
-        
-        try {
-          const response = await fetch('/api/horarios', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-admin-password': adminPassword,
-            },
-            body: JSON.stringify(horariosData),
-          })
-
-          const responseData = await response.json()
-
-          if (response.ok) {
-            const successMessage = `Datos guardados exitosamente en Supabase. ${preview.length} asignaturas disponibles para todos los usuarios.`
-            console.log('Save successful:', successMessage)
-
-            setMessage({
-              type: "success",
-              content: successMessage,
-            })
-
-            // Notificar al componente padre
-            onSuccess?.(successMessage)
-
-            // Recargar la página después de 2 segundos
-            setTimeout(() => {
-              window.location.reload()
-            }, 2000)
-            
-            return
-          } else {
-            throw new Error(responseData.error || 'Supabase error')
-          }
-        } catch (supabaseError) {
-          console.log('Supabase failed, falling back to localStorage:', supabaseError)
-          
-          // Fallback a localStorage en desarrollo
-          localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
-          
-          const successMessage = `Datos guardados exitosamente en localStorage (desarrollo). ${preview.length} asignaturas disponibles localmente.`
-          console.log('Save successful (localStorage):', successMessage)
-
-          setMessage({
-            type: "success",
-            content: successMessage,
-          })
-
-          // Notificar al componente padre
-          onSuccess?.(successMessage)
-
-          // Recargar la página después de 2 segundos
-          setTimeout(() => {
-            window.location.reload()
-          }, 2000)
-          
-          return
-        }
-      }
-
-      // En producción, solo usar Supabase
+      // Enviar datos a la API con autenticación de admin
       const adminPassword = localStorage.getItem('admin-session') || ''
       const response = await fetch('/api/horarios', {
         method: 'POST',
@@ -646,20 +563,6 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
               Procesar CSV
             </Button>
           </div>
-
-          {process.env.NODE_ENV === 'development' && (
-            <div className="flex items-center gap-2 pt-2 border-t">
-              <Button 
-                onClick={handleLoadSampleData}
-                disabled={loading}
-                variant="outline"
-                className="flex-1"
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <FileSpreadsheet className="h-4 w-4 mr-2" />}
-                Cargar Datos de Muestra (localStorage)
-              </Button>
-            </div>
-          )}
 
 
 

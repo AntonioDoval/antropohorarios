@@ -88,22 +88,6 @@ export function HorariosDisplay() {
         setData(horarios)
       } catch (error) {
         console.error('Error fetching horarios:', error)
-        
-        // En desarrollo, intentar cargar desde localStorage como fallback
-        if (process.env.NODE_ENV === 'development') {
-          try {
-            const localData = localStorage.getItem("horarios-antropologia")
-            if (localData) {
-              const parsedData = JSON.parse(localData)
-              console.log('Loaded horarios from localStorage (development fallback)')
-              setData(parsedData)
-              return
-            }
-          } catch (localError) {
-            console.error('Error loading from localStorage:', localError)
-          }
-        }
-        
         setData({
           asignaturas: [],
           periodo: { año: new Date().getFullYear().toString(), periodo: "1C" },
