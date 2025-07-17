@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Upload, FileSpreadsheet, CheckCircle, AlertTriangle, Loader2 } from "lucide-react"
 import { toStartCase } from "@/lib/text-utils"
-//import { loadSampleData } from "@/lib/sample-data-loader"
+import { loadSampleData } from "@/lib/sample-data-loader"
 
 interface Clase {
   id: string
@@ -62,7 +62,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
     }
   }
 
-  /*const handleLoadSampleData = async () => {
+  const handleLoadSampleData = async () => {
     setLoading(true)
     setMessage(null)
 
@@ -77,31 +77,18 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
         }
       }
 
-      // Guardar en API
-      const response = await fetch('/api/horarios', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(horariosData),
+      // Guardar en localStorage para desarrollo
+      localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
+
+      setMessage({
+        type: "success",
+        content: `Datos de ejemplo cargados exitosamente en localStorage. ${sampleData.length} asignaturas disponibles para desarrollo.`
       })
 
-      if (response.ok) {
-        // También guardar en localStorage como backup
-        localStorage.setItem("horarios-antropologia", JSON.stringify(horariosData))
-
-        setMessage({
-          type: "success",
-          content: `Datos de ejemplo cargados exitosamente. ${sampleData.length} asignaturas disponibles en todos los dispositivos.`
-        })
-
-        // Recargar la página para mostrar los nuevos datos
-        setTimeout(() => {
-          window.location.reload()
-        }, 2000)
-      } else {
-        throw new Error('Error saving sample data to server')
-      }
+      // Recargar la página para mostrar los nuevos datos
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000)
 
     } catch (error) {
       console.error("Error loading sample data:", error)
@@ -112,7 +99,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
     } finally {
       setLoading(false)
     }
-  }*/
+  }
 
   const procesarCSV = async () => {
     if (!file) {
@@ -563,6 +550,25 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
               Procesar CSV
             </Button>
           </div>
+
+          {/* Botón para desarrollo - solo visible en localhost */}
+          {typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('replit')) && (
+            <div className="pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm text-gray-600">Función de desarrollo:</p>
+                <Badge variant="outline" className="text-xs">Solo desarrollo</Badge>
+              </div>
+              <Button 
+                onClick={handleLoadSampleData} 
+                disabled={loading}
+                variant="outline"
+                className="w-full"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <FileSpreadsheet className="h-4 w-4 mr-2" />}
+                Cargar Datos de Ejemplo (localStorage)
+              </Button>
+            </div>
+          )}
 
 
 
