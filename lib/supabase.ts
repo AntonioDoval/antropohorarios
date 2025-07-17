@@ -12,8 +12,25 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Supabase configuration missing. Please check environment variables.')
 }
 
-// Cliente público (solo lectura)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Cliente público (solo lectura) con configuración para desarrollo
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false
+  },
+  global: {
+    fetch: (url, options) => {
+      console.log('Supabase fetch to:', url)
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options?.headers,
+          'User-Agent': 'replit-dev-environment'
+        }
+      })
+    }
+  }
+})
 
 // Cliente administrativo (lectura y escritura)
 export const supabaseAdmin = supabaseServiceKey 
@@ -21,6 +38,18 @@ export const supabaseAdmin = supabaseServiceKey
       auth: {
         autoRefreshToken: false,
         persistSession: false
+      },
+      global: {
+        fetch: (url, options) => {
+          console.log('Supabase Admin fetch to:', url)
+          return fetch(url, {
+            ...options,
+            headers: {
+              ...options?.headers,
+              'User-Agent': 'replit-admin-environment'
+            }
+          })
+        }
       }
     })
   : null
