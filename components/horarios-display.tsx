@@ -922,7 +922,7 @@ export function HorariosDisplay() {
         <p className="text-gray-600 text-xl mb-3 text-left">
           Período actual:
         </p>
-        <div className="inline-block bg-uba-secondary text-white px-4 py-2 rounded-lg">
+        <div className="inline-block w-fit bg-uba-secondary text-white px-4 py-2 rounded-lg">
           <p className="text-2xl font-bold">
             {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
           </p>
