@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -18,7 +18,6 @@ import {
   getOrientacionesDisponibles,
   type AsignaturaConPlan 
 } from "@/lib/planes-utils"
-import { createClient } from '@supabase/supabase-js'
 
 interface Clase {
   id: string
@@ -80,41 +79,6 @@ export function HorariosDisplay() {
     clases: {},
   })
   const [asignaturasEnriquecidas, setAsignaturasEnriquecidas] = useState<AsignaturaConPlan[]>([])
-  const [equivalenciasAsignaturas, setEquivalenciasAsignaturas] = useState<Record<string, any>>({})
-
-  // Función para obtener equivalencias de asignaturas desde Supabase
-  const obtenerEquivalenciasAsignaturas = async (plan: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('planes_estudios')
-        .select('*')
-        .eq('plan', plan)
-
-      if (error) {
-        console.error('Error al obtener equivalencias:', error)
-        return {}
-      }
-
-      const equivalencias: Record<string, any> = {}
-      data?.forEach((materia: any) => {
-        // Usar el código como clave para mapear nombres
-        const codigo = plan === '2023' ? materia.cod23 : materia.cod85
-        if (codigo) {
-          equivalencias[codigo] = {
-            nombre: materia.nombre,
-            nombreCorto: materia.nombreCorto || materia.nombre,
-            cod23: materia.cod23,
-            cod85: materia.cod85
-          }
-        }
-      })
-
-      return equivalencias
-    } catch (error) {
-      console.error('Error al consultar equivalencias:', error)
-      return {}
-    }
-  }
 
   useEffect(() => {
     const fetchHorarios = async () => {
@@ -279,6 +243,8 @@ export function HorariosDisplay() {
       modalidadesAprobacion: modalidadesAprobacion.sort(),
     }
   }
+
+
 
   const tieneHorarioEnSlot = (horario: string, bloqueInicio: number) => {
     const [inicio, fin] = horario.split(" - ").map(h => parseInt(h.split(":")[0]))
@@ -722,28 +688,6 @@ export function HorariosDisplay() {
     }
   }
 
-  // Función para obtener nombre de asignatura según plan seleccionado
-  const obtenerNombreAsignatura = (asignatura: any) => {
-    if (Object.keys(equivalenciasAsignaturas).length === 0) {
-      return asignatura.materia
-    }
-
-    // Buscar en equivalencias por diferentes campos
-    const codigoAsignatura = asignatura.id
-    let equivalencia = null
-
-    // Buscar por código exacto
-    if (codigoAsignatura && equivalenciasAsignaturas[codigoAsignatura]) {
-      equivalencia = equivalenciasAsignaturas[codigoAsignatura]
-    }
-
-    if (equivalencia) {
-      return equivalencia.nombreCorto || equivalencia.nombre
-    }
-
-    return asignatura.materia
-  }
-
   const asignaturasPorPlan = filtrarAsignaturasPorPlan(asignaturasEnriquecidas, filtros.planEstudios)
   const asignaturasOrdenadas = [...asignaturasPorPlan].sort((a, b) => {
     const nombreA = getNombreAsignaturaPorPlan(a, filtros.planEstudios)
@@ -754,23 +698,7 @@ export function HorariosDisplay() {
   const valoresUnicos = getValoresUnicos(asignaturasEnriquecidas)
 
   const seleccionFormateada = getSeleccionFormateada()
-  
-  // Configurar cliente de Supabase
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-  )
 
-    // Cargar equivalencias cuando cambie el plan de estudios
-    useEffect(() => {
-      const cargarEquivalencias = async () => {
-        const equivalencias = await obtenerEquivalenciasAsignaturas(filtros.planEstudios)
-        setEquivalenciasAsignaturas(equivalencias)
-      }
-  
-      cargarEquivalencias()
-    }, [filtros.planEstudios])
-  
   return (
     <TooltipProvider>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -827,8 +755,7 @@ export function HorariosDisplay() {
                 />
               </div>
 
-              <div className="flex items-center justify-center p-2 bg-[#1c2554]```tool_code
- text-white rounded-lg">
+              <div className="flex items-center justify-center p-2 bg-[#1c2554] text-white rounded-lg">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs font-medium">Plan de Estudios:</span>
                   <span className={`text-xs ${filtros.planEstudios === "1985" ? "font-bold" : "opacity-70"}`}>
@@ -1047,7 +974,7 @@ export function HorariosDisplay() {
                     <div className="flex items-start gap-2 flex-1">
                       {getAsignaturaIcon(asignatura, isSelected)}
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-lg leading-tight">{obtenerNombreAsignatura(asignatura)}</CardTitle>
+                        <CardTitle className="text-lg leading-tight">{getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)}</CardTitle>
                         <div className="text-xs text-white/90 mt-1">
                           <span className="font-medium">Cátedra:</span> {asignatura.catedra}
                         </div>
@@ -1145,6 +1072,8 @@ export function HorariosDisplay() {
                     </Badge>
                   )}
                 </div>
+
+
 
                 {asignatura.aclaraciones && (
                   <div className="text-xs text-uba-primary bg-uba-secondary/10 p-2 rounded">
@@ -1402,7 +1331,7 @@ export function HorariosDisplay() {
                     const fin = parseInt(horarioParts[1].split(":")[0])
 
                     horariosCompletos.push({
-                      asignatura: obtenerNombreAsignatura(asignatura),
+                      asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
                       catedra: asignatura.catedra,
                       clase: `${clase.tipo} ${grupo.clases.length > 1 ? grupo.clases.indexOf(clase) + 1 : ""}`.trim(),
                       dia: clase.dia,
@@ -1419,7 +1348,7 @@ export function HorariosDisplay() {
                     const fin = parseInt(horarioParts[1].split(":")[0])
 
                     horariosCompletos.push({
-                      asignatura: obtenerNombreAsignatura(asignatura),
+                      asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
                       catedra: asignatura.catedra,
                       clase: clase.tipo,
                       dia: clase.dia,
@@ -1437,7 +1366,7 @@ export function HorariosDisplay() {
                         const fin = parseInt(horarioParts[1].split(":")[0])
 
                         horariosCompletos.push({
-                          asignatura: obtenerNombreAsignatura(asignatura),
+                          asignatura: getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios),
                           catedra: asignatura.catedra,
                           clase: `${clase.tipo} ${clase.numero || ""}`.trim(),
                           dia: clase.dia,
@@ -1515,3 +1444,56 @@ export function HorariosDisplay() {
                                         className={`absolute left-1 right-1 rounded-md border-2 p-1 text-xs overflow-hidden ${clase.color}`}
                                         style={{
                                           top: `${topPercent}%`,
+                                          height: `${heightPercent}%`,
+                                          minHeight: '24px'
+                                        }}
+                                      >
+                                        <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
+                                          {clase.asignatura.length > 25 
+                                            ? `${clase.asignatura.substring(0, 22)}...`
+                                            : clase.asignatura
+                                          }
+                                        </div>
+                                        <div className="text-xs leading-tight truncate">
+                                          {clase.clase}
+                                        </div>
+                                        <div className="text-xs opacity-75 truncate">
+                                          {clase.inicio}:00-{clase.fin}:00 hs
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-50 border-t">
+                    <h4 className="text-sm font-semibold text-uba-primary mb-3">Leyenda de asignaturas:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {seleccionFormateada.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
+                          <span className="text-sm text-gray-700 truncate">
+                            {item.asignatura} ({item.catedra})
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })()}
+        </div>
+      )}
+        </div>
+      </div>
+    </TooltipProvider>
+  )
+}
