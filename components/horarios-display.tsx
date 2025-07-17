@@ -1042,19 +1042,8 @@ export function HorariosDisplay() {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {(() => {
-                    const gruposClases = agruparClasesPorTipo(asignatura.clases)
-                    
-                    // Separar tipos de clases
-                    const teoricosYTeoricoPracticos = gruposClases.filter(grupo => 
-                      grupo.tipo === "Teórico" || grupo.tipo === "Teórico-Práctico"
-                    )
-                    const practicos = gruposClases.filter(grupo => 
-                      grupo.tipo === "Práctico"
-                    )
-                    const otrosTipos = gruposClases.filter(grupo => 
-                      grupo.tipo !== "Teórico" && grupo.tipo !== "Teórico-Práctico" && grupo.tipo !== "Práctico"
-                    )
+                  {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
+                    const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
 
                     const getClassColors = (tipo: string, isSelected: boolean, isDimmed: boolean = false) => {
                       const baseColors = (() => {
@@ -1081,105 +1070,83 @@ export function HorariosDisplay() {
                       return isDimmed ? `${baseColors} opacity-50` : baseColors
                     }
 
-                    const renderGrupo = (grupo: { tipo: string; clases: any[] }) => {
-                      const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
-
-                      return (
-                        <div key={grupo.tipo} className="mb-2">
-                          {requiereElegir ? (
-                            <RadioGroup
-                              value={seleccion.clases[asignatura.id]?.[grupo.tipo] || ""}
-                              onValueChange={(value) => seleccionarClase(asignatura.id, grupo.tipo, value)}
-                            >
-                              <div className="space-y-1">
-                                {grupo.clases.map((clase) => {
-                                  const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
-                                  const isDimmed = claseEstaOscurecida(clase)
-                                  return (
-                                    <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
-                                      getClassColors(clase.tipo, isClassSelected, isDimmed)
-                                    }`}>
-                                      <div className="flex justify-between items-start mb-1">
-                                        <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
-                                          {grupo.clases.length === 1 
-                                            ? clase.tipo
-                                            : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
-                                        </Badge>
-                                        <div className="flex items-center">
-                                          <RadioGroupItem
-                                            value={clase.id}
-                                            id={clase.id}
-                                            className="data-[state=checked]:bg-current data-[state=checked]:border-current"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="text-xs space-y-0.5">
-                                        <div className="flex items-center gap-1">
-                                          <span className="font-medium">{clase.dia}</span>
-                                          <span className="opacity-75">{clase.horario} hs</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            </RadioGroup>
-                          ) : (
+                    return (
+                      <div key={grupo.tipo} className="sm:col-span-1">
+                        {requiereElegir ? (
+                          <RadioGroup
+                            value={seleccion.clases[asignatura.id]?.[grupo.tipo] || ""}
+                            onValueChange={(value) => seleccionarClase(asignatura.id, grupo.tipo, value)}
+                          >
                             <div className="space-y-1">
-                              {grupo.clases.map((clase, index) => {
+                              {grupo.clases.map((clase) => {
+                                const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
                                 const isDimmed = claseEstaOscurecida(clase)
                                 return (
-                                <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
-                                  getClassColors(clase.tipo, isSelected, isDimmed)
-                                }`}>
-                                  <div className="flex justify-between items-start mb-1">
-                                    <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
-                                      {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
-                                        ? `${clase.tipo} ${String.fromCharCode(65 + index)}` // A, B, C, etc.
-                                        : grupo.clases.length === 1 
+                                  <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
+                                    getClassColors(clase.tipo, isClassSelected, isDimmed)
+                                  }`}>
+                                    <div className="flex justify-between items-start mb-1">
+                                      <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
+                                        {grupo.clases.length === 1 
                                           ? clase.tipo
                                           : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
-                                    </Badge>
-                                    {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
-                                      <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-600 border-yellow-200 px-2 py-0.5">
-                                        <span className="hidden [@container_(min-width:200px)]:inline">Complementario</span>
-                                        <span className="[@container_(min-width:200px)]:hidden">Compl.</span>
                                       </Badge>
-                                    )}
-                                  </div>
-                                  <div className="text-xs space-y-0.5">
-                                    <div className="flex items-center gap-1">
-                                      <span className="font-medium">{clase.dia}</span>
-                                      <span className="opacity-75">{clase.horario} hs</span>
+                                      <div className="flex items-center">
+                                        <RadioGroupItem
+                                          value={clase.id}
+                                          id={clase.id}
+                                          className="data-[state=checked]:bg-current data-[state=checked]:border-current"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="text-xs space-y-0.5">
+                                      <div className="flex items-center gap-1">
+                                        <span className="font-medium">{clase.dia}</span>
+                                        <span className="opacity-75">{clase.horario} hs</span>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              )
+                                )
                               })}
                             </div>
-                          )}
-                        </div>
-                      )
-                    }
-
-                    return (
-                      <>
-                        {/* Columna izquierda: Teóricos y Teórico-Prácticos */}
-                        <div className="sm:col-span-1">
-                          {teoricosYTeoricoPracticos.map(renderGrupo)}
-                          {/* Si no hay prácticos, mostrar otros tipos en la columna izquierda */}
-                          {practicos.length === 0 && otrosTipos.map(renderGrupo)}
-                        </div>
-
-                        {/* Columna derecha: Prácticos */}
-                        <div className="sm:col-span-1">
-                          {practicos.map(renderGrupo)}
-                          {/* Si hay prácticos, mostrar otros tipos en la columna derecha */}
-                          {practicos.length > 0 && otrosTipos.map(renderGrupo)}
-                        </div>
-                      </>
+                          </RadioGroup>
+                        ) : (
+                          <div className="space-y-1">
+                            {grupo.clases.map((clase, index) => {
+                              const isDimmed = claseEstaOscurecida(clase)
+                              return (
+                              <div key={clase.id} className={`border rounded p-2 transition-all duration-200 ${
+                                getClassColors(clase.tipo, isSelected, isDimmed)
+                              }`}>
+                                <div className="flex justify-between items-start mb-1">
+                                  <Badge variant="outline" className="text-xs border-current px-2 py-0.5">
+                                    {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto"
+                                      ? `${clase.tipo} ${String.fromCharCode(65 + index)}` // A, B, C, etc.
+                                      : grupo.clases.length === 1 
+                                        ? clase.tipo
+                                        : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
+                                  </Badge>
+                                  {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
+                                    <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-600 border-yellow-200 px-2 py-0.5">
+                                      <span className="hidden [@container_(min-width:200px)]:inline">Complementario</span>
+                                      <span className="[@container_(min-width:200px)]:hidden">Compl.</span>
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="text-xs space-y-0.5">
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-medium">{clase.dia}</span>
+                                    <span className="opacity-75">{clase.horario} hs</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                            })}
+                          </div>
+                        )}
+                      </div>
                     )
-                  })()}
+                  })}
                 </div>
                 {seleccion.asignaturas.includes(asignatura.id) &&
                   (() => {
