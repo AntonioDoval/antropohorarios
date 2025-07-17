@@ -66,6 +66,7 @@ interface Seleccion {
 export function HorariosDisplay() {
   const [data, setData] = useState<HorariosData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isClient, setIsClient] = useState(false)
   const [filtros, setFiltros] = useState<Filtros>({
     busqueda: "",
     tiposAsignatura: [],
@@ -81,6 +82,8 @@ export function HorariosDisplay() {
   const [asignaturasEnriquecidas, setAsignaturasEnriquecidas] = useState<AsignaturaConPlan[]>([])
 
   useEffect(() => {
+    setIsClient(true)
+    
     const fetchHorarios = async () => {
       try {
         const response = await fetch('/api/horarios')
@@ -111,6 +114,15 @@ export function HorariosDisplay() {
       setAsignaturasEnriquecidas(enriched)
     }
   }, [data])
+
+  // Efecto para forzar re-renderizado cuando cambia el plan
+  useEffect(() => {
+    // Forzar re-renderizado cuando cambia el plan
+    if (asignaturasEnriquecidas.length > 0) {
+      // Trigger re-render by updating state
+      setAsignaturasEnriquecidas(prev => [...prev])
+    }
+  }, [filtros.planEstudios])
 
   const getAsignaturaIcon = (asignatura: Asignatura, isSelected = false) => {
     const tipoAsignatura = asignatura.tipoAsignatura || ""
@@ -249,6 +261,7 @@ export function HorariosDisplay() {
 
   const filtrarAsignaturas = (asignaturas: AsignaturaConPlan[]) => {
     return asignaturas.filter((asignatura) => {
+      // Asegurar que obtenemos el nombre correcto para el plan actual
       const nombreParaBusqueda = getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios)
 
       const coincideBusqueda =
@@ -287,19 +300,32 @@ export function HorariosDisplay() {
   }
 
   const getNombreAsignaturaPorPlan = (asignatura: AsignaturaConPlan, plan: "2023" | "1985"): string => {
+    // Verificar que la asignatura tenga la información necesaria
+    if (!asignatura || !asignatura.materia) {
+      return "Asignatura sin nombre"
+    }
+
+    // Verificar que planInfo existe y tiene equivalencia
+    if (!asignatura.planInfo?.equivalencia) {
+      return asignatura.materia
+    }
+
+    const equivalencia = asignatura.planInfo.equivalencia
+
     if (plan === "1985") {
-      // Para plan 1985, usar el nombre específico si existe, sino el nombre original
-      const nombrePlan85 = asignatura.planInfo?.equivalencia?.nombrePlan85
-      if (nombrePlan85 && nombrePlan85.trim() !== '') {
-        return nombrePlan85
+      // Para plan 1985, usar el nombre específico si existe y no está vacío
+      const nombrePlan85 = equivalencia.nombrePlan85
+      if (nombrePlan85 && typeof nombrePlan85 === 'string' && nombrePlan85.trim() !== '') {
+        return nombrePlan85.trim()
       }
-    } else {
-      // Para plan 2023, usar el nombre específico si existe, sino el nombre original
-      const nombrePlan23 = asignatura.planInfo?.equivalencia?.nombrePlan23
-      if (nombrePlan23 && nombrePlan23.trim() !== '') {
-        return nombrePlan23
+    } else if (plan === "2023") {
+      // Para plan 2023, usar el nombre específico si existe y no está vacío
+      const nombrePlan23 = equivalencia.nombrePlan23
+      if (nombrePlan23 && typeof nombrePlan23 === 'string' && nombrePlan23.trim() !== '') {
+        return nombrePlan23.trim()
       }
     }
+    
     // Fallback al nombre original de la asignatura
     return asignatura.materia
   }
@@ -612,7 +638,7 @@ export function HorariosDisplay() {
     return resultado.sort((a, b) => a.asignatura.localeCompare(b.asignatura))
   }
 
-  if (loading) {
+  if (loading || !isClient) {
     return <div className="text-center py-8 text-uba-primary">Cargando horarios...</div>
   }
 
