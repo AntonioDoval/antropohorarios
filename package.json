@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cargar-planes": "node scripts/cargar-planes-supabase.js"
+    "cargar-planes": "tsx scripts/cargar-planes-supabase.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
