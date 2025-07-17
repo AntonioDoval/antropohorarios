@@ -18,3 +18,14 @@ externalPort = 3001
 [[ports]]
 localPort = 3002
 externalPort = 3002
+
+[workflows]
+
+[[workflows.workflow]]
+name = "Cargar planes en supabase"
+mode = "sequential"
+author = 43019595
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run cargar-planes"
