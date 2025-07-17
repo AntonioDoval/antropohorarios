@@ -705,11 +705,12 @@ export function HorariosDisplay() {
         <div className="space-y-4">
         <div className="mb-4">
           <h1 className="text-4xl font-bold text-uba-primary mb-1">
-            Oferta de Asignaturas - Ciencias Antropológicas (FFyL-UBA)
+            Oferta de Asignaturas y Horarios
           </h1>
-          <p className="text-lg text-uba-primary mb-2 font-normal">
+          <p className="text-2xl text-uba-primary mb-2 font-normal">
             Ciencias Antropológicas (FFyL-UBA)
           </p>
+          <hr className="border-uba-secondary mb-3" />
 
           <h2 className="text-xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
           <p className="text-gray-700 text-base mb-3 leading-relaxed">
