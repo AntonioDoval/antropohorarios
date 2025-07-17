@@ -115,7 +115,7 @@ export function HorariosDisplay() {
     }
 
     fetchHorarios()
-    
+
     // Polling cada 30 segundos para detectar cambios (solo si no estamos usando localStorage)
     const interval = setInterval(() => {
       if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('replit'))) {
@@ -126,7 +126,7 @@ export function HorariosDisplay() {
       }
       fetchHorarios()
     }, 30000)
-    
+
     return () => clearInterval(interval)
   }, [])
 
@@ -155,7 +155,7 @@ export function HorariosDisplay() {
 
       // Escuchar cambios en localStorage
       window.addEventListener('storage', handleStorageChange)
-      
+
       return () => {
         window.removeEventListener('storage', handleStorageChange)
       }
@@ -704,15 +704,13 @@ export function HorariosDisplay() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-uba-primary mb-2">
+          <h1 className="text-4xl font-bold text-uba-primary mb-1">
             Oferta de Asignaturas - Ciencias Antropológicas (FFyL-UBA)
           </h1>
-          <p className="text-gray-600 text-lg mb-3">
-            Período actual: <span className="font-semibold text-uba-primary">
-              {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
-            </span>
+          <p className="text-lg text-uba-primary mb-2 font-normal">
+            Ciencias Antropológicas (FFyL-UBA)
           </p>
-          
+
           <h2 className="text-xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
           <p className="text-gray-700 text-base mb-3 leading-relaxed">
             Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo la{" "}
