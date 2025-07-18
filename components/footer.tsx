@@ -1,4 +1,4 @@
-import { Mail, Facebook, Instagram, Twitter, Youtube } from "lucide-react"
+import { Mail, Facebook, Instagram, Twitter, Youtube, Phone, MapPin } from "lucide-react"
 
 export function Footer() {
   return (
@@ -15,19 +15,28 @@ export function Footer() {
               <img src="/images/footer-logo.svg" alt="UBA Filo Logo" className="h-12" />
             </div>
 
-            {/* Redes sociales a la derecha */}
+            {/* Información de contacto a la derecha */}
             <div className="text-center">
-              <h3 className="text-white font-bold text-lg mb-3">¡Seguinos en redes!</h3>
+              <h3 className="text-white font-bold text-lg mb-3">Contacto</h3>
 
-              <div className="flex space-x-3">
-                <a
-                  href="mailto:depantropologia@gmail.com"
-                  className="text-uba-secondary hover:text-white transition-colors duration-200"
-                  aria-label="Email"
-                >
-                  <Mail className="h-6 w-6" />
-                </a>
+              <div className="text-white text-sm space-y-2 mb-4">
+                <div className="flex items-center justify-center space-x-2">
+                  <Phone className="h-4 w-4 text-uba-secondary" />
+                  <span>5287-2829</span>
+                </div>
+                
+                <div className="flex items-center justify-center space-x-2">
+                  <MapPin className="h-4 w-4 text-uba-secondary" />
+                  <span>Puán 480, 3° piso - 14:30 a 18:30 hs</span>
+                </div>
+                
+                <div className="flex items-center justify-center space-x-2">
+                  <Mail className="h-4 w-4 text-uba-secondary" />
+                  <span>depant[at]filo.uba.ar</span>
+                </div>
+              </div>
 
+              <div className="flex justify-center space-x-3">
                 <a
                   href="https://facebook.com/depantropologia"
                   className="text-uba-secondary hover:text-white transition-colors duration-200"
