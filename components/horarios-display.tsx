@@ -1352,10 +1352,14 @@ export function HorariosDisplay() {
               "bg-teal-200 text-teal-800 border-teal-300"
             ]
 
-            seleccion.asignaturas.forEach((asignaturaId, asignaturaIndex) => {
+            seleccion.asignaturas.forEach((asignaturaId) => {
               const asignatura = asignaturasEnriquecidas.find((a) => a.id === asignaturaId)
               if (!asignatura) return
 
+              // Usar el índice desde seleccionFormateada para mantener correspondencia con la leyenda
+              const asignaturaIndex = seleccionFormateada.findIndex(item => 
+                getNombreAsignaturaPorPlan(asignatura, filtros.planEstudios) === item.asignatura
+              )
               const clasesAsignatura = seleccion.clases[asignaturaId] || {}
               const gruposClases = agruparClasesPorTipo(asignatura.clases)
               const colorAsignatura = colores[asignaturaIndex % colores.length]
@@ -1490,8 +1494,12 @@ export function HorariosDisplay() {
                                         <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
                                           {(() => {
                                             const asignatura = asignaturasEnriquecidas.find(a => getNombreAsignaturaPorPlan(a, filtros.planEstudios) === clase.asignatura)
-                                            if (asignatura?.id) {
-                                              // Crear siglas a partir del nombre de la materia
+                                            if (asignatura?.tipoAsignatura?.includes("Seminario")) {
+                                              // Para seminarios, usar formato "SEM: [Apellido cátedra]"
+                                              const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
+                                              return `SEM: ${apellidoCatedra}`
+                                            } else if (asignatura?.id) {
+                                              // Para materias, crear siglas a partir del nombre
                                               const palabras = clase.asignatura.split(' ')
                                               if (palabras.length >= 2) {
                                                 return palabras.map(palabra => palabra.charAt(0).toUpperCase()).join('')
@@ -1505,9 +1513,6 @@ export function HorariosDisplay() {
                                         </div>
                                         <div className="text-xs leading-tight truncate">
                                           {clase.clase}
-                                        </div>
-                                        <div className="text-xs opacity-75 truncate">
-                                          {clase.inicio}-{clase.fin}
                                         </div>
                                       </div>
                                     )
