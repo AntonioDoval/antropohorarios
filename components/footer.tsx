@@ -16,59 +16,27 @@ export function Footer() {
             </div>
 
             {/* Información de contacto a la derecha */}
-            <div className="text-center">
+            <div className="text-left">
               <h3 className="text-white font-bold text-lg mb-3">Contacto</h3>
 
-              <div className="text-white text-sm space-y-2 mb-4">
-                <div className="flex items-center justify-center space-x-2">
-                  <Phone className="h-4 w-4 text-uba-secondary" />
+              <div className="text-white text-xs space-y-1 mb-3">
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-3 w-3 text-uba-secondary" />
                   <span>5287-2829</span>
                 </div>
-                
-                <div className="flex items-center justify-center space-x-2">
-                  <MapPin className="h-4 w-4 text-uba-secondary" />
+
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-3 w-3 text-uba-secondary" />
                   <span>Puán 480, 3° piso - 14:30 a 18:30 hs</span>
                 </div>
-                
-                <div className="flex items-center justify-center space-x-2">
-                  <Mail className="h-4 w-4 text-uba-secondary" />
+
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-3 w-3 text-uba-secondary" />
                   <span>depant[at]filo.uba.ar</span>
                 </div>
               </div>
 
-              <div className="flex justify-center space-x-3">
-                <a
-                  href="https://facebook.com/depantropologia"
-                  className="text-uba-secondary hover:text-white transition-colors duration-200"
-                  aria-label="Facebook"
-                >
-                  <Facebook className="h-6 w-6" />
-                </a>
-
-                <a
-                  href="https://instagram.com/Antropo.Uba"
-                  className="text-uba-secondary hover:text-white transition-colors duration-200"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="h-6 w-6" />
-                </a>
-
-                <a
-                  href="https://twitter.com/AntropologiaUba"
-                  className="text-uba-secondary hover:text-white transition-colors duration-200"
-                  aria-label="Twitter"
-                >
-                  <Twitter className="h-6 w-6" />
-                </a>
-
-                <a
-                  href="https://www.youtube.com/@departamentocienciasantropolog"
-                  className="text-uba-secondary hover:text-white transition-colors duration-200"
-                  aria-label="YouTube"
-                >
-                  <Youtube className="h-6 w-6" />
-                </a>
-              </div>
+              <div className="flex space-x-2"></div>
             </div>
           </div>
         </div>
