@@ -1447,7 +1447,7 @@ export function HorariosDisplay() {
                             Horario
                           </th>
                           {diasSemana.map((dia) => (
-                            <th key={dia} className="border border-gray-300 p-2 text-center font-semibold text-sm min-w-[110px]">
+                            <th key={dia} className="border border-gray-300 p-2 text-center font-semibold text-sm w-1/6">
                               {dia}
                             </th>
                           ))}
@@ -1488,10 +1488,20 @@ export function HorariosDisplay() {
                                         }}
                                       >
                                         <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
-                                          {clase.asignatura.length > 25 
-                                            ? `${clase.asignatura.substring(0, 22)}...`
-                                            : clase.asignatura
-                                          }
+                                          {(() => {
+                                            const asignatura = asignaturasEnriquecidas.find(a => getNombreAsignaturaPorPlan(a, filtros.planEstudios) === clase.asignatura)
+                                            if (asignatura?.id) {
+                                              // Crear siglas a partir del nombre de la materia
+                                              const palabras = clase.asignatura.split(' ')
+                                              if (palabras.length >= 2) {
+                                                return palabras.map(palabra => palabra.charAt(0).toUpperCase()).join('')
+                                              }
+                                            }
+                                            // Fallback a nombre truncado si no se puede crear sigla
+                                            return clase.asignatura.length > 15 
+                                              ? `${clase.asignatura.substring(0, 12)}...`
+                                              : clase.asignatura
+                                          })()}
                                         </div>
                                         <div className="text-xs leading-tight truncate">
                                           {clase.clase}
