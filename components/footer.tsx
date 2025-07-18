@@ -36,7 +36,39 @@ export function Footer() {
                 </div>
               </div>
 
-              <div className="flex space-x-2"></div>
+              <div className="flex space-x-2">
+                <a
+                  href="https://facebook.com/depantropologia"
+                  className="text-uba-secondary hover:text-white transition-colors duration-200"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="h-4 w-4" />
+                </a>
+
+                <a
+                  href="https://instagram.com/Antropo.Uba"
+                  className="text-uba-secondary hover:text-white transition-colors duration-200"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="h-4 w-4" />
+                </a>
+
+                <a
+                  href="https://twitter.com/AntropologiaUba"
+                  className="text-uba-secondary hover:text-white transition-colors duration-200"
+                  aria-label="Twitter"
+                >
+                  <Twitter className="h-4 w-4" />
+                </a>
+
+                <a
+                  href="https://www.youtube.com/@departamentocienciasantropolog"
+                  className="text-uba-secondary hover:text-white transition-colors duration-200"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="h-4 w-4" />
+                </a>
+              </div>
             </div>
           </div>
         </div>
