@@ -1427,7 +1427,7 @@ export function HorariosDisplay() {
               intervalos.push({
                 inicio: hora,
                 fin: hora + 2,
-                label: `${hora}:00-${hora + 2}:00`
+                label: `${hora} a ${hora + 2}`
               })
             }
 
@@ -1440,14 +1440,14 @@ export function HorariosDisplay() {
                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-20 md:hidden">
                         →
                       </div>
-                      <table className="w-full min-w-[900px]">
+                      <table className="w-full min-w-[750px]">
                       <thead>
                         <tr className="bg-uba-primary text-white">
-                          <th className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[100px]">
+                          <th className="border border-gray-300 p-2 text-center font-semibold text-xs w-16">
                             Horario
                           </th>
                           {diasSemana.map((dia) => (
-                            <th key={dia} className="border border-gray-300 p-3 text-center font-semibold text-sm min-w-[140px]">
+                            <th key={dia} className="border border-gray-300 p-2 text-center font-semibold text-sm min-w-[110px]">
                               {dia}
                             </th>
                           ))}
@@ -1455,8 +1455,8 @@ export function HorariosDisplay() {
                       </thead>
                       <tbody>
                         {intervalos.map((intervalo) => (
-                          <tr key={intervalo.label} className="h-20">
-                            <td className="border border-gray-300 p-2 text-center font-medium text-sm bg-gray-50 text-uba-primary">
+                          <tr key={intervalo.label} className="h-16">
+                            <td className="border border-gray-300 p-1 text-center font-medium text-xs bg-gray-50 text-uba-primary">
                               {intervalo.label}
                             </td>
                             {diasSemana.map((dia) => {
@@ -1468,7 +1468,7 @@ export function HorariosDisplay() {
                               )
 
                               return (
-                                <td key={dia} className="border border-gray-300 p-1 align-top relative">
+                                <td key={dia} className="border border-gray-300 p-0.5 align-top relative">
                                   {clasesEnIntervalo.map((clase, index) => {
                                     const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
                                     const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
@@ -1497,7 +1497,7 @@ export function HorariosDisplay() {
                                           {clase.clase}
                                         </div>
                                         <div className="text-xs opacity-75 truncate">
-                                          {clase.inicio}:00-{clase.fin}:00 hs
+                                          {clase.inicio}-{clase.fin}
                                         </div>
                                       </div>
                                     )
