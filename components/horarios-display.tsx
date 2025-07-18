@@ -1464,31 +1464,39 @@ export function HorariosDisplay() {
                               {intervalo.label}
                             </td>
                             {diasSemana.map((dia) => {
-                              const clasesEnIntervalo = horariosCompletos.filter(
-                                (clase) =>
-                                  clase.dia === dia &&
-                                  clase.inicio < intervalo.fin &&
-                                  clase.fin > intervalo.inicio
+                              // Obtener todas las clases del día, sin filtrar por intervalo
+                              const clasesDelDia = horariosCompletos.filter(
+                                (clase) => clase.dia === dia
+                              )
+
+                              // Solo mostrar clases que comienzan en este intervalo para evitar duplicados
+                              const clasesQueComienzan = clasesDelDia.filter(
+                                (clase) => clase.inicio >= intervalo.inicio && clase.inicio < intervalo.fin
                               )
 
                               return (
                                 <td key={dia} className="border border-gray-300 p-0.5 align-top relative">
-                                  {clasesEnIntervalo.map((clase, index) => {
-                                    const inicioRelativo = Math.max(clase.inicio, intervalo.inicio) - intervalo.inicio
-                                    const finRelativo = Math.min(clase.fin, intervalo.fin) - intervalo.inicio
-                                    const alturaTotal = intervalo.fin - intervalo.inicio
-
-                                    const topPercent = (inicioRelativo / alturaTotal) * 100
-                                    const heightPercent = ((finRelativo - inicioRelativo) / alturaTotal) * 100
-
+                                  {clasesQueComienzan.map((clase, index) => {
+                                    // Calcular la posición y altura basada en las horas absolutas
+                                    const duracionTotal = clase.fin - clase.inicio // duración en horas
+                                    const inicioEnIntervalo = clase.inicio - intervalo.inicio // posición dentro del intervalo actual
+                                    
+                                    // Cada intervalo de la tabla representa 2 horas
+                                    const alturaIntervaloPx = 64 // altura de cada celda en px (h-16 = 64px)
+                                    const alturaHoraPx = alturaIntervaloPx / 2 // cada hora = 32px
+                                    
+                                    const topPercent = (inicioEnIntervalo / 2) * 100 // posición relativa en el intervalo
+                                    const heightPx = duracionTotal * alturaHoraPx // altura en pixels
+                                    
                                     return (
                                       <div
                                         key={index}
                                         className={`absolute left-1 right-1 rounded-md border-2 p-1 text-xs overflow-hidden ${clase.color}`}
                                         style={{
                                           top: `${topPercent}%`,
-                                          height: `${heightPercent}%`,
-                                          minHeight: '24px'
+                                          height: `${heightPx}px`,
+                                          minHeight: '24px',
+                                          zIndex: 10
                                         }}
                                       >
                                         <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
