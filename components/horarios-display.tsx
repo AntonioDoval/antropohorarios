@@ -80,46 +80,21 @@ export function HorariosDisplay() {
     clases: {},
   })
   const [asignaturasEnriquecidas, setAsignaturasEnriquecidas] = useState<AsignaturaConPlan[]>([])
-  const [planesData1985, setPlanesData1985] = useState<any[]>([])
+  const [materias1985, setMaterias1985] = useState<any[]>([])
 
   useEffect(() => {
-    // Cargar datos del plan 1985 desde archivos locales
-    const cargarDatosPlan1985 = () => {
-      try {
-        // Obtener todas las materias del plan 1985
-        const materiasProf1985Socio = getMateriasPorSeleccion("1985", "profesorado", "sociocultural")
-        const materiasProf1985Arqueo = getMateriasPorSeleccion("1985", "profesorado", "arqueologia")
-        const materiasLic1985Socio = getMateriasPorSeleccion("1985", "sociocultural", "sociocultural")
-        const materiasLic1985Arqueo = getMateriasPorSeleccion("1985", "arqueologia", "arqueologia")
-
-        // Combinar todas las materias y crear un mapa de equivalencias
-        const todasMaterias1985 = [
-          ...materiasProf1985Socio,
-          ...materiasProf1985Arqueo,
-          ...materiasLic1985Socio,
-          ...materiasLic1985Arqueo
-        ]
-
-        // Crear mapa de equivalencias único por código 2023
-        const equivalenciasMap = new Map()
-        todasMaterias1985.forEach(materia => {
-          if (materia.cod23 && !equivalenciasMap.has(materia.cod23)) {
-            equivalenciasMap.set(materia.cod23, {
-              cod_23: materia.cod23,
-              cod_85: materia.cod85,
-              nombre_plan_23: materia.nombre,
-              nombre_plan_85: materia.nombre
-            })
-          }
-        })
-
-        setPlanesData1985(Array.from(equivalenciasMap.values()))
-      } catch (error) {
-        console.error('Error loading local planes data:', error)
-      }
+    // Cargar todos los datos del plan 1985 al inicio
+    try {
+      const todasMaterias1985 = [
+        ...getMateriasPorSeleccion("1985", "profesorado", "sociocultural"),
+        ...getMateriasPorSeleccion("1985", "profesorado", "arqueologia"),
+        ...getMateriasPorSeleccion("1985", "sociocultural", "sociocultural"),
+        ...getMateriasPorSeleccion("1985", "arqueologia", "arqueologia")
+      ]
+      setMaterias1985(todasMaterias1985)
+    } catch (error) {
+      console.error('Error loading plan 1985 data:', error)
     }
-
-    cargarDatosPlan1985()
   }, [])
 
   useEffect(() => {
@@ -379,42 +354,42 @@ export function HorariosDisplay() {
   }
 
   const getNombreAsignaturaPorPlan = (asignatura: AsignaturaConPlan, plan: "2023" | "1985"): string => {
-    if (plan === "1985" && planesData1985.length > 0) {
-      // Buscar el nombre en los datos de planes locales
-      const planEquivalencia = planesData1985.find(p => 
-        p.cod_23 === asignatura.id || 
-        p.nombre_plan_23?.toLowerCase().trim() === asignatura.materia.toLowerCase().trim()
-      )
-
-      if (planEquivalencia && planEquivalencia.nombre_plan_85 && planEquivalencia.nombre_plan_85.trim() !== '') {
-        return planEquivalencia.nombre_plan_85
+    if (plan === "1985" && materias1985.length > 0) {
+      // Buscar por código de asignatura primero
+      const porCodigo = materias1985.find(m => m.cod23 === asignatura.id)
+      if (porCodigo) {
+        return porCodigo.nombre
       }
 
-      // Fallback: buscar directamente en los datos del plan 1985 por nombre
-      const todasMaterias1985 = [
-        ...getMateriasPorSeleccion("1985", "profesorado", "sociocultural"),
-        ...getMateriasPorSeleccion("1985", "profesorado", "arqueologia"),
-        ...getMateriasPorSeleccion("1985", "sociocultural", "sociocultural"),
-        ...getMateriasPorSeleccion("1985", "arqueologia", "arqueologia")
-      ]
+      // Buscar por nombre similar (normalizado)
+      const normalizarTexto = (texto: string) => 
+        texto.toLowerCase()
+          .replace(/[áàäâ]/g, 'a')
+          .replace(/[éèëê]/g, 'e')
+          .replace(/[íìïî]/g, 'i')
+          .replace(/[óòöô]/g, 'o')
+          .replace(/[úùüû]/g, 'u')
+          .replace(/[ñ]/g, 'n')
+          .replace(/[^a-z0-9\s]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim()
 
-      const materiaEquivalente = todasMaterias1985.find(m => 
-        m.cod23 === asignatura.id ||
-        m.nombre.toLowerCase().includes(asignatura.materia.toLowerCase().substring(0, 20)) ||
-        asignatura.materia.toLowerCase().includes(m.nombre.toLowerCase().substring(0, 20))
-      )
+      const nombreNormalizado = normalizarTexto(asignatura.materia)
+      
+      const porNombre = materias1985.find(m => {
+        const nombreMateriaNormalizado = normalizarTexto(m.nombre)
+        // Buscar coincidencia exacta o parcial significativa
+        return nombreMateriaNormalizado === nombreNormalizado ||
+               (nombreNormalizado.length > 10 && nombreMateriaNormalizado.includes(nombreNormalizado.substring(0, 15))) ||
+               (nombreMateriaNormalizado.length > 10 && nombreNormalizado.includes(nombreMateriaNormalizado.substring(0, 15)))
+      })
 
-      if (materiaEquivalente) {
-        return materiaEquivalente.nombre
-      }
-    } else if (plan === "2023") {
-      // Para plan 2023, usar el nombre específico si existe, sino el nombre original
-      const nombrePlan23 = asignatura.planInfo?.equivalencia?.nombrePlan23
-      if (nombrePlan23 && nombrePlan23.trim() !== '') {
-        return nombrePlan23
+      if (porNombre) {
+        return porNombre.nombre
       }
     }
-    // Fallback al nombre original de la asignatura
+    
+    // Para plan 2023 o si no se encuentra equivalencia, usar el nombre original
     return asignatura.materia
   }
 
