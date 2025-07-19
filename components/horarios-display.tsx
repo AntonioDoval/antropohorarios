@@ -1332,6 +1332,27 @@ export function HorariosDisplay() {
         </div>
 
         {(() => {
+          const superposiciones = detectarSuperposiciones()
+          return superposiciones.length > 0 ? (
+            <Alert className="border-red-300 bg-red-50 mb-4">
+              <div className="flex items-start gap-3">
+                <div className="text-2xl mt-0.5">⚠️</div>
+                <AlertDescription className="text-red-800">
+                  <div className="font-semibold mb-2">Hay superposiciones horarias en tu cronograma:</div>
+                  <ul className="space-y-1">
+                    {superposiciones.map((superposicion, index) => (
+                      <li key={index} className="text-sm">
+                        • <strong>{superposicion.dia}</strong> ({superposicion.horario}): {superposicion.clase1} y {superposicion.clase2}
+                      </li>
+                    ))}
+                  </ul>
+                </AlertDescription>
+              </div>
+            </Alert>
+          ) : null
+        })()}
+
+        {(() => {
           const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
           const horariosCompletos: Array<{
             asignatura: string
