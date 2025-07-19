@@ -29,8 +29,7 @@ export const MateriasList: React.FC<MateriasListProps> = ({
     </div>
   )
 }
-import React from "react"
-import { MateriaDelPlan } from "@/lib/types/planes"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface MateriasListProps {
