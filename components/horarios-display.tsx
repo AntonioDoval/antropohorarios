@@ -22,6 +22,31 @@ import { getMateriasPorSeleccion } from "@/lib/data/planes-data"
 import { toTitleCase } from "@/lib/text-utils"
 import { materiasLicenciaturaSociocultural1985, materiasLicenciaturaArqueologia1985, materiasProfesoradoSociocultural1985, materiasProfesoradoArqueologia1985 } from "@/lib/data/planes-data-1985"
 
+// Función para abreviar días de la semana
+const abreviarDia = (dia: string): string => {
+  const abreviaciones: { [key: string]: string } = {
+    'Lunes': 'Lun',
+    'Martes': 'Mar',
+    'Miércoles': 'Mié',
+    'Jueves': 'Jue',
+    'Viernes': 'Vie',
+    'Sábado': 'Sáb'
+  }
+  return abreviaciones[dia] || dia
+}
+
+// Función para abreviar horarios
+const abreviarHorario = (horario: string): string => {
+  // Formato esperado: "14:00 - 16:00"
+  const partes = horario.split(' - ')
+  if (partes.length === 2) {
+    const inicio = parseInt(partes[0].split(':')[0])
+    const fin = parseInt(partes[1].split(':')[0])
+    return `${inicio} a ${fin} hs`
+  }
+  return horario
+}
+
 interface Clase {
   id: string
   tipo: string
@@ -1182,8 +1207,8 @@ export function HorariosDisplay() {
                                   </div>
                                   <div className="text-xs space-y-0.5">
                                     <div className="flex items-center gap-1">
-                                      <span className="font-medium">{clase.dia}</span>
-                                      <span className="opacity-75">{clase.horario} hs</span>
+                                      <span className="font-medium">{abreviarDia(clase.dia)}</span>
+                                      <span className="opacity-75">{abreviarHorario(clase.horario)}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -1216,8 +1241,8 @@ export function HorariosDisplay() {
                               </div>
                               <div className="text-xs space-y-0.5">
                                 <div className="flex items-center gap-1">
-                                  <span className="font-medium">{clase.dia}</span>
-                                  <span className="opacity-75">{clase.horario} hs</span>
+                                  <span className="font-medium">{abreviarDia(clase.dia)}</span>
+                                  <span className="opacity-75">{abreviarHorario(clase.horario)}</span>
                                 </div>
                               </div>
                             </div>
@@ -1301,7 +1326,7 @@ export function HorariosDisplay() {
                       <div key={claseIndex} className="text-sm bg-white p-2 rounded border">
                         <span className="font-medium text-uba-primary">{clase.nombre}</span>
                         <span className="text-gray-600 ml-2">
-                          {clase.dia} {clase.horario} hs
+                          {abreviarDia(clase.dia)} {abreviarHorario(clase.horario)}
                         </span>
                       </div>
                     ))}
