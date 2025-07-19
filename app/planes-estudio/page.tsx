@@ -1,4 +1,3 @@
-"use client"
 
 "use client"
 
@@ -6,7 +5,7 @@ import React, { useState } from "react"
 import { PageLayout } from "@/components/layout/page-layout"
 import { PlanSelector } from "@/components/planes/plan-selector"
 import { PlanTitle } from "@/components/planes/plan-title"
-import { PlanContentRenderer } from "@/components/planes/plan-content-renderer"
+import { MateriasList } from "@/components/planes/materias-list"
 import { PlanType, OrientacionType } from "@/lib/types/planes"
 import { usePlanesData } from "@/lib/hooks/use-planes-data"
 
@@ -46,12 +45,10 @@ export default function PlanesEstudioPage() {
             orientacionPlan1985={orientacionPlan1985}
           />
 
-          <PlanContentRenderer
-            planSeleccionado={planSeleccionado}
-            orientacionSeleccionada={orientacionSeleccionada}
-            orientacionPlan1985={orientacionPlan1985}
-            materias={materias}
-          />
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-6">Materias del Plan</h2>
+            <MateriasList materias={materias} />
+          </div>
         </main>
       </div>
     </PageLayout>
