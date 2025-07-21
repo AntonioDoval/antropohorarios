@@ -1,8 +1,5 @@
-
 import React from "react"
 import { MateriaDelPlan, PlanType } from "@/lib/types/planes"
-import { toSentenceCase, isVariableMateria } from "@/lib/utils/planes-utils"
-import { getContenidoMinimo } from "@/lib/contenidos-minimos"
 
 interface MateriaCardProps {
   materia: MateriaDelPlan
@@ -11,38 +8,48 @@ interface MateriaCardProps {
 }
 
 export const MateriaCard: React.FC<MateriaCardProps> = ({ materia, index, plan }) => {
-  const isVariable = isVariableMateria(materia)
-  const contenido = plan === "2023" ? getContenidoMinimo(materia.cod23) : null
+  const formatNombreMateria = (nombre: string) => {
+    // Preservar números romanos y mejorar el formato general
+    return nombre
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+      // Preservar números romanos comunes
+      .replace(/\b(I|Ii|II|Iii|III|Iv|IV|V|Vi|VI|Vii|VII|Viii|VIII|Ix|IX|X)\b/g, (match) => match.toUpperCase())
+      // Preservar artículos y preposiciones en minúscula (excepto al inicio)
+      .replace(/\b(De|Del|La|Las|Los|El|En|Y|A|Con|Por|Para|Desde|Hasta|Sobre|Bajo|Ante|Tras|Durante|Mediante|Según|Sin|So|Como|Entre|Hacia|Contra)\b/g, 
+        (word) => word.toLowerCase())
+      // Asegurar que la primera letra esté en mayúscula
+      .replace(/^./, (char) => char.toUpperCase())
+  }
 
-  if (!isVariable && contenido && plan === "2023") {
-    return (
-      <div className={`py-2 px-3 rounded relative group ${
-        index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
-      }`}>
-        <span className="text-sm text-gray-900 leading-relaxed cursor-help">
-          {toSentenceCase(materia.nombre)}
-        </span>
+  const getNombreParaPlan = (materia: MateriaDelPlan, plan: PlanType) => {
+    // Si es plan 2023, usar el nombre principal
+    if (plan === "2023") {
+      return materia.nombre
+    }
 
-        {/* Tooltip */}
-        <div className="absolute left-0 top-full mt-2 w-96 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-          <h4 className="font-bold text-sm text-[#1c2554] mb-2">
-            {materia.nombre}
-          </h4>
-          <div className="text-xs text-gray-700 leading-relaxed max-h-48 overflow-y-auto">
-            {contenido.contenido}
-          </div>
-        </div>
-      </div>
-    )
+    // Si es plan 1985, usar nombreCorto si existe, sino el nombre principal
+    return materia.nombreCorto || materia.nombre
   }
 
   return (
-    <div className={`py-2 px-3 rounded ${
-      index % 2 === 0 ? 'bg-gray-50' : 'bg-blue-50'
-    }`}>
-      <span className="text-sm text-gray-900 leading-relaxed">
-        {toSentenceCase(materia.nombre)}
-      </span>
+    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors">
+      <div className="flex-1">
+        <h4 className="font-medium text-gray-900 text-sm">
+          {formatNombreMateria(getNombreParaPlan(materia, plan))}
+        </h4>
+        {materia.nombreSiglas && (
+          <p className="text-xs text-gray-600 mt-1">
+            {materia.nombreSiglas}
+          </p>
+        )}
+      </div>
+      <div className="text-right ml-4">
+        <div className="text-xs text-gray-500">
+          {plan === "2023" && materia.cod23 && <div>Cód: {materia.cod23}</div>}
+          {plan === "1985" && materia.cod85 && <div>Cód: {materia.cod85}</div>}
+        </div>
+      </div>
     </div>
   )
 }
