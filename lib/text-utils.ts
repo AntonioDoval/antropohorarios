@@ -9,18 +9,19 @@ export const toStartCase = (str: string) => {
 export const toTitleCase = (str: string) => {
   return str
     .toLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase())
-    // Preservar números romanos comunes
-    .replace(/\b(I|Ii|II|Iii|III|Iv|IV|V|Vi|VI|Vii|VII|Viii|VIII|Ix|IX|X|Xi|XI|Xii|XII)\b/gi, (match) => match.toUpperCase())
-    // Manejar artículos y preposiciones
-    .replace(/\b(de|del|la|las|los|el|en|y|a|con|por|para|desde|hasta|sobre|bajo|ante|tras|durante|mediante|según|sin|so|como|entre|hacia|contra)\b/gi, 
-      (word, offset, str) => {
-        // Si es la primera palabra de la cadena, mantener mayúscula
-        if (offset === 0) {
-          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        }
-        return word.toLowerCase()
-      })
+    .split(' ')
+    .map((word, index) => {
+      // Artículos y preposiciones que van en minúscula (excepto si es la primera palabra)
+      const articulos = ['de', 'del', 'la', 'las', 'los', 'el', 'en', 'y', 'a', 'con', 'por', 'para', 'desde', 'hasta', 'sobre', 'bajo', 'ante', 'tras', 'durante', 'mediante', 'según', 'sin', 'so', 'como', 'entre', 'hacia', 'contra']
+      
+      // Si es la primera palabra o no es un artículo/preposición, capitalizar
+      if (index === 0 || !articulos.includes(word.toLowerCase())) {
+        return word.charAt(0).toUpperCase() + word.slice(1)
+      }
+      
+      return word
+    })
+    .join(' ')
 }
 
 export const normalizarTexto = (texto: string): string => {
