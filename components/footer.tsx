@@ -11,7 +11,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             {/* Información de contacto - arriba en móvil, derecha en desktop */}
-            <div className="text-left order-1 md:order-2">
+            <div className="text-left md:text-right order-1 md:order-2">
               <h3 className="text-white font-bold text-lg mb-3">Contacto</h3>
 
               <div className="text-white text-xs space-y-1 mb-3">

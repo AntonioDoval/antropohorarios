@@ -13,8 +13,12 @@ export const metadata: Metadata = {
   title: "Horarios - Ciencias Antropológicas UBA",
   description: "Horarios de asignaturas de la carrera de Ciencias Antropológicas - Universidad de Buenos Aires",
   generator: 'v0.dev',
-  viewport: 'width=device-width, initial-scale=1',
   robots: 'index, follow',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
