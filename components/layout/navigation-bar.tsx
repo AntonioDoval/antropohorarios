@@ -43,7 +43,7 @@ export function NavigationBar({
               </Button>
             </div>
           ) : (
-      <div className="hidden md:flex space-x-8">
+      <div className="hidden md:flex items-center justify-end space-x-8 ml-auto">
         <a href="https://filo.uba.ar" className="text-white hover:font-bold text-sm transition-transform duration-200 transform hover:scale-110">filo.uba.ar</a>
         <span className="text-white">|</span>
         <a href="https://campus.filo.uba.ar/" className="text-white hover:font-bold text-sm transition-transform duration-200 transform hover:scale-110">Campus Virtual</a>
