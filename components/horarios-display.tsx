@@ -18,9 +18,8 @@ import {
   getOrientacionesDisponibles,
   type AsignaturaConPlan 
 } from "@/lib/planes-utils"
-import { getMateriasPorSeleccion } from "@/lib/data/planes-data"
+import { materiasCompletas, buscarMateriaPorNombre, type MateriaCompleta } from "@/lib/data/materias-completas"
 import { toTitleCase } from "@/lib/text-utils"
-import { materiasLicenciaturaSociocultural1985, materiasLicenciaturaArqueologia1985, materiasProfesoradoSociocultural1985, materiasProfesoradoArqueologia1985 } from "@/lib/data/planes-data-1985"
 
 // Función para abreviar días de la semana
 const abreviarDia = (dia: string): string => {
@@ -93,41 +92,18 @@ interface Seleccion {
 
 // Función para obtener nombre de materia con equivalencia correcta
 const obtenerNombreMateria = (asignatura: AsignaturaConPlan, plan: "2023" | "1985"): string => {
-  if (plan === "1985") {
-    // Obtener todas las materias del plan 1985
-    const materias1985 = [
-      ...materiasLicenciaturaSociocultural1985,
-      ...materiasLicenciaturaArqueologia1985,
-      ...materiasProfesoradoSociocultural1985,
-      ...materiasProfesoradoArqueologia1985
-    ]
-
-    // Normalizar texto para comparación
-    const normalizarTexto = (texto: string) => 
-      texto
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-
-    const nombreNormalizado = normalizarTexto(asignatura.materia)
-
-    const porNombre = materias1985.find(m => {
-      const nombreMateriaNormalizado = normalizarTexto(m.nombre)
-      // Buscar coincidencia exacta o parcial significativa
-      return nombreMateriaNormalizado === nombreNormalizado ||
-             (nombreNormalizado.length > 10 && nombreMateriaNormalizado.includes(nombreNormalizado.substring(0, 15))) ||
-             (nombreNormalizado.length > 10 && nombreNormalizado.includes(nombreMateriaNormalizado.substring(0, 15)))
-    })
-
-    if (porNombre) {
-      return toTitleCase(porNombre.nombre)
+  // Buscar la materia en el archivo de materias completas
+  const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+  
+  if (materiaCompleta) {
+    if (plan === "1985" && materiaCompleta.nombrePlan1985) {
+      return toTitleCase(materiaCompleta.nombrePlan1985)
+    } else if (plan === "2023" && materiaCompleta.nombrePlan2023) {
+      return toTitleCase(materiaCompleta.nombrePlan2023)
     }
   }
 
-  // Para plan 2023 o si no se encuentra equivalencia, usar title case del nombre original
+  // Si no se encuentra en materias completas, usar title case del nombre original
   return toTitleCase(asignatura.materia)
 }
 
@@ -147,20 +123,14 @@ export function HorariosDisplay() {
     clases: {},
   })
   const [asignaturasEnriquecidas, setAsignaturasEnriquecidas] = useState<AsignaturaConPlan[]>([])
-  const [materias1985, setMaterias1985] = useState<any[]>([])
+  const [materiasCompletasData, setMateriasCompletasData] = useState<MateriaCompleta[]>([])
 
   useEffect(() => {
-    // Cargar todos los datos del plan 1985 al inicio
+    // Cargar los datos de materias completas al inicio
     try {
-      const todasMaterias1985 = [
-        ...getMateriasPorSeleccion("1985", "profesorado", "sociocultural"),
-        ...getMateriasPorSeleccion("1985", "profesorado", "arqueologia"),
-        ...getMateriasPorSeleccion("1985", "sociocultural", "sociocultural"),
-        ...getMateriasPorSeleccion("1985", "arqueologia", "arqueologia")
-      ]
-      setMaterias1985(todasMaterias1985)
+      setMateriasCompletasData(materiasCompletas)
     } catch (error) {
-      console.error('Error loading plan 1985 data:', error)
+      console.error('Error loading materias completas data:', error)
     }
   }, [])
 
