@@ -1,52 +1,35 @@
-export function toStartCase(text: string): string {
-  if (!text) return ""
-
-  return text
+export const toStartCase = (str: string) => {
+  return str
     .toLowerCase()
-    .split(" ")
-    .map((word, index, array) => {
-      // Mantener artículos y preposiciones en minúscula si no son la primera palabra
-      const lowercaseWords = [
-        "de",
-        "del",
-        "la",
-        "las",
-        "el",
-        "los",
-        "en",
-        "a",
-        "al",
-        "y",
-        "e",
-        "o",
-        "u",
-        "con",
-        "por",
-        "para",
-        "sin",
-      ]
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
 
-      // Manejar números romanos completos (como palabras independientes)
-      if (word.match(/^(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)) {
-        return word.toUpperCase()
-      }
-
-      // Manejar números romanos al final de palabras
-      if (word.match(/^.+(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)) {
-        const romanMatch = word.match(/(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/)
-        if (romanMatch) {
-          const base = word.slice(0, -romanMatch[0].length)
-          const roman = romanMatch[0].toUpperCase()
-          return base.charAt(0).toUpperCase() + base.slice(1) + roman
-        }
-      }
-
-      // Solo la primera palabra se capitaliza, el resto según las reglas de artículos/preposiciones
-      if (index === 0) {
+export const toTitleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word, index) => {
+      // Artículos y preposiciones que van en minúscula (excepto si es la primera palabra)
+      const articulos = ['de', 'del', 'la', 'las', 'los', 'el', 'en', 'y', 'a', 'con', 'por', 'para', 'desde', 'hasta', 'sobre', 'bajo', 'ante', 'tras', 'durante', 'mediante', 'según', 'sin', 'so', 'como', 'entre', 'hacia', 'contra']
+      
+      // Si es la primera palabra o no es un artículo/preposición, capitalizar
+      if (index === 0 || !articulos.includes(word.toLowerCase())) {
         return word.charAt(0).toUpperCase() + word.slice(1)
       }
-
-      return lowercaseWords.includes(word) ? word : word.charAt(0).toUpperCase() + word.slice(1)
+      
+      return word
     })
-    .join(" ")
+    .join(' ')
+}
+
+export const normalizarTexto = (texto: string): string => {
+  return texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }

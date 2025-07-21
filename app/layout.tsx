@@ -6,12 +6,15 @@ import "./globals.css"
 const bitter = Bitter({
   subsets: ["latin"],
   variable: "--font-bitter",
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: "Horarios - Ciencias Antropológicas UBA",
   description: "Horarios de asignaturas de la carrera de Ciencias Antropológicas - Universidad de Buenos Aires",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  viewport: 'width=device-width, initial-scale=1',
+  robots: 'index, follow',
 }
 
 export default function RootLayout({
@@ -21,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={bitter.variable}>
-      <body className="font-bitter">{children}</body>
+      <body className="font-bitter antialiased">{children}</body>
     </html>
   )
 }

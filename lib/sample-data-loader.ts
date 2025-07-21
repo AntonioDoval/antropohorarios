@@ -88,8 +88,154 @@ export function loadSamplePlanes() {
   return planes
 }
 
-export async function loadSampleData() {
-  return []
+export async function loadSampleData(): Promise<SampleHorario[]> {
+  // Datos de ejemplo para desarrollo
+  const sampleHorarios: SampleHorario[] = [
+    {
+      id: "sample-1",
+      materia: "Epistemología de las Ciencias Sociales",
+      catedra: "García",
+      tipoAsignatura: "Materia cuatrimestral regular",
+      modalidadAprobacion: "Examen final",
+      modalidadCursada: "Sede Puán",
+      clases: [
+        {
+          id: "clase-1",
+          tipo: "Teórico",
+          numero: 1,
+          dia: "Lunes",
+          horario: "14:00 - 16:00"
+        },
+        {
+          id: "clase-2",
+          tipo: "Práctico",
+          numero: 1,
+          dia: "Martes",
+          horario: "16:00 - 18:00"
+        },
+        {
+          id: "clase-3",
+          tipo: "Práctico",
+          numero: 2,
+          dia: "Miércoles",
+          horario: "18:00 - 20:00"
+        }
+      ]
+    },
+    {
+      id: "sample-2",
+      materia: "Historia y Teoría de la Antropología I",
+      catedra: "Rodriguez",
+      tipoAsignatura: "Materia cuatrimestral regular",
+      modalidadAprobacion: "Promoción directa",
+      modalidadCursada: "Sede Puán",
+      agrupacionClases: {
+        "Práctico": "elegir"
+      },
+      clases: [
+        {
+          id: "clase-4",
+          tipo: "Teórico",
+          numero: 1,
+          dia: "Martes",
+          horario: "10:00 - 12:00"
+        },
+        {
+          id: "clase-5",
+          tipo: "Práctico",
+          numero: 1,
+          dia: "Jueves",
+          horario: "14:00 - 16:00"
+        },
+        {
+          id: "clase-6",
+          tipo: "Práctico",
+          numero: 2,
+          dia: "Viernes",
+          horario: "16:00 - 18:00"
+        }
+      ]
+    },
+    {
+      id: "sample-3",
+      materia: "Seminario: Antropología Urbana",
+      catedra: "Martínez",
+      tipoAsignatura: "Seminario regular",
+      modalidadAprobacion: "Trabajo final",
+      modalidadCursada: "Sede Puán",
+      orientacion: "Sociocultural",
+      clases: [
+        {
+          id: "clase-7",
+          tipo: "Teórico-Práctico",
+          numero: 1,
+          dia: "Miércoles",
+          horario: "18:00 - 22:00"
+        }
+      ]
+    },
+    {
+      id: "sample-4",
+      materia: "Introducción a la Arqueología",
+      catedra: "López",
+      tipoAsignatura: "Materia cuatrimestral regular",
+      modalidadAprobacion: "Examen final",
+      modalidadCursada: "Virtual",
+      clases: [
+        {
+          id: "clase-8",
+          tipo: "Teórico",
+          numero: 1,
+          dia: "Lunes",
+          horario: "16:00 - 18:00"
+        },
+        {
+          id: "clase-9",
+          tipo: "Teórico-Práctico",
+          numero: 1,
+          dia: "Jueves",
+          horario: "10:00 - 12:00"
+        }
+      ]
+    },
+    {
+      id: "sample-5",
+      materia: "Problemas de Antropología Social y Política",
+      catedra: "Fernández",
+      tipoAsignatura: "Materia cuatrimestral regular",
+      modalidadAprobacion: "Promoción directa",
+      modalidadCursada: "Presencial, con 30% de virtualidad asincrónica",
+      agrupacionClases: {
+        "Teórico": "conjunto"
+      },
+      clases: [
+        {
+          id: "clase-10",
+          tipo: "Teórico",
+          numero: 1,
+          dia: "Viernes",
+          horario: "8:00 - 10:00"
+        },
+        {
+          id: "clase-11",
+          tipo: "Teórico",
+          numero: 2,
+          dia: "Viernes",
+          horario: "10:00 - 12:00"
+        },
+        {
+          id: "clase-12",
+          tipo: "Práctico",
+          numero: 1,
+          dia: "Lunes",
+          horario: "18:00 - 20:00"
+        }
+      ]
+    }
+  ]
+
+  console.log(`Cargando ${sampleHorarios.length} horarios de ejemplo para desarrollo`)
+  return sampleHorarios
 }
 
 export function loadSampleHorarios(): SampleHorario[] {
