@@ -27,7 +27,7 @@ export function Footer() {
 
                 <div className="flex items-center space-x-2">
                   <Mail className="h-3 w-3 text-uba-secondary flex-shrink-0" />
-                  <span>depant[at]filo.uba.ar</span>
+                  <span>depant@filo.uba.ar</span>
                 </div>
               </div>
 

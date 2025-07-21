@@ -11,6 +11,12 @@ export const toTitleCase = (str: string) => {
     .toLowerCase()
     .split(' ')
     .map((word, index) => {
+      // Lista de números romanos a preservar
+      const numerosRomanos = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+      // Si la palabra es un número romano, lo preservamos.
+      if (numerosRomanos.includes(word.toUpperCase())) {
+        return word.toUpperCase();
+      }
       // Artículos y preposiciones que van en minúscula (excepto si es la primera palabra)
       const articulos = ['de', 'del', 'la', 'las', 'los', 'el', 'en', 'y', 'a', 'con', 'por', 'para', 'desde', 'hasta', 'sobre', 'bajo', 'ante', 'tras', 'durante', 'mediante', 'según', 'sin', 'so', 'como', 'entre', 'hacia', 'contra']
       
