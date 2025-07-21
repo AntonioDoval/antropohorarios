@@ -1555,7 +1555,7 @@ export function HorariosDisplay() {
 
                 <div className="p-4 bg-gray-50 border-t">
                   <h4 className="text-sm font-semibold text-uba-primary mb-3">Leyenda de asignaturas:</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-start">
                     {seleccionFormateada.map((item, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
