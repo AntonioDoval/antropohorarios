@@ -503,14 +503,6 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
           type: "success",
           content: successMessage,
         })
-
-        // Notificar al componente padre
-        onSuccess?.(successMessage)
-
-        // Recargar la página después de 2 segundos
-        setTimeout(() => {
-          window.location.reload()
-        }, 2000)
       } else {
         const errorDetail = responseData.error || 'Unknown error'
         console.error('Server error response:', errorDetail)
