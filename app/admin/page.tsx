@@ -11,7 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Lock, AlertCircle, CheckCircle } from "lucide-react"
+import { Lock, AlertCircle, CheckCircle, Download } from "lucide-react"
+import jsPDF from 'jspdf'
 import Link from "next/link"
 import { PageLayout } from "@/components/layout/page-layout"
 
@@ -139,6 +140,141 @@ export default function AdminPage() {
     setPassword("")
     setError("")
     localStorage.removeItem('admin-session')
+  }
+
+  const generatePDF = async () => {
+    try {
+      // Obtener datos actuales
+      const response = await fetch('/api/horarios')
+      const data = await response.json()
+      
+      if (!data || !data.asignaturas || data.asignaturas.length === 0) {
+        setPeriodoMessage({
+          type: "error",
+          content: "No hay datos de horarios para generar el PDF"
+        })
+        return
+      }
+
+      const pdf = new jsPDF()
+      const pageWidth = pdf.internal.pageSize.width
+      const pageHeight = pdf.internal.pageSize.height
+      let currentY = 20
+
+      // Header del PDF
+      pdf.setFontSize(20)
+      pdf.setTextColor(61, 87, 144) // UBA Primary color
+      pdf.text('Horarios de Antropología', pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 10
+      pdf.setFontSize(14)
+      pdf.text(`Período: ${data.periodo?.año || ''} - ${data.periodo?.periodo || ''}`, pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 20
+
+      // Función para obtener nombre según plan
+      const obtenerNombrePorPlan = (materia, plan) => {
+        // Importar datos de materias completas (simplificado)
+        const materiasMap = {
+          "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES": {
+            "1985": "EPISTEMOLOGÍA Y MÉTODOS DE INVESTIGACIÓN SOCIAL",
+            "2023": "EPISTEMOLOGÍA DE LAS CIENCIAS SOCIALES"
+          },
+          "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I": {
+            "1985": "HISTORIA DE LA TEORÍA ANTROPOLÓGICA",
+            "2023": "HISTORIA Y TEORÍA DE LA ANTROPOLOGÍA I"
+          },
+          // Agregar más mapeos según sea necesario
+        }
+        
+        const materiaUpper = materia.toUpperCase()
+        return materiasMap[materiaUpper]?.[plan] || materia
+      }
+
+      // Secciones por plan
+      const planes = [
+        { codigo: "1985", nombre: "Plan 1985" },
+        { codigo: "2023", nombre: "Plan 2023" }
+      ]
+
+      for (const plan of planes) {
+        // Título del plan
+        pdf.setFontSize(16)
+        pdf.setTextColor(61, 87, 144)
+        pdf.text(plan.nombre, 20, currentY)
+        currentY += 15
+
+        // Línea divisoria
+        pdf.setLineWidth(0.5)
+        pdf.setDrawColor(61, 87, 144)
+        pdf.line(20, currentY - 5, pageWidth - 20, currentY - 5)
+
+        for (const asignatura of data.asignaturas) {
+          // Verificar si necesitamos nueva página
+          if (currentY > pageHeight - 60) {
+            pdf.addPage()
+            currentY = 20
+          }
+
+          // Nombre de la materia
+          pdf.setFontSize(12)
+          pdf.setTextColor(0, 0, 0)
+          const nombreMateria = obtenerNombrePorPlan(asignatura.materia, plan.codigo)
+          pdf.text(`${nombreMateria}`, 20, currentY)
+          currentY += 8
+
+          // Cátedra
+          pdf.setFontSize(10)
+          pdf.setTextColor(100, 100, 100)
+          pdf.text(`Cátedra: ${asignatura.catedra}`, 25, currentY)
+          currentY += 6
+
+          // Modalidades
+          pdf.text(`Modalidad: ${asignatura.modalidadAprobacion} | ${asignatura.modalidadCursada}`, 25, currentY)
+          currentY += 6
+
+          // Clases
+          if (asignatura.clases && asignatura.clases.length > 0) {
+            pdf.text('Horarios:', 25, currentY)
+            currentY += 5
+
+            asignatura.clases.forEach(clase => {
+              pdf.text(`  • ${clase.tipo} ${clase.numero}: ${clase.dia} ${clase.horario}`, 30, currentY)
+              currentY += 5
+            })
+          }
+
+          currentY += 5 // Espacio entre asignaturas
+        }
+
+        currentY += 15 // Espacio entre planes
+      }
+
+      // Footer
+      pdf.setFontSize(8)
+      pdf.setTextColor(150, 150, 150)
+      pdf.text('Generado desde el Sistema de Horarios de Antropología - FFyL UBA', 20, pageHeight - 10)
+      pdf.text(new Date().toLocaleString('es-AR'), pageWidth - 20, pageHeight - 10, { align: 'right' })
+
+      // Descargar PDF
+      pdf.save(`horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}.pdf`)
+
+      setPeriodoMessage({
+        type: "success",
+        content: "PDF generado exitosamente"
+      })
+      setCsvMessage(null)
+      setPlanesMessage(null)
+
+    } catch (error) {
+      console.error("Error generando PDF:", error)
+      setPeriodoMessage({
+        type: "error",
+        content: "Error al generar el PDF. Por favor, intenta nuevamente."
+      })
+      setCsvMessage(null)
+      setPlanesMessage(null)
+    }
   }
 
   if (!isAuthenticated) {
@@ -395,6 +531,27 @@ export default function AdminPage() {
                 🗑️ Eliminar Todos los Horarios
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Sección de Generar PDF */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Generar PDF de Horarios</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-gray-600 mb-4">
+              Genera un PDF con formato elegante listando todas las asignaturas con sus horarios y modalidades, 
+              organizado por planes de estudio (primero Plan 1985, luego Plan 2023).
+            </p>
+            
+            <Button 
+              onClick={generatePDF}
+              className="w-full bg-uba-secondary hover:bg-uba-secondary/90 text-white"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Descargar PDF de Horarios
+            </Button>
           </CardContent>
         </Card>
 
