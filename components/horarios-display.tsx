@@ -986,7 +986,7 @@ export function HorariosDisplay() {
       ) : null
     })()}
 
-    <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-4"
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-min" style={{ gridAutoFlow: 'row' }}>
       {asignaturasFiltradas.length === 0 ? (
         <div className="text-center py-12 col-span-full">
           <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
@@ -996,7 +996,7 @@ export function HorariosDisplay() {
         asignaturasFiltradas.map((asignatura) => {
           const isSelected = seleccion.asignaturas.includes(asignatura.id)
           return (
-            <Card key={asignatura.id} className={`@container transition-all duration-200 break-inside-avoid mb-4 ${
+            <Card key={asignatura.id} className={`@container transition-all duration-200 ${
               isSelected 
                 ? "border-uba-secondary border-2 shadow-lg bg-uba-secondary/5" 
                 : "border-uba-primary/20 hover:border-uba-primary/40"
