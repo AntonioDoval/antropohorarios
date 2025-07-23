@@ -146,9 +146,9 @@ export default function AdminPage() {
     try {
       // Obtener datos actuales
       const response = await fetch('/api/horarios')
-      const data = await response.json()
+      const horariosData = await response.json()
       
-      if (!data || !data.asignaturas || data.asignaturas.length === 0) {
+      if (!horariosData || !horariosData.asignaturas || horariosData.asignaturas.length === 0) {
         setPeriodoMessage({
           type: "error",
           content: "No hay datos de horarios para generar el PDF"
@@ -159,16 +159,147 @@ export default function AdminPage() {
       const pdf = new jsPDF()
       const pageWidth = pdf.internal.pageSize.width
       const pageHeight = pdf.internal.pageSize.height
-      let currentY = 20
+      const margin = 20
+      let currentY = 30
 
       // Header del PDF
-      pdf.setFontSize(20)
-      pdf.setTextColor(61, 87, 144) // UBA Primary color
+      pdf.setFontSize(22)
+      pdf.setTextColor(28, 37, 84) // UBA Primary color
       pdf.text('Horarios de Antropología', pageWidth / 2, currentY, { align: 'center' })
       
-      currentY += 10
+      currentY += 12
+      pdf.setFontSize(16)
+      pdf.setTextColor(70, 191, 176) // UBA Secondary color
+      pdf.text('Ciencias Antropológicas (FFyL-UBA)', pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 15
       pdf.setFontSize(14)
-      pdf.text(`Período: ${data.periodo?.año || ''} - ${data.periodo?.periodo || ''}`, pageWidth / 2, currentY, { align: 'center' })
+      pdf.setTextColor(100, 100, 100)
+      const periodoText = horariosData.periodo?.periodo === "1C" ? "1er Cuatrimestre" : 
+                          horariosData.periodo?.periodo === "2C" ? "2do Cuatrimestre" : 
+                          horariosData.periodo?.periodo === "BV" ? "Bimestre de Verano" : 
+                          horariosData.periodo?.periodo || ''
+      pdf.text(`Período: ${periodoText} ${horariosData.periodo?.año || ''}`, pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 20
+
+      // Línea separadora
+      pdf.setDrawColor(200, 200, 200)
+      pdf.line(margin, currentY, pageWidth - margin, currentY)
+      currentY += 15
+
+      // Función auxiliar para obtener nombre por plan
+      const obtenerNombrePorPlan = (nombreOriginal: string, planCodigo: string) => {
+        // Aquí puedes implementar la lógica de equivalencias si tienes los datos
+        // Por ahora devolvemos el nombre original
+        return nombreOriginal
+      }
+
+      // Organizar asignaturas por planes
+      const planes = [
+        { codigo: "1985", nombre: "Plan 1985" },
+        { codigo: "2023", nombre: "Plan 2023" }
+      ]
+
+      for (const plan of planes) {
+        // Verificar si necesitamos nueva página
+        if (currentY > pageHeight - 40) {
+          pdf.addPage()
+          currentY = 30
+        }
+
+        // Título del plan
+        pdf.setFontSize(18)
+        pdf.setTextColor(28, 37, 84)
+        pdf.text(plan.nombre, margin, currentY)
+        currentY += 15
+
+        // Filtrar asignaturas relevantes para este plan
+        const asignaturasDelPlan = horariosData.asignaturas.filter((asignatura: any) => {
+          if (plan.codigo === "2023") {
+            return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
+          }
+          return true // Plan 1985 incluye todas las asignaturas
+        })
+
+        // Ordenar alfabéticamente
+        asignaturasDelPlan.sort((a: any, b: any) => a.materia.localeCompare(b.materia))
+
+        for (const asignatura of asignaturasDelPlan) {
+          // Verificar si necesitamos nueva página
+          const espacioNecesario = 25 + (asignatura.clases?.length || 0) * 6
+          if (currentY + espacioNecesario > pageHeight - 20) {
+            pdf.addPage()
+            currentY = 30
+            
+            // Repetir título del plan en nueva página
+            pdf.setFontSize(18)
+            pdf.setTextColor(28, 37, 84)
+            pdf.text(`${plan.nombre} (continuación)`, margin, currentY)
+            currentY += 15
+          }
+
+          // Nombre de la materia
+          pdf.setFontSize(12)
+          pdf.setTextColor(0, 0, 0)
+          const nombreMateria = obtenerNombrePorPlan(asignatura.materia, plan.codigo)
+          const maxWidth = pageWidth - 2 * margin
+          const nombreLines = pdf.splitTextToSize(nombreMateria, maxWidth)
+          
+          pdf.text(nombreLines, margin, currentY)
+          currentY += nombreLines.length * 6
+
+          // Cátedra
+          pdf.setFontSize(10)
+          pdf.setTextColor(100, 100, 100)
+          pdf.text(`Cátedra: ${asignatura.catedra}`, margin + 5, currentY)
+          currentY += 6
+
+          // Modalidades
+          const modalidadTexto = `${asignatura.modalidadAprobacion || 'N/A'} | ${asignatura.modalidadCursada || 'N/A'}`
+          pdf.text(`Modalidad: ${modalidadTexto}`, margin + 5, currentY)
+          currentY += 6
+
+          // Clases
+          if (asignatura.clases && asignatura.clases.length > 0) {
+            pdf.text('Horarios:', margin + 5, currentY)
+            currentY += 5
+
+            asignatura.clases.forEach((clase: any) => {
+              const claseTexto = `${clase.tipo}${clase.numero ? ' ' + clase.numero : ''}: ${clase.dia} ${clase.horario}`
+              pdf.text(`  • ${claseTexto}`, margin + 10, currentY)
+              currentY += 5
+            })
+          }
+
+          // Aclaraciones si existen
+          if (asignatura.aclaraciones) {
+            pdf.setTextColor(150, 150, 150)
+            pdf.text(`Nota: ${asignatura.aclaraciones}`, margin + 5, currentY)
+            currentY += 6
+            pdf.setTextColor(100, 100, 100)
+          }
+
+          currentY += 8 // Espacio entre asignaturas
+        }
+
+        currentY += 15 // Espacio entre planes
+      }
+
+      // Footer en todas las páginas
+      const totalPages = pdf.getNumberOfPages()
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i)
+        pdf.setFontSize(8)
+        pdf.setTextColor(150, 150, 150)
+        pdf.text('Generado desde el Sistema de Horarios de Antropología - FFyL UBA', margin, pageHeight - 15)
+        pdf.text(new Date().toLocaleString('es-AR'), pageWidth - margin, pageHeight - 15, { align: 'right' })
+        pdf.text(`Página ${i} de ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' })
+      }
+
+      // Descargar PDF
+      const fileName = `horarios-antropologia-${horariosData.periodo?.año || 'actual'}-${horariosData.periodo?.periodo || ''}.pdf`
+      pdf.save(fileName)
       
       currentY += 20
 
@@ -257,7 +388,23 @@ export default function AdminPage() {
       pdf.text(new Date().toLocaleString('es-AR'), pageWidth - 20, pageHeight - 10, { align: 'right' })
 
       // Descargar PDF
-      pdf.save(`horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}.pdf`)
+      setPeriodoMessage({
+        type: "success",
+        content: "PDF generado exitosamente"
+      })
+      setCsvMessage(null)
+      setPlanesMessage(null)
+
+    } catch (error) {
+      console.error("Error generando PDF:", error)
+      setPeriodoMessage({
+        type: "error",
+        content: "Error al generar el PDF. Por favor, intenta nuevamente."
+      })
+      setCsvMessage(null)
+      setPlanesMessage(null)
+    }
+  }tual'}-${data.periodo?.periodo || ''}.pdf`)
 
       setPeriodoMessage({
         type: "success",
