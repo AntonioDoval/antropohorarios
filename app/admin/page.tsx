@@ -162,24 +162,30 @@ export default function AdminPage() {
       const margin = 20
       let currentY = 30
 
+      // Set Bitter font for the entire document
+      pdf.setFont('times', 'normal') // Using Times as fallback since Bitter isn't available in jsPDF by default
+
       // Header del PDF
       pdf.setFontSize(22)
       pdf.setTextColor(28, 37, 84) // UBA Primary color
-      pdf.text('Horarios de Antropología', pageWidth / 2, currentY, { align: 'center' })
+      pdf.text('Oferta de Asignaturas y Horarios', pageWidth / 2, currentY, { align: 'center' })
       
       currentY += 12
       pdf.setFontSize(16)
       pdf.setTextColor(70, 191, 176) // UBA Secondary color
       pdf.text('Ciencias Antropológicas (FFyL-UBA)', pageWidth / 2, currentY, { align: 'center' })
       
-      currentY += 15
+      currentY += 8
       pdf.setFontSize(14)
       pdf.setTextColor(100, 100, 100)
+      pdf.text('---', pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 10
       const periodoText = horariosData.periodo?.periodo === "1C" ? "1er Cuatrimestre" : 
                           horariosData.periodo?.periodo === "2C" ? "2do Cuatrimestre" : 
                           horariosData.periodo?.periodo === "BV" ? "Bimestre de Verano" : 
                           horariosData.periodo?.periodo || ''
-      pdf.text(`Período: ${periodoText} ${horariosData.periodo?.año || ''}`, pageWidth / 2, currentY, { align: 'center' })
+      pdf.text(`Período actual: ${periodoText} ${horariosData.periodo?.año || ''}`, pageWidth / 2, currentY, { align: 'center' })
       
       currentY += 20
 
@@ -197,8 +203,8 @@ export default function AdminPage() {
 
       // Organizar asignaturas por planes
       const planes = [
-        { codigo: "1985", nombre: "Plan 1985" },
-        { codigo: "2023", nombre: "Plan 2023" }
+        { codigo: "1985", nombre: "Plan de estudios 1985" },
+        { codigo: "2023", nombre: "Plan de estudios 2023" }
       ]
 
       for (const plan of planes) {
@@ -266,7 +272,7 @@ export default function AdminPage() {
             currentY += 5
 
             asignatura.clases.forEach((clase: any) => {
-              const claseTexto = `${clase.tipo}${clase.numero ? ' ' + clase.numero : ''}: ${clase.dia} ${clase.horario}`
+              const claseTexto = `${clase.tipo}${clase.numero ? ' ' + clase.numero : ''}: ${clase.dia} ${clase.horario} hs`
               pdf.text(`  • ${claseTexto}`, margin + 10, currentY)
               currentY += 5
             })
