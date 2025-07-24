@@ -894,6 +894,11 @@ export const obtenerMateriasPorPlanYOrientacion = (
           return false
       }
     } else {
+      // Para plan 1985, filtrar materias que no tienen código o nombre vacío
+      if (materia.codigo1985 === "" || materia.nombrePlan1985 === "") {
+        return false
+      }
+      
       switch (orientacion) {
         case "profesorado":
           return materia.cicloAreaProf1985 !== ""
