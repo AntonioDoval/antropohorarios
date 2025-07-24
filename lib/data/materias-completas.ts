@@ -883,6 +883,11 @@ export const obtenerMateriasPorPlanYOrientacion = (
 ): MateriaCompleta[] => {
   return materiasCompletas.filter(materia => {
     if (plan === "2023") {
+      // Para plan 2023, filtrar materias que no tienen código o nombre vacío
+      if (materia.codigo2023 === "" || materia.nombrePlan2023 === "") {
+        return false
+      }
+      
       switch (orientacion) {
         case "profesorado":
           return materia.cicloAreaProf2023 !== ""
