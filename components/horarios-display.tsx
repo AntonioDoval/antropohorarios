@@ -393,6 +393,12 @@ export function HorariosDisplay() {
 
   const filtrarAsignaturasPorPlan = (asignaturas: AsignaturaConPlan[], plan: "2023" | "1985"): AsignaturaConPlan[] => {
     return asignaturas.filter(asignatura => {
+      // Filtro especial para cátedra Glavich de Epistemología (0743) - solo para plan 1985
+      if (asignatura.materia.toLowerCase().includes("epistemología") && 
+          asignatura.catedra.toLowerCase().includes("glavich")) {
+        return plan === "1985"
+      }
+      
       // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
       const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
       
@@ -774,6 +780,12 @@ export function HorariosDisplay() {
 
         // Filtrar asignaturas relevantes para este plan
         const asignaturasDelPlan = data.asignaturas.filter((asignatura: any) => {
+          // Filtro especial para cátedra Glavich de Epistemología (0743) - solo para plan 1985
+          if (asignatura.materia.toLowerCase().includes("epistemología") && 
+              asignatura.catedra.toLowerCase().includes("glavich")) {
+            return plan.codigo === "1985"
+          }
+          
           // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
           const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
           
