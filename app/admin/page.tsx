@@ -77,6 +77,17 @@ export default function AdminPage() {
   const handleUpdateAnnouncement = async () => {
     try {
       const adminPassword = localStorage.getItem('admin-session') || ''
+      
+      if (!adminPassword) {
+        setAnnouncementMessage({
+          type: "error",
+          content: "Sesión de administrador no válida"
+        })
+        return
+      }
+
+      console.log('Sending announcement update:', { enabled: announcementEnabled, title: announcementTitle?.substring(0, 50), text: announcementText?.substring(0, 50) })
+
       const response = await fetch('/api/announcement', {
         method: 'POST',
         headers: {
@@ -91,6 +102,8 @@ export default function AdminPage() {
       })
 
       if (response.ok) {
+        const result = await response.json()
+        console.log('Announcement updated successfully:', result)
         setAnnouncementMessage({
           type: "success",
           content: "Anuncio actualizado exitosamente"
@@ -99,13 +112,16 @@ export default function AdminPage() {
         setCsvMessage(null)
         setPlanesMessage(null)
       } else {
-        throw new Error('Error saving announcement')
+        const errorData = await response.json()
+        const errorMessage = errorData.error || `Error HTTP ${response.status}`
+        console.error('Server error:', errorData)
+        throw new Error(errorMessage)
       }
     } catch (error) {
       console.error("Error updating announcement:", error)
       setAnnouncementMessage({
         type: "error",
-        content: "Error al actualizar el anuncio"
+        content: `Error al actualizar el anuncio: ${error instanceof Error ? error.message : 'Error desconocido'}`
       })
       setPeriodoMessage(null)
       setCsvMessage(null)

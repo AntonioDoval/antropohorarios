@@ -1,3 +1,4 @@
+
 -- Crear tabla para anuncios
 CREATE TABLE IF NOT EXISTS announcements (
   id BIGSERIAL PRIMARY KEY,
@@ -21,3 +22,6 @@ CREATE POLICY "Allow write access to authenticated users only" ON announcements
 FOR INSERT, UPDATE, DELETE
 TO authenticated
 USING (true);
+
+-- Crear índice para mejor rendimiento
+CREATE INDEX IF NOT EXISTS idx_announcements_enabled_created_at ON announcements(enabled, created_at DESC);
