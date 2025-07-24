@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
-import { AlertTriangle, BookOpen, Calendar, ChevronDown, FileText, Info, Notebook, Search, X } from "lucide-react"
+import { AlertTriangle, BookOpen, Calendar, ChevronDown, FileText, Info, Notebook, Search, X, Download } from "lucide-react"
 import { 
   enrichAsignaturasWithPlanInfo, 
   getAsignaturasPorCiclo, 
@@ -863,27 +863,25 @@ export function HorariosDisplay() {
 
     return (
       <>
-        <Card className="mb-6 border-uba-primary/20 bg-gradient-to-r from-uba-primary/5 to-uba-secondary/5">
+        <Card className="mb-2 w-fit border-uba-primary/20 bg-gradient-to-r from-uba-primary/5 to-uba-secondary/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Info className="h-5 w-5 text-uba-primary" />
-              <div>
-                <h3 className="font-semibold text-uba-primary">
-                  Período Académico Actual
-                </h3>
-                <p className="text-sm text-gray-600">
+            
+              <div>              
+                <h2 className="text-xl font-semibold text-uba-primary">
                   {periodoTexto} {data.periodo.año}
-                </p>
+                </h2>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="mb-6 flex justify-center">
-          <Button 
+        <div className="mb-6 flex">
+          <Button            
             onClick={generatePDF}
-            className="bg-[#e6f5f3] border border-[#bbd8d1] text-[#1e2455] hover:bg-[#d9f0ed] hover:border-[#a8c9c1] px-4 py-2 text-sm font-medium"
+            className="bg-uba-secondary border border-[#4cc1a5] text-white hover:bg-[#d9f0ed] hover:border-[#a8c9c1] hover:text-uba-primary px-4 py-2 text-sm font-bold"
           >
+             <Download className="h-3 w-3 mr-1" />
             Descargar listado en PDF
           </Button>
         </div>
@@ -933,26 +931,22 @@ export function HorariosDisplay() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
         <div className="mb-4">
-          <h1 className="text-4xl font-bold text-uba-primary mb-1">
+          <h1 className="text-xl md:text-4xl lg:text-5xl font-bold text-uba-primary mb-1">
             Oferta de Asignaturas y Horarios
           </h1>
-          <p className="text-2xl text-uba-primary mb-2 font-normal">
+          <p className="text-base md:text-xl lg:text-2xl text-uba-primary mb-2 font-normal">
             Ciencias Antropológicas (FFyL-UBA)
           </p>
-          <hr className="border-uba-secondary mb-3" />
 
-          <h2 className="text-xl font-semibold text-uba-primary mb-2">¡Planificá tus horarios!</h2>
-          <p className="text-gray-700 text-base mb-3 leading-relaxed">
-            Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo la{" "}
-            <span className="font-semibold">comisión de prácticos</span> que prefieras. Abajo podés visualizar la lista de{" "}
-            <span className="font-semibold">tu selección</span> y ver cómo quedaría tu{" "}
-            <span className="font-semibold">cronograma</span> semanal.
+          <hr className="border-uba-secondary mb-3" />
+          <p className="text-sm md:text-base lg:text-lg text-uba-primary mb-3 leading-relaxed">
+            <span className="font-semibold">¡Planificá tus horarios!</span> Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo las <span className="font-semibold">comisiones</span> que prefieras. Abajo podés visualizar <span className="font-semibold">el listado</span> de tu selección y ver cómo quedaría tu <span className="font-semibold">cronograma semanal</span>.
           </p>
 
           <Alert className="border-yellow-300 bg-yellow-100 p-3">
             <div className="flex items-start gap-3">
-              <div className="text-xl mt-0.5">⚠️</div>
-              <AlertDescription className="text-gray-800 text-sm">
+              <div className="text-base md:text-lg mt-0.5">⚠️</div>
+              <AlertDescription className="text-xs md:text-sm lg:text-base text-gray-800">
                 <span className="font-semibold">Aclaración:</span> esta herramienta es para visualizar y planificar
                 horarios. Para realizar las inscripciones debés hacerlo por{" "}
                 <a
@@ -1148,7 +1142,7 @@ export function HorariosDisplay() {
 
     {/* Período actual */}
     <div className="py-4">
-      <p className="text-gray-600 text-xl mb-3 text-left">
+      <p className="text-gray-600 text-l mb-1 text-left">
         Período actual:
       </p>
       {renderPeriodoInfo()}
