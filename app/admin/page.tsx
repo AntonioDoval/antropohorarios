@@ -601,65 +601,7 @@ export default function AdminPage() {
               Descargar PDF de Horarios
             </Button>
           </CardContent>
-        </Card>
-
-        {/* Sección de Planes de Estudios */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Habilitar/Deshabilitar sección Planes de Estudios</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg bg-white">
-              <div className="flex items-center space-x-3">
-                <span className={`text-sm font-medium ${!planesEstudiosHabilitado ? 'text-red-600' : 'text-gray-500'}`}>
-                  Deshabilitado
-                </span>
-                <Switch
-                  checked={planesEstudiosHabilitado}
-                  onCheckedChange={handleTogglePlanesEstudios}
-                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
-                />
-                <span className={`text-sm font-medium ${planesEstudiosHabilitado ? 'text-green-600' : 'text-gray-500'}`}>
-                  Habilitado
-                </span>
-              </div>
-            </div>
-            
-            <Button 
-              onClick={() => {
-                setPlanesMessage({
-                  type: "success",
-                  content: planesEstudiosHabilitado ? "Sección de Planes de Estudio habilitada." : "Sección de Planes de Estudio deshabilitada."
-                });
-                // Limpiar mensajes de otros componentes
-                setPeriodoMessage(null);
-                setCsvMessage(null);
-              }} 
-              className="w-full bg-uba-primary hover:bg-uba-primary/90"
-            >
-              Aplicar Configuración
-            </Button>
-
-            {planesMessage && (
-              <Alert className={`${
-                planesMessage.type === "success" 
-                  ? "border-green-200 bg-green-50" 
-                  : "border-red-200 bg-red-50"
-              }`}>
-                {planesMessage.type === "success" ? (
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                ) : (
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                )}
-                <AlertDescription className={
-                  planesMessage.type === "success" ? "text-green-800" : "text-red-800"
-                }>
-                  {planesMessage.content}
-                </AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
+        </Card>      
       </main>
     </PageLayout>
   )
