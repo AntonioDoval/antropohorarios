@@ -20,6 +20,7 @@ import {
 } from "@/lib/planes-utils"
 import { materiasCompletas, buscarMateriaPorNombre, type MateriaCompleta } from "@/lib/data/materias-completas"
 import { toTitleCase } from "@/lib/text-utils"
+import jsPDF from 'jspdf'
 
 // Función para abreviar días de la semana
 const abreviarDia = (dia: string): string => {
@@ -94,7 +95,7 @@ interface Seleccion {
 const obtenerNombreMateria = (asignatura: AsignaturaConPlan, plan: "2023" | "1985"): string => {
   // Buscar la materia en el archivo de materias completas
   const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-  
+
   if (materiaCompleta) {
     if (plan === "1985" && materiaCompleta.nombrePlan1985) {
       return toTitleCase(materiaCompleta.nombrePlan1985)
@@ -698,6 +699,198 @@ export function HorariosDisplay() {
     return resultado.sort((a, b) => a.asignatura.localeCompare(b.asignatura))
   }
 
+  const generatePDF = async () => {
+    try {
+      if (!data || !data.asignaturas || data.asignaturas.length === 0) {
+        return
+      }
+
+      const pdf = new jsPDF()
+      const pageWidth = pdf.internal.pageSize.width
+      const pageHeight = pdf.internal.pageSize.height
+      const margin = 20
+      let currentY = 30
+
+      // Set font
+      pdf.setFont('times', 'normal')
+
+      // Header del PDF
+      pdf.setFontSize(22)
+      pdf.setTextColor(28, 37, 84)
+      pdf.text('Oferta de Asignaturas y Horarios', pageWidth / 2, currentY, { align: 'center' })
+
+      currentY += 12
+      pdf.setFontSize(16)
+      pdf.setTextColor(70, 191, 176)
+      pdf.text('Ciencias Antropológicas (FFyL-UBA)', pageWidth / 2, currentY, { align: 'center' })
+
+      currentY += 8
+      pdf.setFontSize(14)
+      pdf.setTextColor(100, 100, 100)
+      pdf.text('---', pageWidth / 2, currentY, { align: 'center' })
+
+      currentY += 10
+      const periodoText = data.periodo?.periodo === "1C" ? "1er Cuatrimestre" : 
+                          data.periodo?.periodo === "2C" ? "2do Cuatrimestre" : 
+                          data.periodo?.periodo === "BV" ? "Bimestre de Verano" : 
+                          data.periodo?.periodo || ''
+      pdf.text(`Período actual: ${periodoText} ${data.periodo?.año || ''}`, pageWidth / 2, currentY, { align: 'center' })
+
+      currentY += 20
+
+      // Línea separadora
+      pdf.setDrawColor(200, 200, 200)
+      pdf.line(margin, currentY, pageWidth - margin, currentY)
+      currentY += 15
+
+      // Organizar asignaturas por planes
+      const planes = [
+        { codigo: "1985", nombre: "Plan de estudios 1985" },
+        { codigo: "2023", nombre: "Plan de estudios 2023" }
+      ]
+
+      for (const plan of planes) {
+        if (currentY > pageHeight - 40) {
+          pdf.addPage()
+          currentY = 30
+        }
+
+        // Título del plan
+        pdf.setFontSize(18)
+        pdf.setTextColor(28, 37, 84)
+        pdf.text(plan.nombre, margin, currentY)
+        currentY += 15
+
+        // Filtrar asignaturas relevantes para este plan
+        const asignaturasDelPlan = data.asignaturas.filter((asignatura: any) => {
+          if (plan.codigo === "2023") {
+            return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
+          }
+          return true
+        })
+
+        // Ordenar alfabéticamente
+        asignaturasDelPlan.sort((a: any, b: any) => a.materia.localeCompare(b.materia))
+
+        for (const asignatura of asignaturasDelPlan) {
+          const espacioNecesario = 25 + (asignatura.clases?.length || 0) * 6
+          if (currentY + espacioNecesario > pageHeight - 20) {
+            pdf.addPage()
+            currentY = 30
+
+            pdf.setFontSize(18)
+            pdf.setTextColor(28, 37, 84)
+            pdf.text(`${plan.nombre} (continuación)`, margin, currentY)
+            currentY += 15
+          }
+
+          // Nombre de la materia
+          pdf.setFontSize(12)
+          pdf.setTextColor(0, 0, 0)
+          const nombreMateria = asignatura.materia
+          const maxWidth = pageWidth - 2 * margin
+          const nombreLines = pdf.splitTextToSize(nombreMateria, maxWidth)
+
+          pdf.text(nombreLines, margin, currentY)
+          currentY += nombreLines.length * 6
+
+          // Cátedra
+          pdf.setFontSize(10)
+          pdf.setTextColor(100, 100, 100)
+          pdf.text(`Cátedra: ${asignatura.catedra}`, margin + 5, currentY)
+          currentY += 6
+
+          // Modalidades
+          const modalidadTexto = `${asignatura.modalidadAprobacion || 'N/A'} | ${asignatura.modalidadCursada || 'N/A'}`
+          pdf.text(`Modalidad: ${modalidadTexto}`, margin + 5, currentY)
+          currentY += 6
+
+          // Clases
+          if (asignatura.clases && asignatura.clases.length > 0) {
+            pdf.text('Horarios:', margin + 5, currentY)
+            currentY += 5
+
+            asignatura.clases.forEach((clase: any) => {
+              const claseTexto = `${clase.tipo}${clase.numero ? ' ' + clase.numero : ''}: ${clase.dia} ${clase.horario} hs`
+              pdf.text(`  • ${claseTexto}`, margin + 10, currentY)
+              currentY += 5
+            })
+          }
+
+          // Aclaraciones si existen
+          if (asignatura.aclaraciones) {
+            pdf.setTextColor(150, 150,150)
+            pdf.text(`Nota: ${asignatura.aclaraciones}`, margin + 5, currentY)
+            currentY += 6
+            pdf.setTextColor(100, 100, 100)
+          }
+
+          currentY += 8
+        }
+
+        currentY += 15
+      }
+
+      // Footer en todas las páginas
+      const totalPages = pdf.getNumberOfPages()
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i)
+        pdf.setFontSize(8)
+        pdf.setTextColor(150, 150, 150)
+        pdf.text('Generado desde el Sistema de Horarios de Antropología - FFyL UBA', margin, pageHeight - 15)
+        pdf.text(new Date().toLocaleString('es-AR'), pageWidth - margin, pageHeight - 15, { align: 'right' })
+        pdf.text(`Página ${i} de ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' })
+      }
+
+      // Descargar PDF
+      const fileName = `horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}.pdf`
+      pdf.save(fileName)
+
+    } catch (error) {
+      console.error("Error generando PDF:", error)
+    }
+  }
+
+  const renderPeriodoInfo = () => {
+    if (!data?.periodo?.año || !data?.periodo?.periodo) {
+      return null
+    }
+
+    const periodoTexto = data.periodo.periodo === "1C" ? "1er Cuatrimestre" : 
+                         data.periodo.periodo === "2C" ? "2do Cuatrimestre" : 
+                         data.periodo.periodo === "BV" ? "Bimestre de Verano" : 
+                         data.periodo.periodo
+
+    return (
+      <>
+        <Card className="mb-6 border-uba-primary/20 bg-gradient-to-r from-uba-primary/5 to-uba-secondary/5">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Info className="h-5 w-5 text-uba-primary" />
+              <div>
+                <h3 className="font-semibold text-uba-primary">
+                  Período Académico Actual
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {periodoTexto} {data.periodo.año}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="mb-6 flex justify-center">
+          <Button 
+            onClick={generatePDF}
+            className="bg-[#e6f5f3] border border-[#bbd8d1] text-[#1e2455] hover:bg-[#d9f0ed] hover:border-[#a8c9c1] px-4 py-2 text-sm font-medium"
+          >
+            Descargar listado en PDF
+          </Button>
+        </div>
+      </>
+    )
+  }
+
   if (loading) {
     return <div className="text-center py-8 text-uba-primary">Cargando horarios...</div>
   }
@@ -958,11 +1151,7 @@ export function HorariosDisplay() {
       <p className="text-gray-600 text-xl mb-3 text-left">
         Período actual:
       </p>
-      <div className="inline-block w-fit bg-uba-secondary text-white px-4 py-2 rounded-lg">
-        <p className="text-2xl font-bold">
-          {getPeriodoText(data.periodo.periodo)} {data.periodo.año}
-        </p>
-      </div>
+      {renderPeriodoInfo()}
     </div>
 
     {(() => {
@@ -1498,14 +1687,14 @@ export function HorariosDisplay() {
                                   // Calcular la posición y altura basada en las horas absolutas
                                   const duracionTotal = clase.fin - clase.inicio // duración en horas
                                   const inicioEnIntervalo = clase.inicio - intervalo.inicio // posición dentro del intervalo actual
-                                  
+
                                   // Cada intervalo de la tabla representa 2 horas
                                   const alturaIntervaloPx = 64 // altura de cada celda en px (h-16 = 64px)
                                   const alturaHoraPx = alturaIntervaloPx / 2 // cada hora = 32px
-                                  
+
                                                                     const topPercent = (inicioEnIntervalo / 2) * 100 // posición relativa en el intervalo
                                   const heightPx = duracionTotal * alturaHoraPx // altura en pixels
-                                  
+
                                   return (
                                     <div
                                       key={index}

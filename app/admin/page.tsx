@@ -525,8 +525,8 @@ export default function AdminPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-semibold text-sm text-red-700">Zona de Peligro</h3>
-                    <p className="text-xs text-red-600">Eliminar todos los datos (irreversible)</p>
+                    <h3 className="font-semibold text-sm text-red-700">Limpiar datos cargados</h3>
+                    <p className="text-xs text-red-600">Peligro: esta acción es irreversible</p>
                   </div>
                   <Button 
                     onClick={async () => {
@@ -567,7 +567,7 @@ export default function AdminPage() {
                     variant="destructive"
                     className="h-8"
                   >
-                    🗑️ Eliminar
+                    Limpiar
                   </Button>
                 </div>
               </CardContent>
