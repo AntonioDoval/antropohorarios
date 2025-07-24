@@ -787,7 +787,9 @@ export function HorariosDisplay() {
           // Nombre de la materia
           pdf.setFontSize(12)
           pdf.setTextColor(0, 0, 0)
-          const nombreMateria = asignatura.materia
+          const nombreMateria = plan.codigo === "1985" ? 
+            obtenerNombreMateria(asignatura, "1985") : 
+            obtenerNombreMateria(asignatura, "2023")
           const maxWidth = pageWidth - 2 * margin
           const nombreLines = pdf.splitTextToSize(nombreMateria, maxWidth)
 
