@@ -26,6 +26,10 @@ export default function AdminPage() {
   const [periodoMessage, setPeriodoMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
   const [planesMessage, setPlanesMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
   const [csvMessage, setCsvMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
+  const [announcementEnabled, setAnnouncementEnabled] = useState(false)
+  const [announcementTitle, setAnnouncementTitle] = useState("")
+  const [announcementText, setAnnouncementText] = useState("")
+  const [announcementMessage, setAnnouncementMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem("planes-estudios-habilitado")
@@ -45,7 +49,21 @@ export default function AdminPage() {
       }
     }
     
+    // Cargar anuncio actual
+    const fetchAnnouncement = async () => {
+      try {
+        const response = await fetch('/api/announcement')
+        const data = await response.json()
+        setAnnouncementEnabled(data.enabled || false)
+        setAnnouncementTitle(data.title || "")
+        setAnnouncementText(data.text || "")
+      } catch (error) {
+        console.error("Error loading announcement data:", error)
+      }
+    }
+    
     fetchPeriodo()
+    fetchAnnouncement()
   }, [])
 
   const handleTogglePlanesEstudios = (enabled: boolean) => {
@@ -54,6 +72,45 @@ export default function AdminPage() {
     // Limpiar mensajes de otros componentes
     setPeriodoMessage(null)
     setCsvMessage(null)
+  }
+
+  const handleUpdateAnnouncement = async () => {
+    try {
+      const adminPassword = localStorage.getItem('admin-session') || ''
+      const response = await fetch('/api/announcement', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': adminPassword,
+        },
+        body: JSON.stringify({
+          enabled: announcementEnabled,
+          title: announcementTitle,
+          text: announcementText
+        }),
+      })
+
+      if (response.ok) {
+        setAnnouncementMessage({
+          type: "success",
+          content: "Anuncio actualizado exitosamente"
+        })
+        setPeriodoMessage(null)
+        setCsvMessage(null)
+        setPlanesMessage(null)
+      } else {
+        throw new Error('Error saving announcement')
+      }
+    } catch (error) {
+      console.error("Error updating announcement:", error)
+      setAnnouncementMessage({
+        type: "error",
+        content: "Error al actualizar el anuncio"
+      })
+      setPeriodoMessage(null)
+      setCsvMessage(null)
+      setPlanesMessage(null)
+    }
   }
 
   const handleUpdatePeriodo = async () => {
@@ -380,27 +437,77 @@ export default function AdminPage() {
     <PageLayout showPlanesEstudio={false} showAdminButtons={true} onLogout={handleLogout}>
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
         {/* Combined Messages Display */}
-        {(periodoMessage || csvMessage || planesMessage) && (
+        {(periodoMessage || csvMessage || planesMessage || announcementMessage) && (
           <Alert className={`${
-            (periodoMessage?.type || csvMessage?.type || planesMessage?.type) === "success" 
+            (periodoMessage?.type || csvMessage?.type || planesMessage?.type || announcementMessage?.type) === "success" 
               ? "border-green-200 bg-green-50" 
               : "border-red-200 bg-red-50"
           }`}>
-            {(periodoMessage?.type || csvMessage?.type || planesMessage?.type) === "success" ? (
+            {(periodoMessage?.type || csvMessage?.type || planesMessage?.type || announcementMessage?.type) === "success" ? (
               <CheckCircle className="h-4 w-4 text-green-600" />
             ) : (
               <AlertCircle className="h-4 w-4 text-red-600" />
             )}
             <AlertDescription className={
-              (periodoMessage?.type || csvMessage?.type || planesMessage?.type) === "success" ? "text-green-800" : "text-red-800"
+              (periodoMessage?.type || csvMessage?.type || planesMessage?.type || announcementMessage?.type) === "success" ? "text-green-800" : "text-red-800"
             }>
-              {periodoMessage?.content || csvMessage?.content || planesMessage?.content}
+              {periodoMessage?.content || csvMessage?.content || planesMessage?.content || announcementMessage?.content}
             </AlertDescription>
           </Alert>
         )}
 
         {/* Main Grid Layout */}
         <div className="grid gap-6">
+          {/* Announcement Management */}
+          <Card className="border-slate-200 shadow-sm">
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-sm text-slate-700 mb-3">Gestión de Anuncios</h3>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={announcementEnabled}
+                    onCheckedChange={(checked) => {
+                      setAnnouncementEnabled(checked)
+                      setAnnouncementMessage(null)
+                      setPeriodoMessage(null)
+                      setCsvMessage(null)
+                      setPlanesMessage(null)
+                    }}
+                  />
+                  <Label className="text-sm">Habilitar anuncio</Label>
+                </div>
+                <div>
+                  <Label htmlFor="announcement-title" className="text-xs text-slate-600">Título</Label>
+                  <Input
+                    id="announcement-title"
+                    value={announcementTitle}
+                    onChange={(e) => setAnnouncementTitle(e.target.value)}
+                    placeholder="Título del anuncio"
+                    className="h-8 text-sm mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="announcement-text" className="text-xs text-slate-600">Texto</Label>
+                  <textarea
+                    id="announcement-text"
+                    value={announcementText}
+                    onChange={(e) => setAnnouncementText(e.target.value)}
+                    placeholder="Contenido del anuncio"
+                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-uba-primary focus:border-transparent resize-none"
+                    rows={3}
+                  />
+                </div>
+                <Button 
+                  onClick={handleUpdateAnnouncement}
+                  size="sm"
+                  className="w-full h-8 bg-uba-secondary hover:bg-uba-secondary/90 text-white"
+                >
+                  Guardar Anuncio
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Period & PDF Controls - Compact Row */}
           <div className="grid md:grid-cols-2 gap-4">
             <Card className="border-slate-200 shadow-sm">

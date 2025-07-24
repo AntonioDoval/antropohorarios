@@ -15,6 +15,7 @@ export default function Home() {
   return (
     <PageLayout showPlanesEstudio={planesEstudiosHabilitado}>
       <HorariosDisplay />
+      <AnnouncementModal />
     </PageLayout>
   )
 }
