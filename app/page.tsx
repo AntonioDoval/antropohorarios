@@ -3,6 +3,7 @@
 import { HorariosDisplay } from "@/components/horarios-display"
 import { PageLayout } from "@/components/layout/page-layout"
 import { useEffect, useState } from "react"
+import AnnouncementModal from "@/components/announcement-modal"
 
 export default function Home() {
   const [planesEstudiosHabilitado, setPlanesEstudiosHabilitado] = useState(true)
@@ -14,7 +15,9 @@ export default function Home() {
 
   return (
     <PageLayout showPlanesEstudio={planesEstudiosHabilitado}>
+      <AnnouncementModal />
       <HorariosDisplay />
     </PageLayout>
   )
 }
+`
