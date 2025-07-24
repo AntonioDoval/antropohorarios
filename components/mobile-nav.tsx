@@ -34,7 +34,7 @@ export function MobileNav({ children }: MobileNavProps) {
         </SheetTrigger>
         <SheetContent side="left" className="w-[300px] sm:w-[400px]">
           <SheetHeader>
-            <SheetTitle>Navegación</SheetTitle>
+            <SheetTitle>Horarios AntropoUBA</SheetTitle>
           </SheetHeader>
           <div className="mt-6 space-y-4">
             {children}

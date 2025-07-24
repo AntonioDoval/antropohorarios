@@ -545,7 +545,6 @@ export default function AdminPage() {
                               type: "success",
                               content: "Datos eliminados exitosamente"
                             })
-                            setTimeout(() => window.location.reload(), 2000)
                           } else {
                             throw new Error('Error deleting data')
                           }
