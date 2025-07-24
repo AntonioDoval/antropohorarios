@@ -11,7 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Lock, AlertCircle, CheckCircle } from "lucide-react"
+import { Lock, AlertCircle, CheckCircle, Download } from "lucide-react"
+import jsPDF from 'jspdf'
 import Link from "next/link"
 import { PageLayout } from "@/components/layout/page-layout"
 
@@ -25,6 +26,10 @@ export default function AdminPage() {
   const [periodoMessage, setPeriodoMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
   const [planesMessage, setPlanesMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
   const [csvMessage, setCsvMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
+  const [announcementEnabled, setAnnouncementEnabled] = useState(false)
+  const [announcementTitle, setAnnouncementTitle] = useState("")
+  const [announcementText, setAnnouncementText] = useState("")
+  const [announcementMessage, setAnnouncementMessage] = useState<{ type: "success" | "error"; content: string } | null>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem("planes-estudios-habilitado")
@@ -44,7 +49,21 @@ export default function AdminPage() {
       }
     }
     
+    // Cargar anuncio actual
+    const fetchAnnouncement = async () => {
+      try {
+        const response = await fetch('/api/announcement')
+        const data = await response.json()
+        setAnnouncementEnabled(data.enabled || false)
+        setAnnouncementTitle(data.title || "")
+        setAnnouncementText(data.text || "")
+      } catch (error) {
+        console.error("Error loading announcement data:", error)
+      }
+    }
+    
     fetchPeriodo()
+    fetchAnnouncement()
   }, [])
 
   const handleTogglePlanesEstudios = (enabled: boolean) => {
@@ -53,6 +72,61 @@ export default function AdminPage() {
     // Limpiar mensajes de otros componentes
     setPeriodoMessage(null)
     setCsvMessage(null)
+  }
+
+  const handleUpdateAnnouncement = async () => {
+    try {
+      const adminPassword = localStorage.getItem('admin-session') || ''
+      
+      if (!adminPassword) {
+        setAnnouncementMessage({
+          type: "error",
+          content: "Sesión de administrador no válida"
+        })
+        return
+      }
+
+      console.log('Sending announcement update:', { enabled: announcementEnabled, title: announcementTitle?.substring(0, 50), text: announcementText?.substring(0, 50) })
+
+      const response = await fetch('/api/announcement', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': adminPassword,
+        },
+        body: JSON.stringify({
+          enabled: announcementEnabled,
+          title: announcementTitle,
+          text: announcementText
+        }),
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        console.log('Announcement updated successfully:', result)
+        setAnnouncementMessage({
+          type: "success",
+          content: "Anuncio actualizado exitosamente"
+        })
+        setPeriodoMessage(null)
+        setCsvMessage(null)
+        setPlanesMessage(null)
+      } else {
+        const errorData = await response.json()
+        const errorMessage = errorData.error || `Error HTTP ${response.status}`
+        console.error('Server error:', errorData)
+        throw new Error(errorMessage)
+      }
+    } catch (error) {
+      console.error("Error updating announcement:", error)
+      setAnnouncementMessage({
+        type: "error",
+        content: `Error al actualizar el anuncio: ${error instanceof Error ? error.message : 'Error desconocido'}`
+      })
+      setPeriodoMessage(null)
+      setCsvMessage(null)
+      setPlanesMessage(null)
+    }
   }
 
   const handleUpdatePeriodo = async () => {
@@ -141,6 +215,189 @@ export default function AdminPage() {
     localStorage.removeItem('admin-session')
   }
 
+  const generatePDF = async () => {
+    try {
+      // Obtener datos actuales
+      const response = await fetch('/api/horarios')
+      const horariosData = await response.json()
+      
+      if (!horariosData || !horariosData.asignaturas || horariosData.asignaturas.length === 0) {
+        setPeriodoMessage({
+          type: "error",
+          content: "No hay datos de horarios para generar el PDF"
+        })
+        return
+      }
+
+      const pdf = new jsPDF()
+      const pageWidth = pdf.internal.pageSize.width
+      const pageHeight = pdf.internal.pageSize.height
+      const margin = 20
+      let currentY = 30
+
+      // Set Bitter font for the entire document
+      pdf.setFont('times', 'normal') // Using Times as fallback since Bitter isn't available in jsPDF by default
+
+      // Header del PDF
+      pdf.setFontSize(22)
+      pdf.setTextColor(28, 37, 84) // UBA Primary color
+      pdf.text('Oferta de Asignaturas y Horarios', pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 12
+      pdf.setFontSize(16)
+      pdf.setTextColor(70, 191, 176) // UBA Secondary color
+      pdf.text('Ciencias Antropológicas (FFyL-UBA)', pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 8
+      pdf.setFontSize(14)
+      pdf.setTextColor(100, 100, 100)
+      pdf.text('---', pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 10
+      const periodoText = horariosData.periodo?.periodo === "1C" ? "1er Cuatrimestre" : 
+                          horariosData.periodo?.periodo === "2C" ? "2do Cuatrimestre" : 
+                          horariosData.periodo?.periodo === "BV" ? "Bimestre de Verano" : 
+                          horariosData.periodo?.periodo || ''
+      pdf.text(`Período actual: ${periodoText} ${horariosData.periodo?.año || ''}`, pageWidth / 2, currentY, { align: 'center' })
+      
+      currentY += 20
+
+      // Línea separadora
+      pdf.setDrawColor(200, 200, 200)
+      pdf.line(margin, currentY, pageWidth - margin, currentY)
+      currentY += 15
+
+      // Función auxiliar para obtener nombre por plan
+      const obtenerNombrePorPlan = (nombreOriginal: string, planCodigo: string) => {
+        // Aquí puedes implementar la lógica de equivalencias si tienes los datos
+        // Por ahora devolvemos el nombre original
+        return nombreOriginal
+      }
+
+      // Organizar asignaturas por planes
+      const planes = [
+        { codigo: "1985", nombre: "Plan de estudios 1985" },
+        { codigo: "2023", nombre: "Plan de estudios 2023" }
+      ]
+
+      for (const plan of planes) {
+        // Verificar si necesitamos nueva página
+        if (currentY > pageHeight - 40) {
+          pdf.addPage()
+          currentY = 30
+        }
+
+        // Título del plan
+        pdf.setFontSize(18)
+        pdf.setTextColor(28, 37, 84)
+        pdf.text(plan.nombre, margin, currentY)
+        currentY += 15
+
+        // Filtrar asignaturas relevantes para este plan
+        const asignaturasDelPlan = horariosData.asignaturas.filter((asignatura: any) => {
+          if (plan.codigo === "2023") {
+            return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
+          }
+          return true // Plan 1985 incluye todas las asignaturas
+        })
+
+        // Ordenar alfabéticamente
+        asignaturasDelPlan.sort((a: any, b: any) => a.materia.localeCompare(b.materia))
+
+        for (const asignatura of asignaturasDelPlan) {
+          // Verificar si necesitamos nueva página
+          const espacioNecesario = 25 + (asignatura.clases?.length || 0) * 6
+          if (currentY + espacioNecesario > pageHeight - 20) {
+            pdf.addPage()
+            currentY = 30
+            
+            // Repetir título del plan en nueva página
+            pdf.setFontSize(18)
+            pdf.setTextColor(28, 37, 84)
+            pdf.text(`${plan.nombre} (continuación)`, margin, currentY)
+            currentY += 15
+          }
+
+          // Nombre de la materia
+          pdf.setFontSize(12)
+          pdf.setTextColor(0, 0, 0)
+          const nombreMateria = obtenerNombrePorPlan(asignatura.materia, plan.codigo)
+          const maxWidth = pageWidth - 2 * margin
+          const nombreLines = pdf.splitTextToSize(nombreMateria, maxWidth)
+          
+          pdf.text(nombreLines, margin, currentY)
+          currentY += nombreLines.length * 6
+
+          // Cátedra
+          pdf.setFontSize(10)
+          pdf.setTextColor(100, 100, 100)
+          pdf.text(`Cátedra: ${asignatura.catedra}`, margin + 5, currentY)
+          currentY += 6
+
+          // Modalidades
+          const modalidadTexto = `${asignatura.modalidadAprobacion || 'N/A'} | ${asignatura.modalidadCursada || 'N/A'}`
+          pdf.text(`Modalidad: ${modalidadTexto}`, margin + 5, currentY)
+          currentY += 6
+
+          // Clases
+          if (asignatura.clases && asignatura.clases.length > 0) {
+            pdf.text('Horarios:', margin + 5, currentY)
+            currentY += 5
+
+            asignatura.clases.forEach((clase: any) => {
+              const claseTexto = `${clase.tipo}${clase.numero ? ' ' + clase.numero : ''}: ${clase.dia} ${clase.horario} hs`
+              pdf.text(`  • ${claseTexto}`, margin + 10, currentY)
+              currentY += 5
+            })
+          }
+
+          // Aclaraciones si existen
+          if (asignatura.aclaraciones) {
+            pdf.setTextColor(150, 150, 150)
+            pdf.text(`Nota: ${asignatura.aclaraciones}`, margin + 5, currentY)
+            currentY += 6
+            pdf.setTextColor(100, 100, 100)
+          }
+
+          currentY += 8 // Espacio entre asignaturas
+        }
+
+        currentY += 15 // Espacio entre planes
+      }
+
+      // Footer en todas las páginas
+      const totalPages = pdf.getNumberOfPages()
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i)
+        pdf.setFontSize(8)
+        pdf.setTextColor(150, 150, 150)
+        pdf.text('Generado desde el Sistema de Horarios de Antropología - FFyL UBA', margin, pageHeight - 15)
+        pdf.text(new Date().toLocaleString('es-AR'), pageWidth - margin, pageHeight - 15, { align: 'right' })
+        pdf.text(`Página ${i} de ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' })
+      }
+
+      // Descargar PDF
+      const fileName = `horarios-antropologia-${horariosData.periodo?.año || 'actual'}-${horariosData.periodo?.periodo || ''}.pdf`
+      pdf.save(fileName)
+
+      setPeriodoMessage({
+        type: "success",
+        content: "PDF generado exitosamente"
+      })
+      setCsvMessage(null)
+      setPlanesMessage(null)
+
+    } catch (error) {
+      console.error("Error generando PDF:", error)
+      setPeriodoMessage({
+        type: "error",
+        content: "Error al generar el PDF. Por favor, intenta nuevamente."
+      })
+      setCsvMessage(null)
+      setPlanesMessage(null)
+    }
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -194,267 +451,251 @@ export default function AdminPage() {
 
   return (
     <PageLayout showPlanesEstudio={false} showAdminButtons={true} onLogout={handleLogout}>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Sección de Período Académico */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Configurar Período Académico</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="año" className="text-uba-primary">
-                  Año
-                </Label>
-                <Input
-                  id="año"
-                  type="number"
-                  value={año}
-                  onChange={(e) => setAño(e.target.value)}
-                  placeholder="2024"
-                  className="mt-1 border-uba-primary/30 focus:border-uba-primary"
-                  min="2020"
-                  max="2030"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cuatrimestre" className="text-uba-primary">
-                  Período
-                </Label>
-                <Select value={cuatrimestre} onValueChange={setCuatrimestre}>
-                  <SelectTrigger className="mt-1 border-uba-primary/30 focus:border-uba-primary">
-                    <SelectValue placeholder="Seleccionar cuatrimestre" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1C">1C (Primer Cuatrimestre)</SelectItem>
-                    <SelectItem value="2C">2C (Segundo Cuatrimestre)</SelectItem>
-                    <SelectItem value="BV">BV (Bimestre de verano)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <Button 
-              onClick={handleUpdatePeriodo}
-              className="w-full bg-uba-primary hover:bg-uba-primary/90"
-            >
-              Actualizar Período Académico
-            </Button>
-
-            {periodoMessage && (
-              <Alert className={`${
-                periodoMessage.type === "success" 
-                  ? "border-green-200 bg-green-50" 
-                  : "border-red-200 bg-red-50"
-              }`}>
-                {periodoMessage.type === "success" ? (
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                ) : (
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                )}
-                <AlertDescription className={
-                  periodoMessage.type === "success" ? "text-green-800" : "text-red-800"
-                }>
-                  {periodoMessage.content}
-                </AlertDescription>
-              </Alert>
+      <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+        {/* Combined Messages Display */}
+        {(periodoMessage || csvMessage || planesMessage || announcementMessage) && (
+          <Alert className={`${
+            (periodoMessage?.type || csvMessage?.type || planesMessage?.type || announcementMessage?.type) === "success" 
+              ? "border-green-200 bg-green-50" 
+              : "border-red-200 bg-red-50"
+          }`}>
+            {(periodoMessage?.type || csvMessage?.type || planesMessage?.type || announcementMessage?.type) === "success" ? (
+              <CheckCircle className="h-4 w-4 text-green-600" />
+            ) : (
+              <AlertCircle className="h-4 w-4 text-red-600" />
             )}
-          </CardContent>
-        </Card>
+            <AlertDescription className={
+              (periodoMessage?.type || csvMessage?.type || planesMessage?.type || announcementMessage?.type) === "success" ? "text-green-800" : "text-red-800"
+            }>
+              {periodoMessage?.content || csvMessage?.content || planesMessage?.content || announcementMessage?.content}
+            </AlertDescription>
+          </Alert>
+        )}
 
-        {/* Sección de Actualizar Horarios */}
-        <div className="space-y-4">
-          <CSVUploader onSuccess={(message) => {
-            setCsvMessage({ type: "success", content: message })
-            setPeriodoMessage(null)
-            setPlanesMessage(null)
-          }} onError={(message) => {
-            setCsvMessage({ type: "error", content: message })
-            setPeriodoMessage(null)
-            setPlanesMessage(null)
-          }} />
-          
-          {csvMessage && (
-            <Alert className={`${
-              csvMessage.type === "success" 
-                ? "border-green-200 bg-green-50" 
-                : "border-red-200 bg-red-50"
-            }`}>
-              {csvMessage.type === "success" ? (
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              ) : (
-                <AlertCircle className="h-4 w-4 text-red-600" />
-              )}
-              <AlertDescription className={
-                csvMessage.type === "success" ? "text-green-800" : "text-red-800"
-              }>
-                {csvMessage.content}
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
+        {/* Main Grid Layout */}
+        <div className="grid gap-6">
+          {/* Announcement Management */}
+          <Card className="border-slate-200 shadow-sm">
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-sm text-slate-700 mb-3">Gestión de Anuncios</h3>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={announcementEnabled}
+                    onCheckedChange={(checked) => {
+                      setAnnouncementEnabled(checked)
+                      setAnnouncementMessage(null)
+                      setPeriodoMessage(null)
+                      setCsvMessage(null)
+                      setPlanesMessage(null)
+                    }}
+                  />
+                  <Label className="text-sm">Habilitar anuncio</Label>
+                </div>
+                <div>
+                  <Label htmlFor="announcement-title" className="text-xs text-slate-600">Título</Label>
+                  <Input
+                    id="announcement-title"
+                    value={announcementTitle}
+                    onChange={(e) => setAnnouncementTitle(e.target.value)}
+                    placeholder="Título del anuncio"
+                    className="h-8 text-sm mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="announcement-text" className="text-xs text-slate-600">Texto</Label>
+                  <textarea
+                    id="announcement-text"
+                    value={announcementText}
+                    onChange={(e) => setAnnouncementText(e.target.value)}
+                    placeholder="Contenido del anuncio"
+                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-uba-primary focus:border-transparent resize-none"
+                    rows={3}
+                  />
+                </div>
+                <Button 
+                  onClick={handleUpdateAnnouncement}
+                  size="sm"
+                  className="w-full h-8 bg-uba-secondary hover:bg-uba-secondary/90 text-white"
+                >
+                  Guardar Anuncio
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Sección de Test de Conexión */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Probar Conexión con Supabase</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-gray-600 mb-4">
-              Usa este botón para verificar que la conexión con Supabase está funcionando correctamente.
-            </p>
-            
-            <Button 
-              onClick={async () => {
-                try {
-                  console.log('Testing Supabase connection...')
-                  const response = await fetch('/api/horarios')
-                  const data = await response.json()
-                  
-                  if (response.ok) {
-                    setCsvMessage({
-                      type: "success",
-                      content: `Conexión con Supabase exitosa. Asignaturas encontradas: ${data.asignaturas?.length || 0}`
-                    })
-                  } else {
-                    throw new Error('Error en la respuesta del servidor')
-                  }
-                  
-                  setPeriodoMessage(null)
-                  setPlanesMessage(null)
-                } catch (error) {
-                  console.error("Error testing Supabase connection:", error)
-                  setCsvMessage({
-                    type: "error", 
-                    content: "Error al conectar con Supabase. Revisa la configuración."
-                  })
-                  setPeriodoMessage(null)
-                  setPlanesMessage(null)
-                }
-              }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              🔗 Probar Conexión con Supabase
-            </Button>
-          </CardContent>
-        </Card>
+          {/* Period & PDF Controls - Compact Row */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <Card className="border-slate-200 shadow-sm">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-sm text-slate-700 mb-3">Período Académico</h3>
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <Input
+                    type="number"
+                    value={año}
+                    onChange={(e) => setAño(e.target.value)}
+                    placeholder="2024"
+                    className="h-8 text-sm"
+                    min="2020"
+                    max="2030"
+                  />
+                  <Select value={cuatrimestre} onValueChange={setCuatrimestre}>
+                    <SelectTrigger className="h-8 text-sm">
+                      <SelectValue placeholder="Período" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1C">1C</SelectItem>
+                      <SelectItem value="2C">2C</SelectItem>
+                      <SelectItem value="BV">BV</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={handleUpdatePeriodo}
+                  size="sm"
+                  className="w-full h-8 bg-uba-primary hover:bg-uba-primary/90"
+                >
+                  Actualizar
+                </Button>
+              </CardContent>
+            </Card>
 
-        {/* Sección de Limpiar Datos */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-700">Limpiar Datos de Horarios</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-              <p className="text-sm text-red-800 mb-4">
-                <strong>⚠️ Atención:</strong> Esta acción eliminará todos los horarios guardados tanto del servidor como del almacenamiento local. 
-                Esta acción no se puede deshacer.
-              </p>
-              
-              <Button 
-                onClick={async () => {
-                  if (confirm("¿Estás seguro de que quieres eliminar todos los datos de horarios? Esta acción no se puede deshacer.")) {
-                    try {
-                      const adminPassword = localStorage.getItem('admin-session') || ''
-                      const response = await fetch('/api/horarios', {
-                        method: 'DELETE',
-                        headers: {
-                          'x-admin-password': adminPassword,
+            <Card className="border-slate-200 shadow-sm">
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-sm text-slate-700 mb-3">Generar PDF</h3>
+                <p className="text-xs text-slate-600 mb-3">
+                  Descarga PDF con horarios organizados por planes de estudio
+                </p>
+                <Button 
+                  onClick={generatePDF}
+                  size="sm"
+                  className="w-full h-8 bg-uba-secondary hover:bg-uba-secondary/90 text-white"
+                >
+                  <Download className="h-3 w-3 mr-1" />
+                  Descargar PDF
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* CSV Upload Section */}
+          <Card className="border-slate-200 shadow-sm">
+            <CardContent className="p-4">
+              <CSVUploader onSuccess={(message) => {
+                setCsvMessage({ type: "success", content: message })
+                setPeriodoMessage(null)
+                setPlanesMessage(null)
+              }} onError={(message) => {
+                setCsvMessage({ type: "error", content: message })
+                setPeriodoMessage(null)
+                setPlanesMessage(null)
+              }} />
+            </CardContent>
+          </Card>
+
+          {/* Development & Danger Zone - Collapsible */}
+          <div className="space-y-4">
+            {/* Test Connection - Dev Only */}
+            {typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('replit')) && (
+              <Card className="border-blue-200 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-sm text-blue-700">Test Supabase</h3>
+                      <p className="text-xs text-blue-600">Verificar conexión con base de datos</p>
+                    </div>
+                    <Button 
+                      onClick={async () => {
+                        try {
+                          console.log('Testing Supabase connection...')
+                          const response = await fetch('/api/horarios')
+                          const data = await response.json()
+                          
+                          if (response.ok) {
+                            setCsvMessage({
+                              type: "success",
+                              content: `Conexión exitosa. ${data.asignaturas?.length || 0} asignaturas`
+                            })
+                          } else {
+                            throw new Error('Error en la respuesta del servidor')
+                          }
+                          
+                          setPeriodoMessage(null)
+                          setPlanesMessage(null)
+                        } catch (error) {
+                          console.error("Error testing Supabase connection:", error)
+                          setCsvMessage({
+                            type: "error", 
+                            content: "Error al conectar con Supabase"
+                          })
+                          setPeriodoMessage(null)
+                          setPlanesMessage(null)
                         }
-                      })
-                      
-                      if (response.ok) {
-                        setCsvMessage({
-                          type: "success",
-                          content: "Todos los datos de horarios han sido eliminados exitosamente de Supabase."
-                        })
-                      } else {
-                        throw new Error('Error deleting data')
-                      }
-                      
-                      setPeriodoMessage(null)
-                      setPlanesMessage(null)
-                      
-                      // Recargar después de 2 segundos
-                      setTimeout(() => {
-                        window.location.reload()
-                      }, 2000)
-                    } catch (error) {
-                      console.error("Error limpiando datos:", error)
-                      setCsvMessage({
-                        type: "error", 
-                        content: "Error al limpiar datos de Supabase. Por favor, intenta nuevamente."
-                      })
-                      setPeriodoMessage(null)
-                      setPlanesMessage(null)
-                    }
-                  }
-                }}
-                className="w-full bg-red-600 hover:bg-red-700 text-white"
-              >
-                🗑️ Eliminar Todos los Horarios
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Sección de Planes de Estudios */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Habilitar/Deshabilitar sección Planes de Estudios</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg bg-white">
-              <div className="flex items-center space-x-3">
-                <span className={`text-sm font-medium ${!planesEstudiosHabilitado ? 'text-red-600' : 'text-gray-500'}`}>
-                  Deshabilitado
-                </span>
-                <Switch
-                  checked={planesEstudiosHabilitado}
-                  onCheckedChange={handleTogglePlanesEstudios}
-                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
-                />
-                <span className={`text-sm font-medium ${planesEstudiosHabilitado ? 'text-green-600' : 'text-gray-500'}`}>
-                  Habilitado
-                </span>
-              </div>
-            </div>
-            
-            <Button 
-              onClick={() => {
-                setPlanesMessage({
-                  type: "success",
-                  content: planesEstudiosHabilitado ? "Sección de Planes de Estudio habilitada." : "Sección de Planes de Estudio deshabilitada."
-                });
-                // Limpiar mensajes de otros componentes
-                setPeriodoMessage(null);
-                setCsvMessage(null);
-              }} 
-              className="w-full bg-uba-primary hover:bg-uba-primary/90"
-            >
-              Aplicar Configuración
-            </Button>
-
-            {planesMessage && (
-              <Alert className={`${
-                planesMessage.type === "success" 
-                  ? "border-green-200 bg-green-50" 
-                  : "border-red-200 bg-red-50"
-              }`}>
-                {planesMessage.type === "success" ? (
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                ) : (
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                )}
-                <AlertDescription className={
-                  planesMessage.type === "success" ? "text-green-800" : "text-red-800"
-                }>
-                  {planesMessage.content}
-                </AlertDescription>
-              </Alert>
+                      }}
+                      size="sm"
+                      variant="outline"
+                      className="h-8 text-blue-600 border-blue-300 hover:bg-blue-50"
+                    >
+                      🔗 Test
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             )}
-          </CardContent>
-        </Card>
+
+            {/* Danger Zone */}
+            <Card className="border-red-200 shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-sm text-red-700">Limpiar datos cargados</h3>
+                    <p className="text-xs text-red-600">Peligro: esta acción es irreversible</p>
+                  </div>
+                  <Button 
+                    onClick={async () => {
+                      if (confirm("¿Eliminar TODOS los datos? Esta acción no se puede deshacer.")) {
+                        try {
+                          const adminPassword = localStorage.getItem('admin-session') || ''
+                          const response = await fetch('/api/horarios', {
+                            method: 'DELETE',
+                            headers: {
+                              'x-admin-password': adminPassword,
+                            }
+                          })
+                          
+                          if (response.ok) {
+                            setCsvMessage({
+                              type: "success",
+                              content: "Datos eliminados exitosamente"
+                            })
+                          } else {
+                            throw new Error('Error deleting data')
+                          }
+                          
+                          setPeriodoMessage(null)
+                          setPlanesMessage(null)
+                        } catch (error) {
+                          console.error("Error limpiando datos:", error)
+                          setCsvMessage({
+                            type: "error", 
+                            content: "Error al eliminar datos"
+                          })
+                          setPeriodoMessage(null)
+                          setPlanesMessage(null)
+                        }
+                      }
+                    }}
+                    size="sm"
+                    variant="destructive"
+                    className="h-8"
+                  >
+                    Limpiar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </main>
     </PageLayout>
   )

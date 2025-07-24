@@ -243,17 +243,17 @@ export const materiasCompletas: MateriaCompleta[] = [
   },
   {
     codigo2023: "17016",
-    codigo1985: "0744",
+    codigo1985: "",
     nombrePlan2023: "METODOLOGÍA E INVESTIGACIÓN ANTROPOLÓGICA",
-    nombrePlan1985: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN DE CAMPO",
+    nombrePlan1985: "",
     nombreAbreviado2023: "Met. e Inv. Antrop.",
     nombreSiglas2023: "MIA",
-    nombreSiglas1985: "METINV",
+    nombreSiglas1985: "",
     cicloAreaProf2023: "",
     cicloAreaLicSocio2023: "Ciclo de Formación Orientada (CFO) Licenciatura Sociocultural",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "Ciclo Orientación Sociocultural",
-    cicloAreaLicSocio1985: "Ciclo Orientación Sociocultural",
+    cicloAreaProf1985: "",
+    cicloAreaLicSocio1985: "",
     cicloAreaLicArqueo1985: ""
   },
   {
@@ -738,17 +738,17 @@ export const materiasCompletas: MateriaCompleta[] = [
   },
   {
     codigo2023: "17049",
-    codigo1985: "",
+    codigo1985: "0744",
     nombrePlan2023: "METODOLOGÍA DE LA INVESTIGACIÓN ANTROPOLÓGICA EN EDUCACIÓN",
-    nombrePlan1985: "",
+    nombrePlan1985: "METODOLOGÍA Y TÉCNICAS DE LA INVESTIGACIÓN DE CAMPO",
     nombreAbreviado2023: "Met. Antrop. Educación",
     nombreSiglas2023: "METED",
-    nombreSiglas1985: "",
+    nombreSiglas1985: "METINV",
     cicloAreaProf2023: "Ciclo de Formación General (CFG) Profesorado",
     cicloAreaLicSocio2023: "",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
+    cicloAreaProf1985: "Ciclo Orientación Sociocultural",
+    cicloAreaLicSocio1985: "Ciclo Orientación Sociocultural",
     cicloAreaLicArqueo1985: ""
   },
   {
@@ -883,6 +883,11 @@ export const obtenerMateriasPorPlanYOrientacion = (
 ): MateriaCompleta[] => {
   return materiasCompletas.filter(materia => {
     if (plan === "2023") {
+      // Para plan 2023, filtrar materias que no tienen código o nombre vacío
+      if (materia.codigo2023 === "" || materia.nombrePlan2023 === "") {
+        return false
+      }
+      
       switch (orientacion) {
         case "profesorado":
           return materia.cicloAreaProf2023 !== ""
@@ -894,6 +899,11 @@ export const obtenerMateriasPorPlanYOrientacion = (
           return false
       }
     } else {
+      // Para plan 1985, filtrar materias que no tienen código o nombre vacío
+      if (materia.codigo1985 === "" || materia.nombrePlan1985 === "") {
+        return false
+      }
+      
       switch (orientacion) {
         case "profesorado":
           return materia.cicloAreaProf1985 !== ""
