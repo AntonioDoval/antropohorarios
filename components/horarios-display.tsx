@@ -392,16 +392,27 @@ export function HorariosDisplay() {
   }
 
   const filtrarAsignaturasPorPlan = (asignaturas: AsignaturaConPlan[], plan: "2023" | "1985"): AsignaturaConPlan[] => {
-    if (plan === "2023") {
-      // Para plan 2023, excluir materias optativas exclusivas del plan 1985
-      return asignaturas.filter(asignatura => 
-        asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
-      )
-    }
-
-    // Para plan 1985, incluir todas las asignaturas
-    // Las materias optativas exclusivas del plan 1985 solo son válidas para este plan
-    return asignaturas
+    return asignaturas.filter(asignatura => {
+      // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
+      const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+      
+      if (materiaCompleta) {
+        if (plan === "2023") {
+          // Para plan 2023, filtrar si tiene código o nombre vacío
+          return materiaCompleta.codigo2023 !== "" && materiaCompleta.nombrePlan2023 !== ""
+        } else {
+          // Para plan 1985, filtrar si tiene código o nombre vacío
+          return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
+        }
+      }
+      
+      // Si no se encuentra en materias completas, usar la lógica anterior como fallback
+      if (plan === "2023") {
+        return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
+      }
+      
+      return true
+    })
   }
 
   const limpiarFiltros = () => {
@@ -763,9 +774,24 @@ export function HorariosDisplay() {
 
         // Filtrar asignaturas relevantes para este plan
         const asignaturasDelPlan = data.asignaturas.filter((asignatura: any) => {
+          // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
+          const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+          
+          if (materiaCompleta) {
+            if (plan.codigo === "2023") {
+              // Para plan 2023, filtrar si tiene código o nombre vacío
+              return materiaCompleta.codigo2023 !== "" && materiaCompleta.nombrePlan2023 !== ""
+            } else {
+              // Para plan 1985, filtrar si tiene código o nombre vacío
+              return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
+            }
+          }
+          
+          // Si no se encuentra en materias completas, usar la lógica anterior como fallback
           if (plan.codigo === "2023") {
             return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
           }
+          
           return true
         })
 
