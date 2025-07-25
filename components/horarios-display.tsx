@@ -409,7 +409,7 @@ export function HorariosDisplay() {
 
         // Buscar la materia en materias completas
         const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-        
+
         if (!materiaCompleta) return true // Si no se encuentra, mostrar por defecto
 
         // Verificar si la materia es válida para alguna de las orientaciones seleccionadas
@@ -453,10 +453,10 @@ export function HorariosDisplay() {
           asignatura.catedra.toLowerCase().includes("glavich")) {
         return plan === "1985"
       }
-      
+
       // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
       const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-      
+
       if (materiaCompleta) {
         if (plan === "2023") {
           // Para plan 2023, filtrar si tiene código o nombre vacío
@@ -466,12 +466,12 @@ export function HorariosDisplay() {
           return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
         }
       }
-      
+
       // Si no se encuentra en materias completas, usar la lógica anterior como fallback
       if (plan === "2023") {
         return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
       }
-      
+
       return true
     })
   }
@@ -831,7 +831,7 @@ export function HorariosDisplay() {
         // Título del plan
         pdf.setFontSize(18)
         pdf.setTextColor(28, 37, 84)
-        pdf.text(plan.nombre, margin, currentY)
+          pdf.text(plan.nombre, margin, currentY)
         currentY += 15
 
         // Filtrar asignaturas relevantes para este plan
@@ -841,10 +841,10 @@ export function HorariosDisplay() {
               asignatura.catedra.toLowerCase().includes("glavich")) {
             return plan.codigo === "1985"
           }
-          
+
           // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
           const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-          
+
           if (materiaCompleta) {
             if (plan.codigo === "2023") {
               // Para plan 2023, filtrar si tiene código o nombre vacío
@@ -854,12 +854,12 @@ export function HorariosDisplay() {
               return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
             }
           }
-          
+
           // Si no se encuentra en materias completas, usar la lógica anterior como fallback
           if (plan.codigo === "2023") {
             return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
           }
-          
+
           return true
         })
 
@@ -962,7 +962,7 @@ export function HorariosDisplay() {
         <Card className="mb-2 w-fit border-uba-primary/20 bg-gradient-to-r from-uba-primary/5 to-uba-secondary/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-            
+
               <div>              
                 <h2 className="text-xl font-semibold text-uba-primary">
                   {periodoTexto} {data.periodo.año}
@@ -1287,7 +1287,8 @@ export function HorariosDisplay() {
       ) : null
     })()}
 
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-min" style={{ gridAutoFlow: 'row' }}>
+    {/* Masonry Layout Implementation */}
+    <div className="masonry-container" style={{ margin: 0 }}>
       {asignaturasFiltradas.length === 0 ? (
         <div className="text-center py-12 col-span-full">
           <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
@@ -1297,7 +1298,7 @@ export function HorariosDisplay() {
         asignaturasFiltradas.map((asignatura) => {
           const isSelected = seleccion.asignaturas.includes(asignatura.id)
           return (
-            <Card key={asignatura.id} className={`@container transition-all duration-200 ${
+            <Card key={asignatura.id} className={`masonry-item transition-all duration-200 ${
               isSelected 
                 ? "border-uba-secondary border-2 shadow-lg bg-uba-secondary/5" 
                 : "border-uba-primary/20 hover:border-uba-primary/40"
@@ -1844,7 +1845,7 @@ export function HorariosDisplay() {
                                               return `PST: ${apellidosCatedra}`
                                             }
                                             // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
-                                           
+
                                             return `SEM: ${apellidosCatedra}`
                                           } else if (asignatura?.id) {
                                             // Para materias, primero intentar usar siglas de materias-completas

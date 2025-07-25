@@ -92,3 +92,29 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Masonry Layout Styles */
+.masonry-container {
+  column-count: 1;
+  column-gap: 1rem;
+  column-fill: balance;
+}
+
+@media (min-width: 768px) {
+  .masonry-container {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1280px) {
+  .masonry-container {
+    column-count: 3;
+  }
+}
+
+.masonry-container > * {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  display: inline-block;
+  width: 100%;
+}
