@@ -1,8 +1,9 @@
 "use client"
 
+import { useState, useEffect } from "react"
+import dynamic from 'next/dynamic'
 import type React from "react"
 
-import { useState, useEffect } from "react"
 import { CSVUploader } from "@/components/csv-uploader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +16,10 @@ import { Lock, AlertCircle, CheckCircle, Download } from "lucide-react"
 import jsPDF from 'jspdf'
 import Link from "next/link"
 import { PageLayout } from "@/components/layout/page-layout"
+import { AnnouncementEditModal } from "@/components/admin-announcement-modal"
+
+// Importar ReactQuill dinámicamente para evitar problemas de SSR
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -34,7 +39,7 @@ export default function AdminPage() {
   useEffect(() => {
     const stored = localStorage.getItem("planes-estudios-habilitado")
     setPlanesEstudiosHabilitado(stored !== "false")
-    
+
     // Cargar período actual desde la API
     const fetchPeriodo = async () => {
       try {
@@ -48,7 +53,7 @@ export default function AdminPage() {
         console.error("Error loading period data:", error)
       }
     }
-    
+
     // Cargar anuncio actual
     const fetchAnnouncement = async () => {
       try {
@@ -61,7 +66,7 @@ export default function AdminPage() {
         console.error("Error loading announcement data:", error)
       }
     }
-    
+
     fetchPeriodo()
     fetchAnnouncement()
   }, [])
@@ -77,7 +82,7 @@ export default function AdminPage() {
   const handleUpdateAnnouncement = async () => {
     try {
       const adminPassword = localStorage.getItem('admin-session') || ''
-      
+
       if (!adminPassword) {
         setAnnouncementMessage({
           type: "error",
@@ -146,7 +151,7 @@ export default function AdminPage() {
       // Obtener datos actuales de la API
       const currentResponse = await fetch('/api/horarios')
       const currentData = await currentResponse.json()
-      
+
       const data = {
         asignaturas: currentData.asignaturas || [],
         periodo: { año, periodo: cuatrimestre }
@@ -183,7 +188,7 @@ export default function AdminPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     try {
       const response = await fetch('/api/auth/verify', {
         method: 'POST',
@@ -220,7 +225,7 @@ export default function AdminPage() {
       // Obtener datos actuales
       const response = await fetch('/api/horarios')
       const horariosData = await response.json()
-      
+
       if (!horariosData || !horariosData.asignaturas || horariosData.asignaturas.length === 0) {
         setPeriodoMessage({
           type: "error",
@@ -242,24 +247,24 @@ export default function AdminPage() {
       pdf.setFontSize(22)
       pdf.setTextColor(28, 37, 84) // UBA Primary color
       pdf.text('Oferta de Asignaturas y Horarios', pageWidth / 2, currentY, { align: 'center' })
-      
+
       currentY += 12
       pdf.setFontSize(16)
       pdf.setTextColor(70, 191, 176) // UBA Secondary color
       pdf.text('Ciencias Antropológicas (FFyL-UBA)', pageWidth / 2, currentY, { align: 'center' })
-      
+
       currentY += 8
       pdf.setFontSize(14)
       pdf.setTextColor(100, 100, 100)
       pdf.text('---', pageWidth / 2, currentY, { align: 'center' })
-      
+
       currentY += 10
       const periodoText = horariosData.periodo?.periodo === "1C" ? "1er Cuatrimestre" : 
                           horariosData.periodo?.periodo === "2C" ? "2do Cuatrimestre" : 
                           horariosData.periodo?.periodo === "BV" ? "Bimestre de Verano" : 
                           horariosData.periodo?.periodo || ''
       pdf.text(`Período actual: ${periodoText} ${horariosData.periodo?.año || ''}`, pageWidth / 2, currentY, { align: 'center' })
-      
+
       currentY += 20
 
       // Línea separadora
@@ -310,7 +315,7 @@ export default function AdminPage() {
           if (currentY + espacioNecesario > pageHeight - 20) {
             pdf.addPage()
             currentY = 30
-            
+
             // Repetir título del plan en nueva página
             pdf.setFontSize(18)
             pdf.setTextColor(28, 37, 84)
@@ -324,7 +329,7 @@ export default function AdminPage() {
           const nombreMateria = obtenerNombrePorPlan(asignatura.materia, plan.codigo)
           const maxWidth = pageWidth - 2 * margin
           const nombreLines = pdf.splitTextToSize(nombreMateria, maxWidth)
-          
+
           pdf.text(nombreLines, margin, currentY)
           currentY += nombreLines.length * 6
 
@@ -397,6 +402,41 @@ export default function AdminPage() {
       setPlanesMessage(null)
     }
   }
+
+  // Definir módulos y formatos de ReactQuill
+  const quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+      ['blockquote', 'code-block'],
+
+      [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+      [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+      [{ 'direction': 'rtl' }],                         // text direction
+
+      [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+      [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults and custom
+      [{ 'font': [] }],
+      [{ 'align': [] }],
+
+      ['clean']                                         // remove formatting button
+    ],
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
+    }
+  }
+
+  const quillFormats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image', 'color', 'background',
+    'align'
+  ]
 
   if (!isAuthenticated) {
     return (
@@ -503,15 +543,21 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="announcement-text" className="text-xs text-slate-600">Texto</Label>
-                  <textarea
-                    id="announcement-text"
-                    value={announcementText}
-                    onChange={(e) => setAnnouncementText(e.target.value)}
-                    placeholder="Contenido del anuncio"
-                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-uba-primary focus:border-transparent resize-none"
-                    rows={3}
-                  />
+                  <Label htmlFor="announcement-text" className="text-xs text-slate-600">Contenido</Label>
+                  <div className="mt-1 border border-gray-300 rounded-md">
+                    <ReactQuill
+                      value={announcementText}
+                      onChange={setAnnouncementText}
+                      modules={quillModules}
+                      formats={quillFormats}
+                      placeholder="Contenido del anuncio..."
+                      theme="snow"
+                      style={{ 
+                        minHeight: '120px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </div>
                 </div>
                 <Button 
                   onClick={handleUpdateAnnouncement}
@@ -610,7 +656,7 @@ export default function AdminPage() {
                           console.log('Testing Supabase connection...')
                           const response = await fetch('/api/horarios')
                           const data = await response.json()
-                          
+
                           if (response.ok) {
                             setCsvMessage({
                               type: "success",
@@ -619,7 +665,7 @@ export default function AdminPage() {
                           } else {
                             throw new Error('Error en la respuesta del servidor')
                           }
-                          
+
                           setPeriodoMessage(null)
                           setPlanesMessage(null)
                         } catch (error) {
@@ -662,7 +708,7 @@ export default function AdminPage() {
                               'x-admin-password': adminPassword,
                             }
                           })
-                          
+
                           if (response.ok) {
                             setCsvMessage({
                               type: "success",
@@ -671,7 +717,7 @@ export default function AdminPage() {
                           } else {
                             throw new Error('Error deleting data')
                           }
-                          
+
                           setPeriodoMessage(null)
                           setPlanesMessage(null)
                         } catch (error) {
