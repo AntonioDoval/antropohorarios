@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toTitleCase, extraerApellidos } from "@/lib/text-utils"
+import Masonry from 'react-masonry-css'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -1022,6 +1024,13 @@ export function HorariosDisplay() {
 
   const seleccionFormateada = getSeleccionFormateada()
 
+  const breakpointColumnsObj = {
+    default: 3,
+    1100: 3,
+    700: 2,
+    500: 1
+  };
+
   return (
     <TooltipProvider>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -1288,7 +1297,11 @@ export function HorariosDisplay() {
     })()}
 
     {/* Masonry Layout Implementation */}
-    <div className="masonry-container" style={{ margin: 0 }}>
+    <Masonry
+      breakpointCols={breakpointColumnsObj}
+      className="my-masonry-grid"
+      columnClassName="my-masonry-grid_column"
+    >
       {asignaturasFiltradas.length === 0 ? (
         <div className="text-center py-12 col-span-full">
           <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
@@ -1298,7 +1311,7 @@ export function HorariosDisplay() {
         asignaturasFiltradas.map((asignatura) => {
           const isSelected = seleccion.asignaturas.includes(asignatura.id)
           return (
-            <Card key={asignatura.id} className={`masonry-item transition-all duration-200 ${
+            <Card key={asignatura.id} className={`transition-all duration-200 ${
               isSelected 
                 ? "border-uba-secondary border-2 shadow-lg bg-uba-secondary/5" 
                 : "border-uba-primary/20 hover:border-uba-primary/40"
@@ -1562,7 +1575,7 @@ export function HorariosDisplay() {
           )
         })
       )}
-    </div>
+    </Masonry>
 
     {seleccionFormateada.length > 0 && <div className="border-t border-gray-300 my-8"></div>}
 
