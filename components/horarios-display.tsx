@@ -817,13 +817,15 @@ export function HorariosDisplay() {
       pdf.line(margin, currentY, pageWidth - margin, currentY)
       currentY += 15
 
-      // Organizar asignaturas por planes
-      const planes = [
-        { codigo: "1985", nombre: "Plan de estudios 1985" },
-        { codigo: "2023", nombre: "Plan de estudios 2023" }
-      ]
+      // Generar PDF solo para el plan seleccionado
+      const planSeleccionado = { 
+        codigo: filtros.planEstudios, 
+        nombre: `Plan de estudios ${filtros.planEstudios}` 
+      }
 
-      for (const plan of planes) {
+      // Solo procesar el plan seleccionado
+      {
+        const plan = planSeleccionado
         if (currentY > pageHeight - 40) {
           pdf.addPage()
           currentY = 30
@@ -1031,7 +1033,7 @@ export function HorariosDisplay() {
             className="bg-uba-secondary border border-[#4cc1a5] text-white hover:bg-[#d9f0ed] hover:border-[#a8c9c1] hover:text-uba-primary px-4 py-2 text-sm font-bold"
           >
              <Download className="h-3 w-3 mr-1" />
-            Descargar listado en PDF
+            Descargar listado en PDF (plan {filtros.planEstudios})
           </Button>
         </div>
       </>
