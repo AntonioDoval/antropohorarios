@@ -1242,7 +1242,16 @@ export function HorariosDisplay() {
                   <div className="flex items-start gap-2 flex-1">
                     {getAsignaturaIcon(asignatura, isSelected)}
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-lg leading-tight">{obtenerNombreMateria(asignatura, filtros.planEstudios)}</CardTitle>
+                      <CardTitle className="text-lg leading-tight">
+                        {(() => {
+                          const nombreMateria = obtenerNombreMateria(asignatura, filtros.planEstudios)
+                          // Corregir "Pst" a "PST" en títulos de seminarios PST
+                          if (asignatura.tipoAsignatura === "Seminario PST") {
+                            return nombreMateria.replace(/\bPst\b/g, "PST")
+                          }
+                          return nombreMateria
+                        })()}
+                      </CardTitle>
                       <div className="text-xs text-white/90 mt-1">
                         <span className="font-medium">Cátedra:</span> {toTitleCase(asignatura.catedra)}
                       </div>
@@ -1753,9 +1762,9 @@ export function HorariosDisplay() {
                                         {(() => {
                                           const asignatura = asignaturasEnriquecidas.find(a => obtenerNombreMateria(a, filtros.planEstudios) === clase.asignatura)
                                           if (asignatura?.tipoAsignatura?.includes("Seminario")) {
-                                            // Para seminarios PST, mostrar "PST" en mayúsculas
+                                            // Para seminarios PST, mostrar "PST: [cátedra]"
                                             if (asignatura.tipoAsignatura === "Seminario PST") {
-                                              return "PST"
+                                              return `PST: ${clase.catedra}`
                                             }
                                             // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
                                             const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
