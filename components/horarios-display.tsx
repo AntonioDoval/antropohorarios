@@ -994,7 +994,7 @@ export function HorariosDisplay() {
       }
 
       // Descargar PDF
-      const fileName = `horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}.pdf`
+      const fileName = `horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}-plan${filtros.planEstudios}.pdf`
       pdf.save(fileName)
 
     } catch (error) {
