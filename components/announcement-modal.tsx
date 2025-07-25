@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect } from 'react'
@@ -12,6 +13,62 @@ import 'react-quill/dist/quill.snow.css'
 
 // Importar ReactQuill dinámicamente para evitar problemas de SSR
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
+
+export function AnnouncementModal() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [announcement, setAnnouncement] = useState<{
+    enabled: boolean
+    title: string
+    text: string
+  } | null>(null)
+
+  useEffect(() => {
+    const fetchAnnouncement = async () => {
+      try {
+        const response = await fetch('/api/announcement')
+        const data = await response.json()
+        
+        if (data.enabled && (data.title || data.text)) {
+          setAnnouncement(data)
+          setIsOpen(true)
+        }
+      } catch (error) {
+        console.error('Error fetching announcement:', error)
+      }
+    }
+
+    fetchAnnouncement()
+  }, [])
+
+  const handleClose = () => {
+    setIsOpen(false)
+  }
+
+  if (!announcement) return null
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[525px]">
+        <DialogHeader>
+          <DialogTitle className="text-uba-primary">
+            {announcement.title}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="py-4">
+          <div 
+            className="prose prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: announcement.text }}
+          />
+        </div>
+        <div className="flex justify-end">
+          <Button onClick={handleClose} className="bg-uba-primary hover:bg-uba-primary/90">
+            Cerrar
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 export function AnuncioModal({ open, onClose, anuncio }) {
   const [titulo, setTitulo] = useState('')
@@ -74,7 +131,6 @@ export function AnuncioModal({ open, onClose, anuncio }) {
           type: 'success',
           content: `Anuncio ${anuncio ? 'actualizado' : 'creado'} con éxito.`,
         })
-        // Opcional: cerrar el modal o resetear el formulario
         setTimeout(() => {
           onClose()
         }, 2000)
