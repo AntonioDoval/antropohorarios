@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
 import { AlertTriangle, BookOpen, Calendar, ChevronDown, FileText, Info, Notebook, Search, X, Download } from "lucide-react"
+import Masonry from 'react-masonry-css'
 import { 
   enrichAsignaturasWithPlanInfo, 
   getAsignaturasPorCiclo, 
@@ -19,7 +20,7 @@ import {
   type AsignaturaConPlan 
 } from "@/lib/planes-utils"
 import { materiasCompletas, buscarMateriaPorNombre, type MateriaCompleta } from "@/lib/data/materias-completas"
-import { toTitleCase } from "@/lib/text-utils"
+import { toTitleCase, extraerApellidos } from "@/lib/text-utils"
 import jsPDF from 'jspdf'
 
 // Función para abreviar días de la semana
@@ -82,6 +83,7 @@ interface Filtros {
   busqueda: string
   tiposAsignatura: string[]
   modalidadesAprobacion: string[]
+  carrerasOrientaciones: string[]
   planEstudios: "2023" | "1985"
   horariosSeleccionados: { [dia: string]: number[] }
 }
@@ -115,6 +117,7 @@ export function HorariosDisplay() {
     busqueda: "",
     tiposAsignatura: [],
     modalidadesAprobacion: [],
+    carrerasOrientaciones: [],
     planEstudios: "2023",
     horariosSeleccionados: {},
   })
@@ -277,12 +280,10 @@ export function HorariosDisplay() {
   }
 
   const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
-    // Tipos de asignatura en el orden solicitado
+    // Tipos de asignatura simplificados
     const tiposAsignatura = [
-      "Materia cuatrimestral",
-      "Seminario regular", 
-      "Seminario PST",
-      "Materia o seminario anual"
+      "Materias",
+      "Seminarios"
     ]
 
     const modalidadesAprobacion = [
@@ -293,9 +294,17 @@ export function HorariosDisplay() {
       ),
     ]
 
+    // Carreras/Orientaciones disponibles
+    const carrerasOrientaciones = [
+      "Profesorado",
+      "Lic. Arqueología", 
+      "Lic. Sociocultural"
+    ]
+
     return {
       tiposAsignatura,
       modalidadesAprobacion: modalidadesAprobacion.sort(),
+      carrerasOrientaciones,
     }
   }
 
@@ -366,15 +375,26 @@ export function HorariosDisplay() {
 
         if (!asignatura.tipoAsignatura) return false
 
-        // Agrupar materias cuatrimestrales regulares y optativas bajo "Materia cuatrimestral"
-        if (filtros.tiposAsignatura.includes("Materia cuatrimestral")) {
+        // Agrupar materias bajo "Materias"
+        if (filtros.tiposAsignatura.includes("Materias")) {
           if (asignatura.tipoAsignatura === "Materia cuatrimestral regular" || 
-              asignatura.tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
+              asignatura.tipoAsignatura === "Materia cuatrimestral optativa/electiva" ||
+              asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" ||
+              asignatura.tipoAsignatura === "Asignatura anual" ||
+              asignatura.tipoAsignatura === "Materia o seminario anual") {
             return true
           }
         }
 
-        return filtros.tiposAsignatura.includes(asignatura.tipoAsignatura)
+        // Agrupar seminarios bajo "Seminarios"
+        if (filtros.tiposAsignatura.includes("Seminarios")) {
+          if (asignatura.tipoAsignatura === "Seminario regular" || 
+              asignatura.tipoAsignatura === "Seminario PST") {
+            return true
+          }
+        }
+
+        return false
       })()
 
       const coincideModalidad = (() => {
@@ -385,9 +405,45 @@ export function HorariosDisplay() {
         return filtros.modalidadesAprobacion.includes(modalidadReal)
       })()
 
+      const coincideCarreraOrientacion = (() => {
+        if (filtros.carrerasOrientaciones.length === 0) return true
+
+        // Buscar la materia en materias completas
+        const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+        
+        if (!materiaCompleta) return true // Si no se encuentra, mostrar por defecto
+
+        // Verificar si la materia es válida para alguna de las orientaciones seleccionadas
+        return filtros.carrerasOrientaciones.some(orientacion => {
+          if (filtros.planEstudios === "2023") {
+            switch (orientacion) {
+              case "Profesorado":
+                return materiaCompleta.cicloAreaProf2023 !== ""
+              case "Lic. Arqueología":
+                return materiaCompleta.cicloAreaLicArqueo2023 !== ""
+              case "Lic. Sociocultural":
+                return materiaCompleta.cicloAreaLicSocio2023 !== ""
+              default:
+                return false
+            }
+          } else {
+            switch (orientacion) {
+              case "Profesorado":
+                return materiaCompleta.cicloAreaProf1985 !== ""
+              case "Lic. Arqueología":
+                return materiaCompleta.cicloAreaLicArqueo1985 !== ""
+              case "Lic. Sociocultural":
+                return materiaCompleta.cicloAreaLicSocio1985 !== ""
+              default:
+                return false
+            }
+          }
+        })
+      })()
+
       const coincideHorarios = asignaturaCoincideConHorarios(asignatura)
 
-      return coincideBusqueda && coincideTipo && coincideModalidad && coincideHorarios
+      return coincideBusqueda && coincideTipo && coincideModalidad && coincideCarreraOrientacion && coincideHorarios
     })
   }
 
@@ -426,12 +482,13 @@ export function HorariosDisplay() {
       busqueda: "",
       tiposAsignatura: [],
       modalidadesAprobacion: [],
+      carrerasOrientaciones: [],
       planEstudios: filtros.planEstudios,
       horariosSeleccionados: {},
     })
   }
 
-  const toggleFiltro = (tipo: "tiposAsignatura" | "modalidadesAprobacion", valor: string) => {
+  const toggleFiltro = (tipo: "tiposAsignatura" | "modalidadesAprobacion" | "carrerasOrientaciones", valor: string) => {
     setFiltros((prev) => ({
       ...prev,
       [tipo]: prev[tipo].includes(valor) ? prev[tipo].filter((item) => item !== valor) : [...prev[tipo], valor],
@@ -1005,7 +1062,7 @@ export function HorariosDisplay() {
 
     <Card className="bg-[#46bfb0]/15 border-[#46bfb0]/40 rounded-xl">
       <CardContent className="p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
           {/* Search and Plan Selector */}
           <div className="space-y-3">
             <div className="relative">
@@ -1102,6 +1159,28 @@ export function HorariosDisplay() {
               </div>
             </div>
           </div>
+
+          {/* Carrera / Orientación */}
+          {valoresUnicos.carrerasOrientaciones.length > 0 && (
+            <div className="bg-white p-3 rounded-lg border border-gray-200">
+              <h4 className="text-xs font-semibold text-uba-primary mb-2">Carrera / Orientación</h4>
+              <div className="space-y-1.5">
+                {valoresUnicos.carrerasOrientaciones.map((carrera) => (
+                  <div key={carrera} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`carrera-${carrera}`}
+                      checked={filtros.carrerasOrientaciones.includes(carrera)}
+                      onCheckedChange={() => toggleFiltro("carrerasOrientaciones", carrera)}
+                      className="h-3.5 w-3.5"
+                    />
+                    <label htmlFor={`carrera-${carrera}`} className="text-xs text-gray-700 cursor-pointer leading-snug">
+                      {carrera}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Filtro de horarios por día */}
@@ -1209,14 +1288,23 @@ export function HorariosDisplay() {
       ) : null
     })()}
 
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-min" style={{ gridAutoFlow: 'row' }}>
-      {asignaturasFiltradas.length === 0 ? (
-        <div className="text-center py-12 col-span-full">
-          <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
-          <p className="text-gray-600">Intenta ajustar los filtros de búsqueda.</p>
-        </div>
-      ) : (
-        asignaturasFiltradas.map((asignatura) => {
+    {asignaturasFiltradas.length === 0 ? (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
+        <p className="text-gray-600">Intenta ajustar los filtros de búsqueda.</p>
+      </div>
+    ) : (
+      <Masonry
+        breakpointCols={{
+          default: 3,
+          1280: 3,
+          1150: 2,
+          765: 1
+        }}
+        className="masonry-grid"
+        columnClassName="masonry-grid-column"
+      >
+        {asignaturasFiltradas.map((asignatura) => {
           const isSelected = seleccion.asignaturas.includes(asignatura.id)
           return (
             <Card key={asignatura.id} className={`@container transition-all duration-200 ${
@@ -1233,9 +1321,18 @@ export function HorariosDisplay() {
                   <div className="flex items-start gap-2 flex-1">
                     {getAsignaturaIcon(asignatura, isSelected)}
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-lg leading-tight">{obtenerNombreMateria(asignatura, filtros.planEstudios)}</CardTitle>
+                      <CardTitle className="text-lg leading-tight">
+                        {(() => {
+                          const nombreMateria = obtenerNombreMateria(asignatura, filtros.planEstudios)
+                          // Corregir "Pst" a "PST" en títulos de seminarios PST
+                          if (asignatura.tipoAsignatura === "Seminario PST") {
+                            return nombreMateria.replace(/\bPst\b/g, "PST")
+                          }
+                          return nombreMateria
+                        })()}
+                      </CardTitle>
                       <div className="text-xs text-white/90 mt-1">
-                        <span className="font-medium">Cátedra:</span> {asignatura.catedra}
+                        <span className="font-medium">Cátedra:</span> {toTitleCase(asignatura.catedra)}
                       </div>
                     </div>
                   </div>
@@ -1324,8 +1421,15 @@ export function HorariosDisplay() {
                   }
                 })()}
 
-                {/* Badge de Optativa para materias exclusivas del plan 1985 */}
-                {asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" && (
+                {/* Badge de Optativa para materias exclusivas del plan 1985 y materias marcadas como optativas en materias-completas */}
+                {(asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" || 
+                  (filtros.planEstudios === "1985" && (() => {
+                    const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+                    if (!materiaCompleta) return false
+                    return materiaCompleta.cicloAreaProf1985 === "Optativa" || 
+                           materiaCompleta.cicloAreaLicSocio1985 === "Optativa" || 
+                           materiaCompleta.cicloAreaLicArqueo1985 === "Optativa"
+                  })())) && (
                   <Badge variant="secondary" className="text-xs bg-violet-100 text-violet-700 border-violet-300 px-1.5 py-0.5">
                     Optativa
                   </Badge>
@@ -1340,7 +1444,7 @@ export function HorariosDisplay() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="space-y-3">
                 {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
                   const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
 
@@ -1370,13 +1474,13 @@ export function HorariosDisplay() {
                   }
 
                   return (
-                    <div key={grupo.tipo} className="sm:col-span-1">
+                    <div key={grupo.tipo} className="w-full">
                       {requiereElegir ? (
                         <RadioGroup
                           value={seleccion.clases[asignatura.id]?.[grupo.tipo] || ""}
                           onValueChange={(value) => seleccionarClase(asignatura.id, grupo.tipo, value)}
                         >
-                          <div className="space-y-1">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {grupo.clases.map((clase) => {
                               const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
                               const isDimmed = claseEstaOscurecida(clase)
@@ -1410,7 +1514,7 @@ export function HorariosDisplay() {
                           </div>
                         </RadioGroup>
                       ) : (
-                        <div className="space-y-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {grupo.clases.map((clase, index) => {
                             const isDimmed = claseEstaOscurecida(clase)
                             return (
@@ -1465,9 +1569,9 @@ export function HorariosDisplay() {
             </CardContent>
           </Card>
           )
-        })
-      )}
-    </div>
+        })}
+      </Masonry>
+    )}
 
     {seleccionFormateada.length > 0 && <div className="border-t border-gray-300 my-8"></div>}
 
@@ -1513,7 +1617,7 @@ export function HorariosDisplay() {
               {seleccionFormateada.map((item, index) => (
                 <div key={index} className="border-l-4 border-uba-secondary pl-4">
                   <h4 className="font-semibold text-uba-primary">{item.asignatura}</h4>
-                  <p className="text-sm text-gray-600 mb-2">Cátedra: {item.catedra}</p>
+                  <p className="text-sm text-gray-600 mb-2">Cátedra: {toTitleCase(item.catedra)}</p>
                   <div className="space-y-1">
                     {item.clases.map((clase, claseIndex) => (
                       <div key={claseIndex} className="text-sm bg-white p-2 rounded border">
@@ -1743,12 +1847,25 @@ export function HorariosDisplay() {
                                       <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
                                         {(() => {
                                           const asignatura = asignaturasEnriquecidas.find(a => obtenerNombreMateria(a, filtros.planEstudios) === clase.asignatura)
-                                          if (asignatura?.tipoAsignatura?.includes("Seminario")) {
-                                            // Para seminarios, usar formato "SEM: [Apellido cátedra]"
-                                            const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
-                                            return `SEM: ${apellidoCatedra}`
+                                         const apellidosCatedra = extraerApellidos(clase.catedra)
+                                      if (asignatura?.tipoAsignatura?.includes("Seminario")) {
+                                            // Para seminarios PST, mostrar "PST: [cátedra]"
+                                            if (asignatura.tipoAsignatura === "Seminario PST") {
+                                              return `PST: ${apellidosCatedra}`
+                                            }
+                                            // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
+                                           
+                                            return `SEM: ${apellidosCatedra}`
                                           } else if (asignatura?.id) {
-                                            // Para materias, crear siglas a partir del nombre
+                                            // Para materias, primero intentar usar siglas de materias-completas
+                                            const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+                                            if (materiaCompleta) {
+                                              const siglas = filtros.planEstudios === "2023" ? materiaCompleta.nombreSiglas2023 : materiaCompleta.nombreSiglas1985
+                                              if (siglas && siglas.trim() !== "") {
+                                                return siglas
+                                              }
+                                            }
+                                            // Si no hay siglas en materias-completas, crear siglas a partir del nombre
                                             const palabras = clase.asignatura.split(' ')
                                             if (palabras.length >= 2) {
                                               return palabras.map(palabra => palabra.charAt(0).toUpperCase()).join('')
@@ -1782,8 +1899,8 @@ export function HorariosDisplay() {
                     {seleccionFormateada.map((item, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
-                        <span className="text-sm text-gray-700 truncate">
-                          {item.asignatura} ({item.catedra})
+                        <span className="text-sm text-gray-700 leading-tight">
+                          {item.asignatura} ({toTitleCase(item.catedra)})
                         </span>
                       </div>
                     ))}
