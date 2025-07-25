@@ -1744,7 +1744,11 @@ export function HorariosDisplay() {
                                         {(() => {
                                           const asignatura = asignaturasEnriquecidas.find(a => obtenerNombreMateria(a, filtros.planEstudios) === clase.asignatura)
                                           if (asignatura?.tipoAsignatura?.includes("Seminario")) {
-                                            // Para seminarios, usar formato "SEM: [Apellido cátedra]"
+                                            // Para seminarios PST, mostrar "PST" en mayúsculas
+                                            if (asignatura.tipoAsignatura === "Seminario PST") {
+                                              return "PST"
+                                            }
+                                            // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
                                             const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
                                             return `SEM: ${apellidoCatedra}`
                                           } else if (asignatura?.id) {
