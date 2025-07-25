@@ -47,10 +47,9 @@ export function AnnouncementModal() {
           </DialogTitle>
         </DialogHeader>
         <div className="mt-4">
-          <div 
-            className="text-gray-700 prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: announcement.text }}
-          />
+          <p className="text-gray-700 whitespace-pre-wrap">
+            {announcement.text}
+          </p>
         </div>
         <div className="mt-6 flex justify-end">
           <Button 
