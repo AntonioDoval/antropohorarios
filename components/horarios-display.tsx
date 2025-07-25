@@ -1761,13 +1761,14 @@ export function HorariosDisplay() {
                                       <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
                                         {(() => {
                                           const asignatura = asignaturasEnriquecidas.find(a => obtenerNombreMateria(a, filtros.planEstudios) === clase.asignatura)
-                                          if (asignatura?.tipoAsignatura?.includes("Seminario")) {
+                                         const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
+                                      if (asignatura?.tipoAsignatura?.includes("Seminario")) {
                                             // Para seminarios PST, mostrar "PST: [cátedra]"
                                             if (asignatura.tipoAsignatura === "Seminario PST") {
-                                              return `PST: ${clase.catedra}`
+                                              return `PST: ${apellidoCatedra}`
                                             }
                                             // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
-                                            const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
+                                           
                                             return `SEM: ${apellidoCatedra}`
                                           } else if (asignatura?.id) {
                                             // Para materias, primero intentar usar siglas de materias-completas
