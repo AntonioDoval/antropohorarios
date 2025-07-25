@@ -1298,8 +1298,8 @@ export function HorariosDisplay() {
         breakpointCols={{
           default: 3,
           1280: 3,
-          768: 2,
-          640: 1
+          1150: 2,
+          765: 1
         }}
         className="masonry-grid"
         columnClassName="masonry-grid-column"
