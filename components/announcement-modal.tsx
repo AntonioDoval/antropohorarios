@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, CheckCircle, X } from "lucide-react"
+import { AlertCircle, CheckCircle } from "lucide-react"
 import 'react-quill/dist/quill.snow.css'
 
 // Importar ReactQuill dinámicamente para evitar problemas de SSR
@@ -165,7 +165,7 @@ export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{anuncio ? 'Editar Anuncio' : 'Crear Anuncio'}</DialogTitle>
         </DialogHeader>
@@ -194,19 +194,20 @@ export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
             <Label htmlFor="contenido" className="text-uba-primary">
               Contenido del Anuncio
             </Label>
-            <div className="border border-uba-primary/30 rounded-md">
+            <div className="border border-uba-primary/30 rounded-md min-h-[200px]">
               <ReactQuill
                 value={contenido}
                 onChange={setContenido}
                 modules={quillModules}
                 formats={quillFormats}
                 placeholder="Escribe aquí el contenido del anuncio..."
-                style={{ minHeight: '120px' }}
+                style={{ height: '150px' }}
+                theme="snow"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 mt-12">
             <Label htmlFor="fechaVencimiento" className="text-uba-primary">
               Fecha de Vencimiento
             </Label>
