@@ -1444,7 +1444,7 @@ export function HorariosDisplay() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="space-y-3">
                 {agruparClasesPorTipo(asignatura.clases).map((grupo) => {
                   const requiereElegir = requiereSeleccion(asignatura, grupo.tipo, grupo.clases.length)
 
@@ -1474,13 +1474,13 @@ export function HorariosDisplay() {
                   }
 
                   return (
-                    <div key={grupo.tipo} className="sm:col-span-1">
+                    <div key={grupo.tipo} className="w-full">
                       {requiereElegir ? (
                         <RadioGroup
                           value={seleccion.clases[asignatura.id]?.[grupo.tipo] || ""}
                           onValueChange={(value) => seleccionarClase(asignatura.id, grupo.tipo, value)}
                         >
-                          <div className="space-y-1">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {grupo.clases.map((clase) => {
                               const isClassSelected = seleccion.clases[asignatura.id]?.[grupo.tipo] === clase.id
                               const isDimmed = claseEstaOscurecida(clase)
@@ -1514,7 +1514,7 @@ export function HorariosDisplay() {
                           </div>
                         </RadioGroup>
                       ) : (
-                        <div className="space-y-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {grupo.clases.map((clase, index) => {
                             const isDimmed = claseEstaOscurecida(clase)
                             return (
