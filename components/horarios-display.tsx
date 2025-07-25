@@ -1411,8 +1411,15 @@ export function HorariosDisplay() {
                   }
                 })()}
 
-                {/* Badge de Optativa para materias exclusivas del plan 1985 */}
-                {asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" && (
+                {/* Badge de Optativa para materias exclusivas del plan 1985 y materias marcadas como optativas en materias-completas */}
+                {(asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" || 
+                  (filtros.planEstudios === "1985" && (() => {
+                    const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+                    if (!materiaCompleta) return false
+                    return materiaCompleta.cicloAreaProf1985 === "Optativa" || 
+                           materiaCompleta.cicloAreaLicSocio1985 === "Optativa" || 
+                           materiaCompleta.cicloAreaLicArqueo1985 === "Optativa"
+                  })())) && (
                   <Badge variant="secondary" className="text-xs bg-violet-100 text-violet-700 border-violet-300 px-1.5 py-0.5">
                     Optativa
                   </Badge>
