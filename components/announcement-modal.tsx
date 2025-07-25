@@ -88,23 +88,19 @@ export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; content: string } | null>(null)
 
-  // Configuración del editor Quill
+  // Configuración del editor Quill con herramientas mínimas
   const quillModules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
+      ['bold', 'italic', 'underline'],
       [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['blockquote', 'code-block'],
-      [{ 'color': [] }, { 'background': [] }],
       ['link'],
       ['clean']
     ],
   }
 
   const quillFormats = [
-    'header', 'bold', 'italic', 'underline', 'strike',
-    'list', 'bullet', 'blockquote', 'code-block',
-    'color', 'background', 'link'
+    'bold', 'italic', 'underline',
+    'list', 'bullet', 'link'
   ]
 
   useEffect(() => {
@@ -167,14 +163,18 @@ export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{anuncio ? 'Editar Anuncio' : 'Crear Anuncio'}</DialogTitle>
+          <DialogTitle className="text-uba-primary">
+            {anuncio ? 'Editar Anuncio' : 'Crear Anuncio'}
+          </DialogTitle>
         </DialogHeader>
+        
         {message && (
           <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
             {message.type === 'error' ? <AlertCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
             <AlertDescription>{message.content}</AlertDescription>
           </Alert>
         )}
+        
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="titulo" className="text-uba-primary">
@@ -194,20 +194,23 @@ export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
             <Label htmlFor="contenido" className="text-uba-primary">
               Contenido del Anuncio
             </Label>
-            <div className="border border-uba-primary/30 rounded-md min-h-[200px]">
+            <div className="border border-uba-primary/30 rounded-md">
               <ReactQuill
                 value={contenido}
                 onChange={setContenido}
                 modules={quillModules}
                 formats={quillFormats}
                 placeholder="Escribe aquí el contenido del anuncio..."
-                style={{ height: '150px' }}
                 theme="snow"
+                style={{ 
+                  minHeight: '150px',
+                  backgroundColor: 'white'
+                }}
               />
             </div>
           </div>
 
-          <div className="space-y-2 mt-12">
+          <div className="space-y-2">
             <Label htmlFor="fechaVencimiento" className="text-uba-primary">
               Fecha de Vencimiento
             </Label>
@@ -220,6 +223,7 @@ export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
               required
             />
           </div>
+          
           <Button type="submit" disabled={loading} className="bg-uba-primary hover:bg-uba-primary/90">
             {loading ? 'Guardando...' : 'Guardar Anuncio'}
           </Button>
