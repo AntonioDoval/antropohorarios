@@ -817,51 +817,57 @@ export function HorariosDisplay() {
       pdf.line(margin, currentY, pageWidth - margin, currentY)
       currentY += 15
 
-      // Usar solo el plan seleccionado actualmente
-      const planSeleccionado = {
-        codigo: filtros.planEstudios,
-        nombre: filtros.planEstudios === "1985" ? "Plan de estudios 1985" : "Plan de estudios 2023"
-      }
+      // Organizar asignaturas por planes
+      const planes = [
+        { codigo: "1985", nombre: "Plan de estudios 1985" },
+        { codigo: "2023", nombre: "Plan de estudios 2023" }
+      ]
 
-      // Título del plan
-      pdf.setFontSize(18)
-      pdf.setTextColor(28, 37, 84)
-      pdf.text(planSeleccionado.nombre, margin, currentY)
-      currentY += 15
-
-      // Filtrar asignaturas relevantes para el plan seleccionado
-      const asignaturasDelPlan = data.asignaturas.filter((asignatura: any) => {
-        // Filtro especial para cátedra Glavich de Epistemología (0743) - solo para plan 1985
-        if (asignatura.materia.toLowerCase().includes("epistemología") && 
-            asignatura.catedra.toLowerCase().includes("glavich")) {
-          return planSeleccionado.codigo === "1985"
+      for (const plan of planes) {
+        if (currentY > pageHeight - 40) {
+          pdf.addPage()
+          currentY = 30
         }
-        
-        // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
-        const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-        
-        if (materiaCompleta) {
-          if (planSeleccionado.codigo === "2023") {
-            // Para plan 2023, filtrar si tiene código o nombre vacío
-            return materiaCompleta.codigo2023 !== "" && materiaCompleta.nombrePlan2023 !== ""
-          } else {
-            // Para plan 1985, filtrar si tiene código o nombre vacío
-            return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
+
+        // Título del plan
+        pdf.setFontSize(18)
+        pdf.setTextColor(28, 37, 84)
+        pdf.text(plan.nombre, margin, currentY)
+        currentY += 15
+
+        // Filtrar asignaturas relevantes para este plan
+        const asignaturasDelPlan = data.asignaturas.filter((asignatura: any) => {
+          // Filtro especial para cátedra Glavich de Epistemología (0743) - solo para plan 1985
+          if (asignatura.materia.toLowerCase().includes("epistemología") && 
+              asignatura.catedra.toLowerCase().includes("glavich")) {
+            return plan.codigo === "1985"
           }
-        }
-        
-        // Si no se encuentra en materias completas, usar la lógica anterior como fallback
-        if (planSeleccionado.codigo === "2023") {
-          return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
-        }
-        
-        return true
-      })
+          
+          // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
+          const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+          
+          if (materiaCompleta) {
+            if (plan.codigo === "2023") {
+              // Para plan 2023, filtrar si tiene código o nombre vacío
+              return materiaCompleta.codigo2023 !== "" && materiaCompleta.nombrePlan2023 !== ""
+            } else {
+              // Para plan 1985, filtrar si tiene código o nombre vacío
+              return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
+            }
+          }
+          
+          // Si no se encuentra en materias completas, usar la lógica anterior como fallback
+          if (plan.codigo === "2023") {
+            return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
+          }
+          
+          return true
+        })
 
-      // Ordenar alfabéticamente
-      asignaturasDelPlan.sort((a: any, b: any) => a.materia.localeCompare(b.materia))
+        // Ordenar alfabéticamente
+        asignaturasDelPlan.sort((a: any, b: any) => a.materia.localeCompare(b.materia))
 
-      for (const asignatura of asignaturasDelPlan) {
+        for (const asignatura of asignaturasDelPlan) {
           const espacioNecesario = 25 + (asignatura.clases?.length || 0) * 6
           if (currentY + espacioNecesario > pageHeight - 20) {
             pdf.addPage()
@@ -876,7 +882,9 @@ export function HorariosDisplay() {
           // Nombre de la materia
           pdf.setFontSize(12)
           pdf.setTextColor(0, 0, 0)
-          const nombreMateria = obtenerNombreMateria(asignatura, planSeleccionado.codigo as "1985" | "2023")
+          const nombreMateria = plan.codigo === "1985" ? 
+            obtenerNombreMateria(asignatura, "1985") : 
+            obtenerNombreMateria(asignatura, "2023")
           const maxWidth = pageWidth - 2 * margin
           const nombreLines = pdf.splitTextToSize(nombreMateria, maxWidth)
 
@@ -898,14 +906,14 @@ export function HorariosDisplay() {
           // Verificar si es optativa
           let modalidadAprobacion = asignatura.modalidadAprobacion || 'N/A'
           const esOptativa = asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" || 
-                           (planSeleccionado.codigo === "1985" && (() => {
+                           (plan.codigo === "1985" && (() => {
                              const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
                              if (!materiaCompleta) return false
                              return materiaCompleta.cicloAreaProf1985 === "Optativa" || 
                                     materiaCompleta.cicloAreaLicSocio1985 === "Optativa" || 
                                     materiaCompleta.cicloAreaLicArqueo1985 === "Optativa"
                            })()) ||
-                           (planSeleccionado.codigo === "2023" && (() => {
+                           (plan.codigo === "2023" && (() => {
                              const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
                              if (!materiaCompleta) return false
                              return materiaCompleta.cicloAreaProf2023 === "Optativa" || 
@@ -928,7 +936,7 @@ export function HorariosDisplay() {
           if (materiaCompleta) {
             const validezArray = []
             
-            if (planSeleccionado.codigo === "2023") {
+            if (plan.codigo === "2023") {
               if (materiaCompleta.cicloAreaProf2023 !== "") validezArray.push("Profesorado")
               if (materiaCompleta.cicloAreaLicArqueo2023 !== "") validezArray.push("Lic. Arqueología")
               if (materiaCompleta.cicloAreaLicSocio2023 !== "") validezArray.push("Lic. Sociocultural")
@@ -969,6 +977,9 @@ export function HorariosDisplay() {
           currentY += 8
         }
 
+        currentY += 15
+      }
+
       // Footer en todas las páginas
       const totalPages = pdf.getNumberOfPages()
       for (let i = 1; i <= totalPages; i++) {
@@ -981,7 +992,7 @@ export function HorariosDisplay() {
       }
 
       // Descargar PDF
-      const fileName = `horarios-antropologia-plan${filtros.planEstudios}-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}.pdf`
+      const fileName = `horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}.pdf`
       pdf.save(fileName)
 
     } catch (error) {
