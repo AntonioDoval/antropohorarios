@@ -70,7 +70,18 @@ export function AnnouncementModal() {
   )
 }
 
-export function AnuncioModal({ open, onClose, anuncio }) {
+interface AnuncioModalProps {
+  open: boolean
+  onClose: () => void
+  anuncio?: {
+    id: string
+    titulo: string
+    contenido: string
+    fechaVencimiento: string
+  }
+}
+
+export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
   const [titulo, setTitulo] = useState('')
   const [contenido, setContenido] = useState('')
   const [fechaVencimiento, setFechaVencimiento] = useState('')
@@ -108,7 +119,7 @@ export function AnuncioModal({ open, onClose, anuncio }) {
     }
   }, [anuncio])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setMessage(null)
@@ -159,7 +170,7 @@ export function AnuncioModal({ open, onClose, anuncio }) {
           <DialogTitle>{anuncio ? 'Editar Anuncio' : 'Crear Anuncio'}</DialogTitle>
         </DialogHeader>
         {message && (
-          <Alert variant={message.type}>
+          <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
             {message.type === 'error' ? <AlertCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
             <AlertDescription>{message.content}</AlertDescription>
           </Alert>
@@ -208,7 +219,7 @@ export function AnuncioModal({ open, onClose, anuncio }) {
               required
             />
           </div>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="bg-uba-primary hover:bg-uba-primary/90">
             {loading ? 'Guardando...' : 'Guardar Anuncio'}
           </Button>
         </form>
