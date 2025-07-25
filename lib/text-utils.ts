@@ -39,3 +39,28 @@ export const normalizarTexto = (texto: string): string => {
     .replace(/\s+/g, ' ')
     .trim()
 }
+
+export const extraerApellidos = (catedra: string): string => {
+  // Separar por "/"
+  const partes = catedra.split('/').map(part => part.trim())
+  
+  // Excepciones para nombres de doble apellido
+  const excepciones = ["Cristian Favier Dubois"]
+  
+  const apellidos = partes.map(nombre => {
+    // Verificar si es una excepción
+    const excepcion = excepciones.find(exc => nombre.includes(exc))
+    if (excepcion) {
+      // Para "Cristian Favier Dubois", devolver "Favier Dubois"
+      if (excepcion === "Cristian Favier Dubois") {
+        return "Favier Dubois"
+      }
+    }
+    
+    // Para casos normales, tomar la última palabra
+    const palabras = nombre.split(' ')
+    return palabras[palabras.length - 1]
+  })
+  
+  return apellidos.join(' / ')
+}

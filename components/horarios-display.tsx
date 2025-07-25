@@ -19,7 +19,7 @@ import {
   type AsignaturaConPlan 
 } from "@/lib/planes-utils"
 import { materiasCompletas, buscarMateriaPorNombre, type MateriaCompleta } from "@/lib/data/materias-completas"
-import { toTitleCase } from "@/lib/text-utils"
+import { toTitleCase, normalizarTexto, extraerApellidos } from "@/lib/text-utils"
 import jsPDF from 'jspdf'
 
 // Función para abreviar días de la semana
@@ -409,7 +409,7 @@ export function HorariosDisplay() {
 
         // Buscar la materia en materias completas
         const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-        
+
         if (!materiaCompleta) return true // Si no se encuentra, mostrar por defecto
 
         // Verificar si la materia es válida para alguna de las orientaciones seleccionadas
@@ -453,10 +453,10 @@ export function HorariosDisplay() {
           asignatura.catedra.toLowerCase().includes("glavich")) {
         return plan === "1985"
       }
-      
+
       // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
       const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-      
+
       if (materiaCompleta) {
         if (plan === "2023") {
           // Para plan 2023, filtrar si tiene código o nombre vacío
@@ -466,12 +466,12 @@ export function HorariosDisplay() {
           return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
         }
       }
-      
+
       // Si no se encuentra en materias completas, usar la lógica anterior como fallback
       if (plan === "2023") {
         return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
       }
-      
+
       return true
     })
   }
@@ -830,7 +830,7 @@ export function HorariosDisplay() {
 
         // Título del plan
         pdf.setFontSize(18)
-        pdf.setTextColor(28, 37, 84)
+        pdf.setTextColor(28, 37, 84)```text
         pdf.text(plan.nombre, margin, currentY)
         currentY += 15
 
@@ -841,10 +841,10 @@ export function HorariosDisplay() {
               asignatura.catedra.toLowerCase().includes("glavich")) {
             return plan.codigo === "1985"
           }
-          
+
           // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
           const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-          
+
           if (materiaCompleta) {
             if (plan.codigo === "2023") {
               // Para plan 2023, filtrar si tiene código o nombre vacío
@@ -854,12 +854,12 @@ export function HorariosDisplay() {
               return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
             }
           }
-          
+
           // Si no se encuentra en materias completas, usar la lógica anterior como fallback
           if (plan.codigo === "2023") {
             return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
           }
-          
+
           return true
         })
 
@@ -962,7 +962,7 @@ export function HorariosDisplay() {
         <Card className="mb-2 w-fit border-uba-primary/20 bg-gradient-to-r from-uba-primary/5 to-uba-secondary/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-            
+
               <div>              
                 <h2 className="text-xl font-semibold text-uba-primary">
                   {periodoTexto} {data.periodo.año}
@@ -1841,10 +1841,10 @@ export function HorariosDisplay() {
                                       if (asignatura?.tipoAsignatura?.includes("Seminario")) {
                                             // Para seminarios PST, mostrar "PST: [cátedra]"
                                             if (asignatura.tipoAsignatura === "Seminario PST") {
-                                              return `PST: ${apellidoCatedra}`
+                                              return `PST: ${extraerApellidos(clase.catedra)}`
                                             }
                                             // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
-                                           
+
                                             return `SEM: ${apellidoCatedra}`
                                           } else if (asignatura?.id) {
                                             // Para materias, primero intentar usar siglas de materias-completas
