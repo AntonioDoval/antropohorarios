@@ -817,13 +817,15 @@ export function HorariosDisplay() {
       pdf.line(margin, currentY, pageWidth - margin, currentY)
       currentY += 15
 
-      // Organizar asignaturas por planes
-      const planes = [
-        { codigo: "1985", nombre: "Plan de estudios 1985" },
-        { codigo: "2023", nombre: "Plan de estudios 2023" }
-      ]
+      // Generar PDF solo para el plan seleccionado
+      const planSeleccionado = { 
+        codigo: filtros.planEstudios, 
+        nombre: `Plan de estudios ${filtros.planEstudios}` 
+      }
 
-      for (const plan of planes) {
+      // Solo procesar el plan seleccionado
+      {
+        const plan = planSeleccionado
         if (currentY > pageHeight - 40) {
           pdf.addPage()
           currentY = 30
@@ -898,8 +900,60 @@ export function HorariosDisplay() {
           currentY += 6
 
           // Modalidades
-          const modalidadTexto = `${asignatura.modalidadAprobacion || 'N/A'} | ${asignatura.modalidadCursada || 'N/A'}`
+          let modalidadCursada = asignatura.modalidadCursada || 'N/A'
+          if (modalidadCursada === 'Presencial, con 30% de virtualidad asincrónica') {
+            modalidadCursada = 'Sede Puán (30% de virtualidad asincrónica)'
+          }
+          
+          // Verificar si es optativa
+          let modalidadAprobacion = asignatura.modalidadAprobacion || 'N/A'
+          const esOptativa = asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" || 
+                           (plan.codigo === "1985" && (() => {
+                             const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+                             if (!materiaCompleta) return false
+                             return materiaCompleta.cicloAreaProf1985 === "Optativa" || 
+                                    materiaCompleta.cicloAreaLicSocio1985 === "Optativa" || 
+                                    materiaCompleta.cicloAreaLicArqueo1985 === "Optativa"
+                           })()) ||
+                           (plan.codigo === "2023" && (() => {
+                             const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+                             if (!materiaCompleta) return false
+                             return materiaCompleta.cicloAreaProf2023 === "Optativa" || 
+                                    materiaCompleta.cicloAreaLicSocio2023 === "Optativa" || 
+                                    materiaCompleta.cicloAreaLicArqueo2023 === "Optativa"
+                           })())
+          
+          if (esOptativa) {
+            modalidadAprobacion += ' | Optativa'
+          }
+          
+          const modalidadTexto = `${modalidadAprobacion} | ${modalidadCursada}`
           pdf.text(`Modalidad: ${modalidadTexto}`, margin + 5, currentY)
+          currentY += 6
+
+          // Validez (para qué planes está habilitada)
+          const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+          let validezTexto = 'Todas las carreras y orientaciones'
+          
+          if (materiaCompleta) {
+            const validezArray = []
+            
+            if (plan.codigo === "2023") {
+              if (materiaCompleta.cicloAreaProf2023 !== "") validezArray.push("Profesorado")
+              if (materiaCompleta.cicloAreaLicArqueo2023 !== "") validezArray.push("Lic. Arqueología")
+              if (materiaCompleta.cicloAreaLicSocio2023 !== "") validezArray.push("Lic. Sociocultural")
+            } else {
+              if (materiaCompleta.cicloAreaProf1985 !== "") validezArray.push("Profesorado")
+              if (materiaCompleta.cicloAreaLicArqueo1985 !== "") validezArray.push("Lic. Arqueología")
+              if (materiaCompleta.cicloAreaLicSocio1985 !== "") validezArray.push("Lic. Sociocultural")
+            }
+            
+            if (validezArray.length > 0 && validezArray.length < 3) {
+              validezTexto = validezArray.join(", ")
+            }
+          }
+          
+          pdf.text(`Validez: ${validezTexto}`, margin + 5, currentY)
           currentY += 6
 
           // Clases
@@ -940,7 +994,7 @@ export function HorariosDisplay() {
       }
 
       // Descargar PDF
-      const fileName = `horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}.pdf`
+      const fileName = `horarios-antropologia-${data.periodo?.año || 'actual'}-${data.periodo?.periodo || ''}-plan${filtros.planEstudios}.pdf`
       pdf.save(fileName)
 
     } catch (error) {
@@ -979,7 +1033,7 @@ export function HorariosDisplay() {
             className="bg-uba-secondary border border-[#4cc1a5] text-white hover:bg-[#d9f0ed] hover:border-[#a8c9c1] hover:text-uba-primary px-4 py-2 text-sm font-bold"
           >
              <Download className="h-3 w-3 mr-1" />
-            Descargar listado en PDF
+            Descargar listado en PDF (plan {filtros.planEstudios})
           </Button>
         </div>
       </>
