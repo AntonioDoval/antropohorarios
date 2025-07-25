@@ -1235,7 +1235,7 @@ export function HorariosDisplay() {
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-lg leading-tight">{obtenerNombreMateria(asignatura, filtros.planEstudios)}</CardTitle>
                       <div className="text-xs text-white/90 mt-1">
-                        <span className="font-medium">Cátedra:</span> {asignatura.catedra}
+                        <span className="font-medium">Cátedra:</span> {toTitleCase(asignatura.catedra)}
                       </div>
                     </div>
                   </div>
@@ -1513,7 +1513,7 @@ export function HorariosDisplay() {
               {seleccionFormateada.map((item, index) => (
                 <div key={index} className="border-l-4 border-uba-secondary pl-4">
                   <h4 className="font-semibold text-uba-primary">{item.asignatura}</h4>
-                  <p className="text-sm text-gray-600 mb-2">Cátedra: {item.catedra}</p>
+                  <p className="text-sm text-gray-600 mb-2">Cátedra: {toTitleCase(item.catedra)}</p>
                   <div className="space-y-1">
                     {item.clases.map((clase, claseIndex) => (
                       <div key={claseIndex} className="text-sm bg-white p-2 rounded border">
@@ -1748,7 +1748,15 @@ export function HorariosDisplay() {
                                             const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
                                             return `SEM: ${apellidoCatedra}`
                                           } else if (asignatura?.id) {
-                                            // Para materias, crear siglas a partir del nombre
+                                            // Para materias, primero intentar usar siglas de materias-completas
+                                            const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+                                            if (materiaCompleta) {
+                                              const siglas = filtros.planEstudios === "2023" ? materiaCompleta.nombreSiglas2023 : materiaCompleta.nombreSiglas1985
+                                              if (siglas && siglas.trim() !== "") {
+                                                return siglas
+                                              }
+                                            }
+                                            // Si no hay siglas en materias-completas, crear siglas a partir del nombre
                                             const palabras = clase.asignatura.split(' ')
                                             if (palabras.length >= 2) {
                                               return palabras.map(palabra => palabra.charAt(0).toUpperCase()).join('')
@@ -1783,7 +1791,7 @@ export function HorariosDisplay() {
                       <div key={index} className="flex items-center gap-2">
                         <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
                         <span className="text-sm text-gray-700 truncate">
-                          {item.asignatura} ({item.catedra})
+                          {item.asignatura} ({toTitleCase(item.catedra)})
                         </span>
                       </div>
                     ))}
