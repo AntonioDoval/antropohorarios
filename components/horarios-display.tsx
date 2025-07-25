@@ -1790,7 +1790,7 @@ export function HorariosDisplay() {
                     {seleccionFormateada.map((item, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <div className={`w-4 h-4 rounded border-2 ${colores[index % colores.length]}`}></div>
-                        <span className="text-sm text-gray-700 truncate">
+                        <span className="text-sm text-gray-700 leading-tight">
                           {item.asignatura} ({toTitleCase(item.catedra)})
                         </span>
                       </div>
