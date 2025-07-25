@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
 import { AlertTriangle, BookOpen, Calendar, ChevronDown, FileText, Info, Notebook, Search, X, Download } from "lucide-react"
+import Masonry from 'react-masonry-css'
 import { 
   enrichAsignaturasWithPlanInfo, 
   getAsignaturasPorCiclo, 
@@ -1287,14 +1288,23 @@ export function HorariosDisplay() {
       ) : null
     })()}
 
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-min" style={{ gridAutoFlow: 'row' }}>
-      {asignaturasFiltradas.length === 0 ? (
-        <div className="text-center py-12 col-span-full">
-          <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
-          <p className="text-gray-600">Intenta ajustar los filtros de búsqueda.</p>
-        </div>
-      ) : (
-        asignaturasFiltradas.map((asignatura) => {
+    {asignaturasFiltradas.length === 0 ? (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-semibold text-uba-primary mb-2">No se encontraron asignaturas</h3>
+        <p className="text-gray-600">Intenta ajustar los filtros de búsqueda.</p>
+      </div>
+    ) : (
+      <Masonry
+        breakpointCols={{
+          default: 3,
+          1280: 3,
+          768: 2,
+          640: 1
+        }}
+        className="masonry-grid"
+        columnClassName="masonry-grid-column"
+      >
+        {asignaturasFiltradas.map((asignatura) => {
           const isSelected = seleccion.asignaturas.includes(asignatura.id)
           return (
             <Card key={asignatura.id} className={`@container transition-all duration-200 ${
@@ -1559,9 +1569,9 @@ export function HorariosDisplay() {
             </CardContent>
           </Card>
           )
-        })
-      )}
-    </div>
+        })}
+      </Masonry>
+    )}
 
     {seleccionFormateada.length > 0 && <div className="border-t border-gray-300 my-8"></div>}
 

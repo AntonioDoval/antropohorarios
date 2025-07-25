@@ -67,3 +67,26 @@
     @apply bg-background text-foreground font-bitter;
   }
 }
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Masonry Layout Styles */
+.masonry-grid {
+  display: flex;
+  margin-left: -1rem; /* gutter size offset */
+  width: auto;
+}
+
+.masonry-grid-column {
+  padding-left: 1rem; /* gutter size */
+  background-clip: padding-box;
+}
+
+.masonry-grid-column > div {
+  margin-bottom: 1rem; /* space between items */
+  break-inside: avoid;
+}
