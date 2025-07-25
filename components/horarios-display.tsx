@@ -410,7 +410,7 @@ export function HorariosDisplay() {
 
         // Buscar la materia en materias completas
         const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-        
+
         if (!materiaCompleta) return true // Si no se encuentra, mostrar por defecto
 
         // Verificar si la materia es válida para alguna de las orientaciones seleccionadas
@@ -454,10 +454,10 @@ export function HorariosDisplay() {
           asignatura.catedra.toLowerCase().includes("glavich")) {
         return plan === "1985"
       }
-      
+
       // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
       const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-      
+
       if (materiaCompleta) {
         if (plan === "2023") {
           // Para plan 2023, filtrar si tiene código o nombre vacío
@@ -467,12 +467,12 @@ export function HorariosDisplay() {
           return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
         }
       }
-      
+
       // Si no se encuentra en materias completas, usar la lógica anterior como fallback
       if (plan === "2023") {
         return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
       }
-      
+
       return true
     })
   }
@@ -844,10 +844,10 @@ export function HorariosDisplay() {
               asignatura.catedra.toLowerCase().includes("glavich")) {
             return plan.codigo === "1985"
           }
-          
+
           // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
           const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-          
+
           if (materiaCompleta) {
             if (plan.codigo === "2023") {
               // Para plan 2023, filtrar si tiene código o nombre vacío
@@ -857,12 +857,12 @@ export function HorariosDisplay() {
               return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
             }
           }
-          
+
           // Si no se encuentra en materias completas, usar la lógica anterior como fallback
           if (plan.codigo === "2023") {
             return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
           }
-          
+
           return true
         })
 
@@ -904,7 +904,7 @@ export function HorariosDisplay() {
           if (modalidadCursada === 'Presencial, con 30% de virtualidad asincrónica') {
             modalidadCursada = 'Sede Puán (30% de virtualidad asincrónica)'
           }
-          
+
           // Verificar si es optativa
           let modalidadAprobacion = asignatura.modalidadAprobacion || 'N/A'
           const esOptativa = asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" || 
@@ -922,11 +922,11 @@ export function HorariosDisplay() {
                                     materiaCompleta.cicloAreaLicSocio2023 === "Optativa" || 
                                     materiaCompleta.cicloAreaLicArqueo2023 === "Optativa"
                            })())
-          
+
           if (esOptativa) {
             modalidadAprobacion += ' | Optativa'
           }
-          
+
           const modalidadTexto = `${modalidadAprobacion} | ${modalidadCursada}`
           pdf.text(`Modalidad: ${modalidadTexto}`, margin + 5, currentY)
           currentY += 6
@@ -934,10 +934,10 @@ export function HorariosDisplay() {
           // Validez (para qué planes está habilitada)
           const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
           let validezTexto = 'Todas las carreras y orientaciones'
-          
+
           if (materiaCompleta) {
             const validezArray = []
-            
+
             if (plan.codigo === "2023") {
               if (materiaCompleta.cicloAreaProf2023 !== "") validezArray.push("Profesorado")
               if (materiaCompleta.cicloAreaLicArqueo2023 !== "") validezArray.push("Lic. Arqueología")
@@ -947,12 +947,12 @@ export function HorariosDisplay() {
               if (materiaCompleta.cicloAreaLicArqueo1985 !== "") validezArray.push("Lic. Arqueología")
               if (materiaCompleta.cicloAreaLicSocio1985 !== "") validezArray.push("Lic. Sociocultural")
             }
-            
+
             if (validezArray.length > 0 && validezArray.length < 3) {
               validezTexto = validezArray.join(", ")
             }
           }
-          
+
           pdf.text(`Validez: ${validezTexto}`, margin + 5, currentY)
           currentY += 6
 
@@ -1017,7 +1017,7 @@ export function HorariosDisplay() {
         <Card className="mb-2 w-fit border-uba-primary/20 bg-gradient-to-r from-uba-primary/5 to-uba-secondary/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-            
+
               <div>              
                 <h2 className="text-xl font-semibold text-uba-primary">
                   {periodoTexto} {data.periodo.año}
@@ -1078,7 +1078,7 @@ export function HorariosDisplay() {
   const seleccionFormateada = getSeleccionFormateada()
 
   return (
-    <div></div>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
         <div className="mb-4">
@@ -1908,7 +1908,7 @@ export function HorariosDisplay() {
                                               return `PST: ${apellidosCatedra}`
                                             }
                                             // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
-                                           
+
                                             return `SEM: ${apellidosCatedra}`
                                           } else if (asignatura?.id) {
                                             // Para materias, primero intentar usar siglas de materias-completas
@@ -1968,6 +1968,3 @@ export function HorariosDisplay() {
     )}
       </div>
     </div>
-  </TooltipProvider>
-  )
-}
