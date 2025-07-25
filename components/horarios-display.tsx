@@ -1083,7 +1083,7 @@ export function HorariosDisplay() {
         <div className="space-y-4">
         <div className="mb-4">
           <h1 className="text-xl md:text-4xl lg:text-5xl font-bold text-uba-primary mb-1">
-            Oferta de Asignaturas y Horarios
+            Planificador de Asignaturas y Horarios
           </h1>
           <p className="text-base md:text-xl lg:text-2xl text-uba-primary mb-2 font-normal">
             Ciencias Antropológicas (FFyL-UBA)
@@ -1091,15 +1091,15 @@ export function HorariosDisplay() {
 
           <hr className="border-uba-secondary mb-3" />
           <p className="text-sm md:text-base lg:text-lg text-uba-primary mb-3 leading-relaxed">
-            <span className="font-semibold">¡Planificá tus horarios!</span> Seleccioná las <span className="font-semibold">asignaturas</span> que te interesan, eligiendo las <span className="font-semibold">comisiones</span> que prefieras. Abajo podés visualizar <span className="font-semibold">el listado</span> de tu selección y ver cómo quedaría tu <span className="font-semibold">cronograma semanal</span>.
+            <span className="font-bold">¡Planificá tu cursada!</span> Antes de inscribirte, conocé la <span className="font-semibold">oferta</span> de asignaturas y horarios, y <span className="font-semibold">seleccioná</span> las que te interesan, eligiendo las <span className="font-semibold">comisiones</span> que prefieras. Abajo podés visualizar <span className="font-semibold">el listado</span> de tu selección y ver cómo quedaría tu <span className="font-semibold">cronograma semanal</span>.
           </p>
 
           <Alert className="border-yellow-300 bg-yellow-100 p-3">
             <div className="flex items-start gap-3">
               <div className="text-base md:text-lg mt-0.5">⚠️</div>
               <AlertDescription className="text-xs md:text-sm lg:text-base text-gray-800">
-                <span className="font-semibold">Aclaración:</span> esta herramienta es para visualizar y planificar
-                horarios. Para realizar las inscripciones debés hacerlo por{" "}
+                <span className="text-uba-red font-black">ADVERTENCIA:</span> esta herramienta es únicamente para visualizar y planificar
+                horarios. <span className="text-uba-red font-semibold">Para realizar las inscripciones debés hacerlo por{" "}
                 <a
                   href="https://suiganew.filo.uba.ar/"
                   className="text-blue-600 hover:text-blue-800 font-semibold underline"
@@ -1108,7 +1108,7 @@ export function HorariosDisplay() {
                 >
                   SUIGA
                 </a>
-                .
+                  </span>.
               </AlertDescription>
             </div>
           </Alert>

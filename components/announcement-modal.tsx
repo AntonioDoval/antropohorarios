@@ -1,26 +1,20 @@
 
 "use client"
 
-import React, { useState, useEffect } from 'react'
-import dynamic from 'next/dynamic'
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, CheckCircle } from "lucide-react"
-import 'react-quill/dist/quill.snow.css'
+import { X } from "lucide-react"
 
-// Importar ReactQuill dinámicamente para evitar problemas de SSR
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
+interface Announcement {
+  enabled: boolean
+  title: string
+  text: string
+}
 
 export function AnnouncementModal() {
+  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [announcement, setAnnouncement] = useState<{
-    enabled: boolean
-    title: string
-    text: string
-  } | null>(null)
 
   useEffect(() => {
     const fetchAnnouncement = async () => {
@@ -40,194 +34,31 @@ export function AnnouncementModal() {
     fetchAnnouncement()
   }, [])
 
-  const handleClose = () => {
-    setIsOpen(false)
+  if (!announcement || !announcement.enabled) {
+    return null
   }
 
-  if (!announcement) return null
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[525px]">
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle className="text-uba-primary">
-            {announcement.title}
+          <DialogTitle className="text-lg font-semibold text-uba-primary pr-8">
+            {announcement.title || 'Anuncio'}
           </DialogTitle>
         </DialogHeader>
-        <div className="py-4">
-          <div 
-            className="prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: announcement.text }}
-          />
+        <div className="mt-4">
+          <p className="text-gray-700 whitespace-pre-wrap">
+            {announcement.text}
+          </p>
         </div>
-        <div className="flex justify-end">
-          <Button onClick={handleClose} className="bg-uba-primary hover:bg-uba-primary/90">
+        <div className="mt-6 flex justify-end">
+          <Button 
+            onClick={() => setIsOpen(false)}
+            className="bg-uba-primary hover:bg-uba-primary/90"
+          >
             Cerrar
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-interface AnuncioModalProps {
-  open: boolean
-  onClose: () => void
-  anuncio?: {
-    id: string
-    titulo: string
-    contenido: string
-    fechaVencimiento: string
-  }
-}
-
-export function AnuncioModal({ open, onClose, anuncio }: AnuncioModalProps) {
-  const [titulo, setTitulo] = useState('')
-  const [contenido, setContenido] = useState('')
-  const [fechaVencimiento, setFechaVencimiento] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; content: string } | null>(null)
-
-  // Configuración del editor Quill con herramientas mínimas
-  const quillModules = {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['link'],
-      ['clean']
-    ],
-  }
-
-  const quillFormats = [
-    'bold', 'italic', 'underline',
-    'list', 'bullet', 'link'
-  ]
-
-  useEffect(() => {
-    if (anuncio) {
-      setTitulo(anuncio.titulo)
-      setContenido(anuncio.contenido)
-      setFechaVencimiento(anuncio.fechaVencimiento)
-    } else {
-      setTitulo('')
-      setContenido('')
-      setFechaVencimiento('')
-    }
-  }, [anuncio])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage(null)
-
-    try {
-      const res = await fetch(`/api/anuncios${anuncio ? `/${anuncio.id}` : ''}`, {
-        method: anuncio ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          titulo,
-          contenido,
-          fechaVencimiento,
-        }),
-      })
-
-      if (res.ok) {
-        setMessage({
-          type: 'success',
-          content: `Anuncio ${anuncio ? 'actualizado' : 'creado'} con éxito.`,
-        })
-        setTimeout(() => {
-          onClose()
-        }, 2000)
-      } else {
-        const errorData = await res.json()
-        setMessage({
-          type: 'error',
-          content: errorData.message || 'Hubo un error al guardar el anuncio.',
-        })
-      }
-    } catch (error) {
-      console.error('Error:', error)
-      setMessage({
-        type: 'error',
-        content: 'Error inesperado al guardar el anuncio.',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-uba-primary">
-            {anuncio ? 'Editar Anuncio' : 'Crear Anuncio'}
-          </DialogTitle>
-        </DialogHeader>
-        
-        {message && (
-          <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
-            {message.type === 'error' ? <AlertCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
-            <AlertDescription>{message.content}</AlertDescription>
-          </Alert>
-        )}
-        
-        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="titulo" className="text-uba-primary">
-              Título del Anuncio
-            </Label>
-            <Input
-              id="titulo"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              placeholder="Título del anuncio"
-              className="border-uba-primary/30 focus:border-uba-primary"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="contenido" className="text-uba-primary">
-              Contenido del Anuncio
-            </Label>
-            <div className="border border-uba-primary/30 rounded-md">
-              <ReactQuill
-                value={contenido}
-                onChange={setContenido}
-                modules={quillModules}
-                formats={quillFormats}
-                placeholder="Escribe aquí el contenido del anuncio..."
-                theme="snow"
-                style={{ 
-                  minHeight: '150px',
-                  backgroundColor: 'white'
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="fechaVencimiento" className="text-uba-primary">
-              Fecha de Vencimiento
-            </Label>
-            <Input
-              type="date"
-              id="fechaVencimiento"
-              value={fechaVencimiento}
-              onChange={(e) => setFechaVencimiento(e.target.value)}
-              className="border-uba-primary/30 focus:border-uba-primary"
-              required
-            />
-          </div>
-          
-          <Button type="submit" disabled={loading} className="bg-uba-primary hover:bg-uba-primary/90">
-            {loading ? 'Guardando...' : 'Guardar Anuncio'}
-          </Button>
-        </form>
       </DialogContent>
     </Dialog>
   )

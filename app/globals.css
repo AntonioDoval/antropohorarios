@@ -74,136 +74,19 @@
   }
 }
 
-/* Estilos para el masonry layout */
+/* Masonry Layout Styles */
 .masonry-grid {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  margin-left: -16px;
+  margin-left: -1rem; /* gutter size offset */
   width: auto;
 }
 
 .masonry-grid-column {
-  padding-left: 16px;
+  padding-left: 1rem; /* gutter size */
   background-clip: padding-box;
 }
 
-/* Punto de quiebre para dispositivos pequeños */
 .masonry-grid-column > div {
-  margin-bottom: 16px;
-}
-
-/* Estilos para el editor Quill */
-.ql-toolbar {
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  border-bottom: none;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-}
-
-.ql-container {
-  border-bottom: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  border-top: none;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-}
-
-.ql-editor {
-  min-height: 120px;
-  font-family: inherit;
-}
-
-.ql-editor.ql-blank::before {
-  font-style: italic;
-  color: #999;
-}
-
-/* Estilos para el contenido renderizado */
-.prose {
-  max-width: none;
-}
-
-.prose h1 {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-
-.prose h2 {
-  font-size: 1.3em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-
-.prose h3 {
-  font-size: 1.1em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-
-.prose strong {
-  font-weight: bold;
-}
-
-.prose em {
-  font-style: italic;
-}
-
-.prose u {
-  text-decoration: underline;
-}
-
-.prose s {
-  text-decoration: line-through;
-}
-
-.prose ol {
-  list-style-type: decimal;
-  margin-left: 1.5em;
-  margin-bottom: 1em;
-}
-
-.prose ul {
-  list-style-type: disc;
-  margin-left: 1.5em;
-  margin-bottom: 1em;
-}
-
-.prose li {
-  margin-bottom: 0.25em;
-}
-
-.prose blockquote {
-  border-left: 4px solid #e5e7eb;
-  padding-left: 1em;
-  margin: 1em 0;
-  font-style: italic;
-}
-
-.prose code {
-  background-color: #f3f4f6;
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-family: monospace;
-}
-
-.prose pre {
-  background-color: #f3f4f6;
-  padding: 1em;
-  border-radius: 6px;
-  overflow-x: auto;
-  margin: 1em 0;
-}
-
-.prose a {
-  color: #3b82f6;
-  text-decoration: underline;
-}
-
-.prose a:hover {
-  color: #1d4ed8;
+  margin-bottom: 1rem; /* space between items */
+  break-inside: avoid;
 }
