@@ -30,6 +30,25 @@ export const toTitleCase = (str: string) => {
     .join(' ')
 }
 
+export const extraerApellidos = (catedra: string): string => {
+  // Separar por "/"
+  const partes = catedra.split('/').map(part => part.trim())
+  
+  // Procesar cada parte
+  const apellidos = partes.map(nombre => {
+    // Excepción para Cristian Favier Dubois
+    if (nombre.includes("Cristian Favier Dubois")) {
+      return "Favier Dubois"
+    }
+    
+    // Para otros casos, tomar la última palabra
+    const palabras = nombre.split(' ')
+    return palabras[palabras.length - 1]
+  })
+
+  return apellidos.join(' / ')
+}
+
 export const normalizarTexto = (texto: string): string => {
   return texto
     .toLowerCase()

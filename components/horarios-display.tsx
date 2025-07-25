@@ -19,7 +19,7 @@ import {
   type AsignaturaConPlan 
 } from "@/lib/planes-utils"
 import { materiasCompletas, buscarMateriaPorNombre, type MateriaCompleta } from "@/lib/data/materias-completas"
-import { toTitleCase } from "@/lib/text-utils"
+import { toTitleCase, extraerApellidos } from "@/lib/text-utils"
 import jsPDF from 'jspdf'
 
 // Función para abreviar días de la semana
@@ -1837,15 +1837,15 @@ export function HorariosDisplay() {
                                       <div className="font-semibold text-xs leading-tight mb-0.5 truncate">
                                         {(() => {
                                           const asignatura = asignaturasEnriquecidas.find(a => obtenerNombreMateria(a, filtros.planEstudios) === clase.asignatura)
-                                         const apellidoCatedra = clase.catedra.split(' ').pop() || clase.catedra
+                                         const apellidosCatedra = extraerApellidos(clase.catedra)
                                       if (asignatura?.tipoAsignatura?.includes("Seminario")) {
                                             // Para seminarios PST, mostrar "PST: [cátedra]"
                                             if (asignatura.tipoAsignatura === "Seminario PST") {
-                                              return `PST: ${apellidoCatedra}`
+                                              return `PST: ${apellidosCatedra}`
                                             }
                                             // Para otros seminarios, usar formato "SEM: [Apellido cátedra]"
                                            
-                                            return `SEM: ${apellidoCatedra}`
+                                            return `SEM: ${apellidosCatedra}`
                                           } else if (asignatura?.id) {
                                             // Para materias, primero intentar usar siglas de materias-completas
                                             const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
