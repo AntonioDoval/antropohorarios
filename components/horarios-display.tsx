@@ -277,12 +277,10 @@ export function HorariosDisplay() {
   }
 
   const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
-    // Tipos de asignatura en el orden solicitado
+    // Tipos de asignatura simplificados
     const tiposAsignatura = [
-      "Materia cuatrimestral",
-      "Seminario regular", 
-      "Seminario PST",
-      "Materia o seminario anual"
+      "Materias",
+      "Seminarios"
     ]
 
     const modalidadesAprobacion = [
@@ -366,15 +364,26 @@ export function HorariosDisplay() {
 
         if (!asignatura.tipoAsignatura) return false
 
-        // Agrupar materias cuatrimestrales regulares y optativas bajo "Materia cuatrimestral"
-        if (filtros.tiposAsignatura.includes("Materia cuatrimestral")) {
+        // Agrupar materias bajo "Materias"
+        if (filtros.tiposAsignatura.includes("Materias")) {
           if (asignatura.tipoAsignatura === "Materia cuatrimestral regular" || 
-              asignatura.tipoAsignatura === "Materia cuatrimestral optativa/electiva") {
+              asignatura.tipoAsignatura === "Materia cuatrimestral optativa/electiva" ||
+              asignatura.tipoAsignatura === "Materia cuatrimestral optativa (Exclusiva plan 1985)" ||
+              asignatura.tipoAsignatura === "Asignatura anual" ||
+              asignatura.tipoAsignatura === "Materia o seminario anual") {
             return true
           }
         }
 
-        return filtros.tiposAsignatura.includes(asignatura.tipoAsignatura)
+        // Agrupar seminarios bajo "Seminarios"
+        if (filtros.tiposAsignatura.includes("Seminarios")) {
+          if (asignatura.tipoAsignatura === "Seminario regular" || 
+              asignatura.tipoAsignatura === "Seminario PST") {
+            return true
+          }
+        }
+
+        return false
       })()
 
       const coincideModalidad = (() => {
