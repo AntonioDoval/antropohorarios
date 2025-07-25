@@ -82,6 +82,7 @@ interface Filtros {
   busqueda: string
   tiposAsignatura: string[]
   modalidadesAprobacion: string[]
+  carrerasOrientaciones: string[]
   planEstudios: "2023" | "1985"
   horariosSeleccionados: { [dia: string]: number[] }
 }
@@ -115,6 +116,7 @@ export function HorariosDisplay() {
     busqueda: "",
     tiposAsignatura: [],
     modalidadesAprobacion: [],
+    carrerasOrientaciones: [],
     planEstudios: "2023",
     horariosSeleccionados: {},
   })
@@ -291,9 +293,17 @@ export function HorariosDisplay() {
       ),
     ]
 
+    // Carreras/Orientaciones disponibles
+    const carrerasOrientaciones = [
+      "Profesorado",
+      "Lic. Arqueología", 
+      "Lic. Sociocultural"
+    ]
+
     return {
       tiposAsignatura,
       modalidadesAprobacion: modalidadesAprobacion.sort(),
+      carrerasOrientaciones,
     }
   }
 
@@ -394,9 +404,45 @@ export function HorariosDisplay() {
         return filtros.modalidadesAprobacion.includes(modalidadReal)
       })()
 
+      const coincideCarreraOrientacion = (() => {
+        if (filtros.carrerasOrientaciones.length === 0) return true
+
+        // Buscar la materia en materias completas
+        const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
+        
+        if (!materiaCompleta) return true // Si no se encuentra, mostrar por defecto
+
+        // Verificar si la materia es válida para alguna de las orientaciones seleccionadas
+        return filtros.carrerasOrientaciones.some(orientacion => {
+          if (filtros.planEstudios === "2023") {
+            switch (orientacion) {
+              case "Profesorado":
+                return materiaCompleta.cicloAreaProf2023 !== ""
+              case "Lic. Arqueología":
+                return materiaCompleta.cicloAreaLicArqueo2023 !== ""
+              case "Lic. Sociocultural":
+                return materiaCompleta.cicloAreaLicSocio2023 !== ""
+              default:
+                return false
+            }
+          } else {
+            switch (orientacion) {
+              case "Profesorado":
+                return materiaCompleta.cicloAreaProf1985 !== ""
+              case "Lic. Arqueología":
+                return materiaCompleta.cicloAreaLicArqueo1985 !== ""
+              case "Lic. Sociocultural":
+                return materiaCompleta.cicloAreaLicSocio1985 !== ""
+              default:
+                return false
+            }
+          }
+        })
+      })()
+
       const coincideHorarios = asignaturaCoincideConHorarios(asignatura)
 
-      return coincideBusqueda && coincideTipo && coincideModalidad && coincideHorarios
+      return coincideBusqueda && coincideTipo && coincideModalidad && coincideCarreraOrientacion && coincideHorarios
     })
   }
 
@@ -435,12 +481,13 @@ export function HorariosDisplay() {
       busqueda: "",
       tiposAsignatura: [],
       modalidadesAprobacion: [],
+      carrerasOrientaciones: [],
       planEstudios: filtros.planEstudios,
       horariosSeleccionados: {},
     })
   }
 
-  const toggleFiltro = (tipo: "tiposAsignatura" | "modalidadesAprobacion", valor: string) => {
+  const toggleFiltro = (tipo: "tiposAsignatura" | "modalidadesAprobacion" | "carrerasOrientaciones", valor: string) => {
     setFiltros((prev) => ({
       ...prev,
       [tipo]: prev[tipo].includes(valor) ? prev[tipo].filter((item) => item !== valor) : [...prev[tipo], valor],
@@ -1014,7 +1061,7 @@ export function HorariosDisplay() {
 
     <Card className="bg-[#46bfb0]/15 border-[#46bfb0]/40 rounded-xl">
       <CardContent className="p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
           {/* Search and Plan Selector */}
           <div className="space-y-3">
             <div className="relative">
@@ -1111,6 +1158,28 @@ export function HorariosDisplay() {
               </div>
             </div>
           </div>
+
+          {/* Carrera / Orientación */}
+          {valoresUnicos.carrerasOrientaciones.length > 0 && (
+            <div className="bg-white p-3 rounded-lg border border-gray-200">
+              <h4 className="text-xs font-semibold text-uba-primary mb-2">Carrera / Orientación</h4>
+              <div className="space-y-1.5">
+                {valoresUnicos.carrerasOrientaciones.map((carrera) => (
+                  <div key={carrera} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`carrera-${carrera}`}
+                      checked={filtros.carrerasOrientaciones.includes(carrera)}
+                      onCheckedChange={() => toggleFiltro("carrerasOrientaciones", carrera)}
+                      className="h-3.5 w-3.5"
+                    />
+                    <label htmlFor={`carrera-${carrera}`} className="text-xs text-gray-700 cursor-pointer leading-snug">
+                      {carrera}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Filtro de horarios por día */}
