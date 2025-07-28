@@ -658,7 +658,7 @@ export const materiasCompletas: MateriaCompleta[] = [
     cicloAreaLicSocio2023: "",
     cicloAreaLicArqueo2023: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología",
     cicloAreaProf1985: "Ciclo Común",
-    cicloAreaLicSocio1985: "",
+    cicloAreaLicSocio1985: "Ciclo Común",
     cicloAreaLicArqueo1985: "Ciclo Común"
   },
   {
