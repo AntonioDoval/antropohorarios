@@ -361,9 +361,6 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
                 // 1. Definir el objeto de agrupación con valores por defecto
                 // Por precaución, empezamos con un objeto vacío o valores estándar
                 const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {
-                  "Teórico": "elegir",
-                  "Teórico-Práctico": "elegir",
-                  "Práctico": "elegir"
                 };
 
                 // 2. Leer los valores directamente de las columnas del CSV (usando row: any para evitar errores de TS)
