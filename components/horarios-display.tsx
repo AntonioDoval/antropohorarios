@@ -406,40 +406,57 @@ export function HorariosDisplay() {
       })()
 
       const coincideCarreraOrientacion = (() => {
-        if (filtros.carrerasOrientaciones.length === 0) return true
+        if (filtros.carrerasOrientaciones.length === 0) return true;
 
-        // Buscar la materia en materias completas
-        const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-        
-        if (!materiaCompleta) return true // Si no se encuentra, mostrar por defecto
+        // 1. Prioridad: Usar el valor exacto del CSV
+        if (asignatura.orientacion) {
+          const oriCSV = asignatura.orientacion.trim();
 
-        // Verificar si la materia es válida para alguna de las orientaciones seleccionadas
+          // Si el CSV dice "Todas", el seminario es visible para cualquier filtro
+          if (oriCSV === "Todas") return true;
+
+          return filtros.carrerasOrientaciones.some(filtro => {
+            // 'filtro' puede ser: "Profesorado", "Lic. Arqueología" o "Lic. Sociocultural"
+
+            if (oriCSV === "Ambas") {
+              return filtro === "Lic. Arqueología" || filtro === "Lic. Sociocultural";
+            }
+
+            if (oriCSV === "Sociocultural") {
+              return filtro === "Lic. Sociocultural";
+            }
+
+            if (oriCSV === "Arqueología") {
+              return filtro === "Lic. Arqueología";
+            }
+
+            if (oriCSV === "Profesorado") {
+              return filtro === "Profesorado";
+            }
+
+            // Fallback de seguridad por si hay espacios o diferencias de mayúsculas
+            return filtro.toLowerCase().includes(oriCSV.toLowerCase());
+          });
+        }
+
+        // 2. Fallback: Diccionario de materias (para materias obligatorias del plan)
+        const materiaCompleta = buscarMateriaPorNombre(asignatura.materia);
+        if (!materiaCompleta) return true;
+
         return filtros.carrerasOrientaciones.some(orientacion => {
-          if (filtros.planEstudios === "2023") {
-            switch (orientacion) {
-              case "Profesorado":
-                return materiaCompleta.cicloAreaProf2023 !== ""
-              case "Lic. Arqueología":
-                return materiaCompleta.cicloAreaLicArqueo2023 !== ""
-              case "Lic. Sociocultural":
-                return materiaCompleta.cicloAreaLicSocio2023 !== ""
-              default:
-                return false
-            }
-          } else {
-            switch (orientacion) {
-              case "Profesorado":
-                return materiaCompleta.cicloAreaProf1985 !== ""
-              case "Lic. Arqueología":
-                return materiaCompleta.cicloAreaLicArqueo1985 !== ""
-              case "Lic. Sociocultural":
-                return materiaCompleta.cicloAreaLicSocio1985 !== ""
-              default:
-                return false
-            }
+          const esPlan2023 = filtros.planEstudios === "2023";
+          switch (orientacion) {
+            case "Profesorado":
+              return esPlan2023 ? materiaCompleta.cicloAreaProf2023 !== "" : materiaCompleta.cicloAreaProf1985 !== "";
+            case "Lic. Arqueología":
+              return esPlan2023 ? materiaCompleta.cicloAreaLicArqueo2023 !== "" : materiaCompleta.cicloAreaLicArqueo1985 !== "";
+            case "Lic. Sociocultural":
+              return esPlan2023 ? materiaCompleta.cicloAreaLicSocio2023 !== "" : materiaCompleta.cicloAreaLicSocio1985 !== "";
+            default:
+              return false;
           }
-        })
-      })()
+        });
+      })();
 
       const coincideHorarios = asignaturaCoincideConHorarios(asignatura)
 
