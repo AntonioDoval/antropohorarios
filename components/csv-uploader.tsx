@@ -367,8 +367,8 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
                 };
 
                 // 2. Leer los valores directamente de las columnas del CSV (usando row: any para evitar errores de TS)
-                const agrupacionTeoricos = (row as any)["Indicar relación entre los dos horarios de teóricos"] || "";
-                const agrupacionTeoricoPracticos = (row as any)["Indicar relación entre los dos horarios de teórico-prácticos"] || "";
+                const agrupacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")] || "";
+                const agrupacionTeoricoPracticos = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")] || "";
 
                 // 3. Lógica para Teóricos
                 if (agrupacionTeoricos.includes("dividido en dos")) {
