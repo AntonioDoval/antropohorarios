@@ -357,9 +357,9 @@ export const materiasCompletas: MateriaCompleta[] = [
     cicloAreaProf2023: "",
     cicloAreaLicSocio2023: "Procesos culturales, ideología y poder",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17024",
@@ -402,9 +402,9 @@ export const materiasCompletas: MateriaCompleta[] = [
     cicloAreaProf2023: "",
     cicloAreaLicSocio2023: "Procesos políticos, instituciones y prácticas",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17027",
@@ -447,9 +447,9 @@ export const materiasCompletas: MateriaCompleta[] = [
     cicloAreaProf2023: "Ciclo de Formación General (CFG) Profesorado",
     cicloAreaLicSocio2023: "Procesos políticos, instituciones y prácticas",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17030",
@@ -702,9 +702,9 @@ export const materiasCompletas: MateriaCompleta[] = [
     cicloAreaProf2023: "",
     cicloAreaLicSocio2023: "",
     cicloAreaLicArqueo2023: "Ciclo de Formación Orientada (CFO) Licenciatura Arqueología",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17047",
