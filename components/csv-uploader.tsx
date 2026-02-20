@@ -358,26 +358,35 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
           continue
         }
 
-        // Definir agrupación de clases por defecto
-        const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {
-          "Teórico": "elegir",
-          "Teórico-Práctico": "elegir",
-          "Práctico": "elegir"
-        }
+                // 1. Definir el objeto de agrupación con valores por defecto
+                // Por precaución, empezamos con un objeto vacío o valores estándar
+                const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {
+                  "Teórico": "elegir",
+                  "Teórico-Práctico": "elegir",
+                  "Práctico": "elegir"
+                };
 
-        // Lógica para Teóricos
-        const relacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")]
-        if (relacionTeoricos && relacionTeoricos.includes("correspondientes a un mismo")) {
-          agrupacionClases["Teórico"] = "conjunto" ||
-        } else if (relacionTeoricos && relacionTeoricos.includes("dividida en dos")) {
-          agrupacionClases["Teórico"] = "conjunto"
-        }
+                // 2. Leer los valores directamente de las columnas del CSV (usando row: any para evitar errores de TS)
+                const agrupacionTeoricos = (row as any)["Indicar relación entre los dos horarios de teóricos"] || "";
+                const agrupacionTeoricoPracticos = (row as any)["Indicar relación entre los dos horarios de teórico-prácticos"] || "";
 
-        // Lógica para Teórico-Prácticos (Nueva corrección)
-        const relacionTP = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")]
-        if (relacionTP && (relacionTP.includes("correspondientes a un mismo") || relacionTP.includes("dividida en dos"))) {
-          agrupacionClases["Teórico-Práctico"] = "conjunto"
-        }
+                // 3. Lógica para Teóricos
+                if (agrupacionTeoricos.includes("dividido en dos")) {
+                  agrupacionClases["Teórico"] = "conjunto";
+                } else if (agrupacionTeoricos.includes("deben elegir una")) {
+                  agrupacionClases["Teórico"] = "elegir";
+                }
+
+                // 4. Lógica para Teórico-Prácticos
+                if (agrupacionTeoricoPracticos.includes("dividido en dos")) {
+                  agrupacionClases["Teórico-Práctico"] = "conjunto";
+                } else if (agrupacionTeoricoPracticos.includes("deben elegir una")) {
+                  agrupacionClases["Teórico-Práctico"] = "elegir";
+                }
+        
+        console.log("Agrupaciones leídas del CSV:")
+        console.log("- Teóricos:", agrupacionTeoricos)
+        console.log("- Teórico-Prácticos:", agrupacionTeoricoPracticos)
 
         // Obtener aclaraciones
         const aclaraciones = row[headers.indexOf("De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)")] || ""
