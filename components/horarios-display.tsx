@@ -456,27 +456,24 @@ export function HorariosDisplay() {
       }
       
       // Buscar la materia en materias completas para verificar si tiene código y nombre para el plan
-      const materiaCompleta = buscarMateriaPorNombre(asignatura.materia)
-      
+  const materiaCompleta = buscarMateriaPorNombre(asignatura.materia);
+
       if (materiaCompleta) {
         if (plan === "2023") {
-          // Para plan 2023, filtrar si tiene código o nombre vacío
-          return materiaCompleta.codigo2023 !== "" && materiaCompleta.nombrePlan2023 !== ""
+          return materiaCompleta.nombrePlan2023 !== "";
         } else {
-          // Para plan 1985, filtrar si tiene código o nombre vacío
-          // Las materias electivas de 2023 que son optativas en 1985 tienen código prefijado con 'O'
-          return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
+          // Permitimos que aparezca si tiene nombre para 1985, sin importar el código
+          return materiaCompleta.nombrePlan1985 !== "";
         }
       }
-      
-      // Si no se encuentra en materias completas, usar la lógica anterior como fallback
+
+      // Fallback para materias no listadas en el diccionario
       if (plan === "2023") {
-        return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)"
+        return asignatura.tipoAsignatura !== "Materia cuatrimestral optativa (Exclusiva plan 1985)";
       }
-      
-      return true
-    })
-  }
+      return true;
+    });
+  };
 
   const limpiarFiltros = () => {
     setFiltros({
