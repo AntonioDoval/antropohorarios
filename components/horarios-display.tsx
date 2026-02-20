@@ -280,7 +280,7 @@ export function HorariosDisplay() {
 
     // 3. Fallback
     else 
-      return false
+      return true
     }
 
   const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
