@@ -103,8 +103,22 @@ function procesarInformacionPlanes(
     equivalencia.cod23 = materia23.cod23
     equivalencia.nombrePlan23 = materia23.nombre
     
-    // Buscar equivalencia con plan 1985 usando cod85
-    if (materia23.cod85) {
+    // Buscar en materiasCompletas si existe un nombre específico para 1985
+    const materiaInfoCompleta = require('./data/materias-completas').materiasCompletas.find(
+      (m: any) => m.codigo2023 === materia23.cod23 || (materia23.cod85 && m.codigo1985 === materia23.cod85)
+    )
+    
+    if (materiaInfoCompleta) {
+      if (materiaInfoCompleta.nombrePlan1985) {
+        equivalencia.nombrePlan85 = materiaInfoCompleta.nombrePlan1985
+      }
+      if (materiaInfoCompleta.codigo1985) {
+        equivalencia.cod85 = materiaInfoCompleta.codigo1985
+      }
+    }
+    
+    // Si aún no tenemos nombrePlan85, buscar equivalencia con plan 1985 usando cod85 en los planes cargados
+    if (!equivalencia.nombrePlan85 && materia23.cod85) {
       const planEquivalente85 = todosLosPlanes.find(plan => 
         plan.año === "1985" && 
         plan.materias.some(m => m.cod85 === materia23.cod85 || m.cod23 === materia23.cod85)
