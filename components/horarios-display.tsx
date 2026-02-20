@@ -269,15 +269,19 @@ export function HorariosDisplay() {
   }
 
   const requiereSeleccion = (asignatura: Asignatura, tipoClase: string, cantidadClases: number) => {
+    // 1. Si solo hay una clase, nunca se elige.
     if (cantidadClases <= 1) return false
 
+    // 2. Priorizar la definición explícita del CSV
     const agrupacion = asignatura.agrupacionClases?.[tipoClase]
 
     if (agrupacion === "conjunto") return false
     if (agrupacion === "elegir") return true
 
-    return cantidadClases > 1
-  }
+    // 3. Fallback
+    else 
+      return false
+    }
 
   const getValoresUnicos = (asignaturas: AsignaturaConPlan[]) => {
     // Tipos de asignatura simplificados
@@ -1722,7 +1726,8 @@ export function HorariosDisplay() {
           return superposiciones.length > 0 ? (
             <Alert className="border-red-300 bg-red-50 mb-4">
               <div className="flex items-start gap-3">
-                <div className="text-2xl mt-0.5">⚠️</div>
+                <div className="text-2xl mt-0.5">⚠️
+                </div>
                 <AlertDescription className="text-red-800">
                   <div className="font-semibold mb-2">Hay superposiciones horarias en tu cronograma:</div>
                   <ul className="space-y-1">
