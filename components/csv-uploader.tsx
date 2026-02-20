@@ -359,27 +359,22 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
         }
 
                 // 1. Definir el objeto de agrupación con valores por defecto
-                // Por precaución, empezamos con un objeto vacío o valores estándar
-                const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {
-                };
+        const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {};
 
-                // 2. Leer los valores directamente de las columnas del CSV (usando row: any para evitar errores de TS)
-                const agrupacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")] || "";
-                const agrupacionTeoricoPracticos = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")] || "";
+        const agrupacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")] || "";
+        const agrupacionTeoricoPracticos = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")] || "";
 
-                // 3. Lógica para Teóricos
-                if (agrupacionTeoricos.includes("dividido en dos")) {
-                  agrupacionClases["Teórico"] = "conjunto";
-                } else  {
-                  agrupacionClases["Teórico"] = "elegir";
-                }
+        // Solo asignar agrupación si efectivamente hay dos clases del tipo
+        const tieneDosTeoricos = clases.filter(c => c.tipo === "Teórico").length > 1;
+        const dosTPsExisten = clases.filter(c => c.tipo === "Teórico-Práctico").length > 1;
 
-                // 4. Lógica para Teórico-Prácticos
-                if (agrupacionTeoricoPracticos.includes("dividido en dos")) {
-                  agrupacionClases["Teórico-Práctico"] = "conjunto";
-                } else  {
-                  agrupacionClases["Teórico-Práctico"] = "elegir";
-                }
+        if (tieneDosTeoricos) {
+          agrupacionClases["Teórico"] = agrupacionTeoricos.includes("dividido en dos") ? "conjunto" : "elegir";
+        }
+
+        if (dosTPsExisten) {
+          agrupacionClases["Teórico-Práctico"] = agrupacionTeoricoPracticos.includes("dividido en dos") ? "conjunto" : "elegir";
+        }
         
         console.log("Agrupaciones leídas del CSV:")
         console.log("- Teóricos:", agrupacionTeoricos)
@@ -400,21 +395,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
           clases: clases,
         }
 
-        // Determinar agrupaciones de clases después de crear la asignatura
-        const gruposClases = agruparClasesPorTipo(clases)
-        gruposClases.forEach((grupo) => {
-          if (grupo.clases.length > 1) {
-            let agrupacionValue = ""
-
-            if (grupo.tipo === "Teórico") {
-              agrupacionValue = agrupacionTeoricos
-            } else if (grupo.tipo === "Teórico-Práctico") {
-              agrupacionValue = agrupacionTeoricoPracticos
-            }
-
-            // Si no hay información específica, no establecer agrupación (comportamiento por defecto en la UI)
-          }
-        })
+        
 
         if (Object.keys(agrupacionClases).length > 0) {
           asignatura.agrupacionClases = agrupacionClases
