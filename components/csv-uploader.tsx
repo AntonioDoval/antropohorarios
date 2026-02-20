@@ -370,14 +370,14 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
                 // 3. Lógica para Teóricos
                 if (agrupacionTeoricos.includes("dividido en dos")) {
                   agrupacionClases["Teórico"] = "conjunto";
-                } else if (agrupacionTeoricos.includes("deben elegir una")) {
+                } else  {
                   agrupacionClases["Teórico"] = "elegir";
                 }
 
                 // 4. Lógica para Teórico-Prácticos
                 if (agrupacionTeoricoPracticos.includes("dividido en dos")) {
                   agrupacionClases["Teórico-Práctico"] = "conjunto";
-                } else if (agrupacionTeoricoPracticos.includes("deben elegir una")) {
+                } else  {
                   agrupacionClases["Teórico-Práctico"] = "elegir";
                 }
         
