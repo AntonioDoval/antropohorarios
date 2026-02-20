@@ -1597,12 +1597,7 @@ export function HorariosDisplay() {
                                     : grupo.clases.length === 1 
                                       ? clase.tipo
                                       : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
-                                </Badge>
-                                {grupo.clases.length > 1 && asignatura.agrupacionClases?.[grupo.tipo] === "conjunto" && (
-                                  <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-600 border-yellow-200 px-2 py-0.5">
-                                    <span className="hidden [@container_(min-width:200px)]:inline">Complementario</span>
-                                    <span className="[@container_(min-width:200px)]:hidden">Compl.</span>
-                                  </Badge>
+                                
                                 )}
                               </div>
                               <div className="text-xs space-y-0.5">

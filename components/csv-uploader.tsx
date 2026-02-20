@@ -358,16 +358,26 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
           continue
         }
 
-        // Determinar agrupaciones de clases leyendo desde el CSV
-        const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {}
+        // Definir agrupación de clases por defecto
+        const agrupacionClases: { [tipo: string]: "elegir" | "conjunto" } = {
+          "Teórico": "elegir",
+          "Teórico-Práctico": "elegir",
+          "Práctico": "elegir"
+        }
 
-        // Leer valores específicos de agrupación desde las columnas exactas del CSV
-        const agrupacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")] || ""
-        const agrupacionTeoricoPracticos = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")] || ""
+        // Lógica para Teóricos
+        const relacionTeoricos = row[headers.indexOf("Indicar relación entre los dos horarios de teóricos")]
+        if (relacionTeoricos && relacionTeoricos.includes("correspondientes a un mismo")) {
+          agrupacionClases["Teórico"] = "conjunto" ||
+        } else if (relacionTeoricos && relacionTeoricos.includes("dividida en dos")) {
+          agrupacionClases["Teórico"] = "conjunto"
+        }
 
-        console.log("Agrupaciones leídas del CSV:")
-        console.log("- Teóricos:", agrupacionTeoricos)
-        console.log("- Teórico-Prácticos:", agrupacionTeoricoPracticos)
+        // Lógica para Teórico-Prácticos (Nueva corrección)
+        const relacionTP = row[headers.indexOf("Indicar relación entre los dos horarios de teórico-prácticos")]
+        if (relacionTP && (relacionTP.includes("correspondientes a un mismo") || relacionTP.includes("dividida en dos"))) {
+          agrupacionClases["Teórico-Práctico"] = "conjunto"
+        }
 
         // Obtener aclaraciones
         const aclaraciones = row[headers.indexOf("De ser necesario indicar aclaraciones (lugar de cursada, horario especial, modalidades particulares, etc.)")] || ""
