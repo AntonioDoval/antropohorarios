@@ -464,6 +464,7 @@ export function HorariosDisplay() {
           return materiaCompleta.codigo2023 !== "" && materiaCompleta.nombrePlan2023 !== ""
         } else {
           // Para plan 1985, filtrar si tiene código o nombre vacío
+          // Las materias electivas de 2023 que son optativas en 1985 tienen código prefijado con 'O'
           return materiaCompleta.codigo1985 !== "" && materiaCompleta.nombrePlan1985 !== ""
         }
       }
