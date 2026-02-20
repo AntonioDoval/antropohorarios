@@ -415,29 +415,6 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
               agrupacionValue = agrupacionTeoricoPracticos
             }
 
-            // Determinar si es complementario o electivo basado en el valor del CSV
-            const agrupacionLower = agrupacionValue.toLowerCase()
-
-            if (agrupacionLower.includes("mismo teórico dividido") || 
-                agrupacionLower.includes("conjunto") ||
-                agrupacionLower.includes("complementario") ||
-                agrupacionLower.includes("ambos") ||
-                agrupacionLower.includes("los dos")) {
-              agrupacionClases[grupo.tipo] = "conjunto"
-              console.log(`${grupo.tipo} marcado como complementario (conjunto) - valor: "${agrupacionValue}"`)
-            } else if (agrupacionLower.includes("alternativas") || 
-                       agrupacionLower.includes("elegir") ||
-                       agrupacionLower.includes("deben elegir") ||
-                       agrupacionLower.includes("electivo") ||
-                       agrupacionLower.includes("opción") ||
-                       agrupacionLower.includes("opcional")) {
-              agrupacionClases[grupo.tipo] = "elegir"
-              console.log(`${grupo.tipo} marcado como electivo (elegir) - valor: "${agrupacionValue}"`)
-            } else if (agrupacionValue.trim() !== "") {
-              // Si hay información pero no coincide con los patrones conocidos, marcar como electivo por defecto
-              agrupacionClases[grupo.tipo] = "elegir"
-              console.log(`${grupo.tipo} con información no reconocida, marcado como electivo por defecto - valor: "${agrupacionValue}"`)
-            }
             // Si no hay información específica, no establecer agrupación (comportamiento por defecto en la UI)
           }
         })
