@@ -1597,8 +1597,8 @@ export function HorariosDisplay() {
                                     : grupo.clases.length === 1 
                                       ? clase.tipo
                                       : clase.numero && clase.numero > 0 ? `${clase.tipo} ${clase.numero}` : clase.tipo}
-                                
-                                )}
+                                   </Badge>
+                                  
                               </div>
                               <div className="text-xs space-y-0.5">
                                 <div className="flex items-center gap-1">
