@@ -1460,6 +1460,12 @@ export function HorariosDisplay() {
                         Sede Tilcara
                       </Badge>
                     )
+                  } else if (modalidadCursada.toLowerCase().includes("25 de mayo")) {
+                    return (
+                      <Badge variant="secondary" className="text-xs bg-violet-100 text-violet-700 border-violet-300 px-1.5 py-0.5">
+                        Sede 25 de Mayo
+                      </Badge>
+                    )
                   } else {
                     return (
                       <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-300 px-1.5 py-0.5">
