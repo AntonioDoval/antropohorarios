@@ -253,7 +253,7 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
           } else if (cursadaLower.includes("tilcara")) {
             modalidadCursada = "Sede Tilcara"
           } else if (cursadaLower.includes("25 de mayo")) { 
-            modalidadCursada = "Sede 25 de Mayo" }
+            modalidadCursada = "Sede 25 de Mayo" 
           } else {
             modalidadCursada = "Sede Puán"
           }
