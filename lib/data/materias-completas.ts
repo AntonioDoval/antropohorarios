@@ -753,18 +753,18 @@ export const materiasCompletas: MateriaCompleta[] = [
   },
   {
     codigo2023: "17050",
-    codigo1985: "",
+    codigo1985: "O9999",
     nombrePlan2023: "ANTROPOLOGÍA Y CONOCIMIENTO",
-    nombrePlan1985: "",
+    nombrePlan1985: "Construcción de conocimiento y aprendizaje (optativa)",
     nombreAbreviado2023: "Antrop. y Conocimiento",
     nombreSiglas2023: "AYC",
-    nombreSiglas1985: "",
+    nombreSiglas1985: "Con",
     cicloAreaProf2023: "Ciclo de Formación General (CFG) Profesorado",
     cicloAreaLicSocio2023: "",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "ESI",
