@@ -138,18 +138,18 @@ export const materiasCompletas: MateriaCompleta[] = [
   },
   {
     codigo2023: "17009",
-    codigo1985: "",
+    codigo1985: "O5555",
     nombrePlan2023: "ARQUEOLOGÍA, LEGISLACIÓN Y COMUNIDAD",
-    nombrePlan1985: "",
+    nombrePlan1985: "ARQUEOLOGÍA, LEGISLACIÓN Y COMUNIDAD (optataiva)",
     nombreAbreviado2023: "Arqueo. Leg. y Com.",
     nombreSiglas2023: "ALC",
-    nombreSiglas1985: "",
+    nombreSiglas1985: "ALC",
     cicloAreaProf2023: "Ciclo de Formación General (CFG) Licenciatura Sociocultural",
     cicloAreaLicSocio2023: "Ciclo de Formación General (CFG) Licenciatura Sociocultural",
     cicloAreaLicArqueo2023: "Ciclo de Formación General (CFG) Licenciatura Sociocultural",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17010",
@@ -333,18 +333,18 @@ export const materiasCompletas: MateriaCompleta[] = [
   },
   {
     codigo2023: "17022",
-    codigo1985: "",
+    codigo1985: "O6666",
     nombrePlan2023: "AMÉRICA EN CONTEXTO",
-    nombrePlan1985: "",
+    nombrePlan1985: "AMÉRICA EN CONTEXTO (optativa)",
     nombreAbreviado2023: "Am. en Contexto",
     nombreSiglas2023: "AEC",
-    nombreSiglas1985: "",
+    nombreSiglas1985: "AEC",
     cicloAreaProf2023: "Ciclo de Formación General (CFG) Profesorado",
     cicloAreaLicSocio2023: "Antropología histórica y memoria",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17023",
@@ -408,18 +408,18 @@ export const materiasCompletas: MateriaCompleta[] = [
   },
   {
     codigo2023: "17027",
-    codigo1985: "",
+    codigo1985: "O7777",
     nombrePlan2023: "SUJETOS SOCIALES Y POLÍTICOS EN PERSPECTIVA ANTROPOLÓGICA",
-    nombrePlan1985: "",
+    nombrePlan1985: "SUJETOS SOCIALES Y POLÍTICOS EN PERSPECTIVA ANTROPOLÓGICA (optativa)",
     nombreAbreviado2023: "Suj. Soc. y Pol.",
     nombreSiglas2023: "SUJ",
-    nombreSiglas1985: "",
+    nombreSiglas1985: "SUJ",
     cicloAreaProf2023: "",
     cicloAreaLicSocio2023: "Procesos políticos, instituciones y prácticas",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17028",
@@ -453,18 +453,18 @@ export const materiasCompletas: MateriaCompleta[] = [
   },
   {
     codigo2023: "17030",
-    codigo1985: "",
+    codigo1985: "O8888",
     nombrePlan2023: "DINÁMICAS CONTEMPORÁNEAS DEL CAMPO DE LA CULTURA",
-    nombrePlan1985: "",
+    nombrePlan1985: "DINÁMICAS CONTEMPORÁNEAS DEL CAMPO DE LA CULTURA  (optativa)",
     nombreAbreviado2023: "D. Cont. en el C. de la Cult.",
     nombreSiglas2023: "CULT",
-    nombreSiglas1985: "",
+    nombreSiglas1985: "CULT",
     cicloAreaProf2023: "",
     cicloAreaLicSocio2023: "Procesos socioeconómicos: producción, reproducción y transformación social",
     cicloAreaLicArqueo2023: "",
-    cicloAreaProf1985: "",
-    cicloAreaLicSocio1985: "",
-    cicloAreaLicArqueo1985: ""
+    cicloAreaProf1985: "Optativa",
+    cicloAreaLicSocio1985: "Optativa",
+    cicloAreaLicArqueo1985: "Optativa"
   },
   {
     codigo2023: "17031",
