@@ -252,6 +252,8 @@ export function CSVUploader({ onSuccess, onError }: CSVUploaderProps = {}) {
             modalidadCursada = "Sede Museo"
           } else if (cursadaLower.includes("tilcara")) {
             modalidadCursada = "Sede Tilcara"
+          } else if (cursadaLower.includes("25 de mayo")) { 
+            modalidadCursada = "Sede 25 de Mayo" }
           } else {
             modalidadCursada = "Sede Puán"
           }
